@@ -21,7 +21,6 @@ void vt_fill(char ch, char attr) {
 	// get the address of the VRAM
 	char* char_address = video_mem;
 
-
 	unsigned int i;
 
 	for (i = 0; i < scr_width * scr_lines; i++)
@@ -48,7 +47,7 @@ int vt_print_char(char ch, char attr, int r, int c) {
 
 		char* char_address = video_mem;
 
-		// sum the lines before the line we are putting the car on
+		// sum the lines before the line we are putting the char on
 		char_address += r * scr_width * 2;
 
 		// sum the columns to the one where we put our char on
@@ -57,7 +56,6 @@ int vt_print_char(char ch, char attr, int r, int c) {
 		*char_address = ch;
 		char_address ++;
 		*char_address = attr;
-		char_address ++;
 
 		return 0;
 	}
@@ -72,49 +70,63 @@ int vt_print_string(char *str, char attr, int r, int c) {
 /* Completing .... */
 
 //Checks if the input is valid
-
-	if ( r > scr_lines || c > scr_width || c < 0 || r < 0) {
-		return 1;
-	}
-
+        if ( r > scr_lines || c > scr_width || c < 0 || r < 0) {
+                return 1;
+        }
 //Start by increasing the pointer to the starting point
-	char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
+        char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
 
-
-	
 //Loop the string printing each character
+        bool flag == true;
 
-	bool flag == true;
-	
-	do{
-		if (*str == 0x00){
-			break;
-		}
-		
-		c ++;
-		
-		if (c == scr_width-1){
-			r++;
-			c=0;
-		}
-		
-		if (r>scr_lines){
-			return 1;
-		}
-		*char_Adress = *str;
-		char_Adress ++;
-		*char_Adress = attr;
-		char_Adress ++;
-		
-	} while (flag);
-	
-	return 0;
+        do{
+                if (*str == 0x00){
+                        break;
+                }
+
+                c ++;
+
+                if (c == scr_width-1){
+                        r++;
+                        c=0;
+                }
+
+                if (r>scr_lines){
+                        return 1;                }
+                *char_Adress = *str;
+                char_Adress ++;
+                *char_Adress = attr;
+                char_Adress ++;
+
+        } while (flag);
+
+        return 0;
+
+
 }
 
 int vt_print_int(int num, char attr, int r, int c) {
 
-  /* To complete ... */
+	/*char digit;
+	char* char_address = video_mem;
 
+	// sum the lines before the line we are putting the int on
+	char_address += r * scr_width * 2;
+
+	// sum the columns to the one where we put our int on
+	char_address += c * 2;
+
+
+
+	do
+	{
+		*char_address = string_with_int[i]; // gets the char to VRAM
+		char_address++;
+		*char_address = attr; // sets the attribute
+		char_address++;
+
+		i++; // incs counter
+	} while (i < int_length);*/
 }
 
 
