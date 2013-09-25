@@ -85,7 +85,7 @@ int vt_print_string(char *str, char attr, int r, int c) {
 		*char_Adress = *str;
 		char_Adress ++;
 		*char_Adress = attr;
-		
+		char_Adress ++;
 		
 	} while (flag);
 	
