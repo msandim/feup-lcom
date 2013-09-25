@@ -17,7 +17,18 @@ static unsigned scr_lines;	/* Height of screen in lines */
 
 void vt_fill(char ch, char attr) {
   
-  /* To complete */
+  /* DONE - *testing* - WORKS BAD */
+
+	char* char_address = video_mem;
+
+	unsigned int i;
+
+	for (i = 0; i < scr_width * scr_lines; i++)
+	{
+		(*char_address) = ch; // puts the wanted char
+		char_address++; // incs the pointer to the next chat (attributes)
+		(*char_address) = attr;
+	}
   
 }
 
