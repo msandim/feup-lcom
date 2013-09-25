@@ -16,8 +16,6 @@ static unsigned scr_width;	/* Width of screen in columns */
 static unsigned scr_lines;	/* Height of screen in lines */
 
 void vt_fill(char ch, char attr) {
-  
-  /* DONE - *testing* - WORKS BAD */
 
 
 	// get the address of the VRAM
@@ -39,13 +37,26 @@ void vt_fill(char ch, char attr) {
 void vt_blank() {
 
 	// filling the screen with black smiley faces in a black background
-	vt_fill(0x01, 0x80);
-
+	vt_fill(0x01, 0x0A);
 }
 
 int vt_print_char(char ch, char attr, int r, int c) {
-  
-  /* To complete ... */
+// NOTE: "r" and "c" start in 0 and go to scr_"height/width"-1
+
+	if ()
+
+	char* char_address = video_mem;
+
+	// sum the lines before the line we are putting the car on
+	char_address += r * scr_width * 2;
+
+	char_address += c * 2;
+
+	*char_address = ch;
+	char_address ++;
+	*char_address = attr;
+
+	return 0;
 
 }
 
