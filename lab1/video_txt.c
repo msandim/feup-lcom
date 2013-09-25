@@ -71,9 +71,17 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 /* Completing .... */
 
+//Checks if the input is valid
+
+	if ( r > scr_lines || c > scr_width || c < 0 || r < 0) {
+		return 1;
+	}
+
 //Start by increasing the pointer to the starting point
 	char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
 
+
+	
 //Loop the string printing each character
 
 	bool flag == true;
