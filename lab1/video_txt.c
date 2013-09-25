@@ -91,6 +91,16 @@ int vt_print_string(char *str, char attr, int r, int c) {
 			break;
 		}
 		
+		c ++;
+		
+		if (c == scr_width-1){
+			r++;
+			c=0;
+		}
+		
+		if (r>scr_lines){
+			return 1;
+		}
 		*char_Adress = *str;
 		char_Adress ++;
 		*char_Adress = attr;
