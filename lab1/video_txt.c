@@ -27,9 +27,9 @@ void vt_fill(char ch, char attr) {
 	for (i = 0; i < scr_width * scr_lines; i++)
 	{
 		(*char_address) = ch; // puts the wanted char
-		char_address++; // incs the pointer to the next chat (attributes)
+		char_address++; // incs the pointer to the next char (attributes)
 		(*char_address) = attr;
-		char_address++;
+		char_address++; // incs the pointer to the char (next line/column
 	}
   
 }
@@ -51,6 +51,7 @@ int vt_print_char(char ch, char attr, int r, int c) {
 		// sum the lines before the line we are putting the car on
 		char_address += r * scr_width * 2;
 
+		// sum the columns to the one where we put our char on
 		char_address += c * 2;
 
 		*char_address = ch;
@@ -67,7 +68,7 @@ int vt_print_char(char ch, char attr, int r, int c) {
 
 int vt_print_string(char *str, char attr, int r, int c) {
 
-  /* To complete ... */
+
 
 }
 
