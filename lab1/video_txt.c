@@ -70,7 +70,26 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 /* Completing .... */
 
+//Start by increasing the pointer to the starting point
+	char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
 
+//Loop the string printing each character
+
+	bool flag == true;
+	
+	do{
+		if (*str == 0x00){
+			break;
+		}
+		
+		*char_Adress = *str;
+		char_Adress ++;
+		*char_Adress = attr;
+		
+		
+	} while (flag);
+	
+	return 0;
 }
 
 int vt_print_int(int num, char attr, int r, int c) {
