@@ -69,6 +69,39 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 /* Completing .... */
 
+//Checks if the input is valid
+        if ( r > scr_lines || c > scr_width || c < 0 || r < 0) {	
+                return 1;
+        }	
+//Start by increasing the pointer to the starting point
+        char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
+        
+//Loop the string printing each character
+        bool flag == true;
+        
+        do{
+                if (*str == 0x00){
+                        break;
+                }
+                
+                c ++;
+                
+                if (c == scr_width-1){
+                        r++;	
+                        c=0;
+                }
+                
+                if (r>scr_lines){
+                        return 1;                }	
+                *char_Adress = *str;
+                char_Adress ++;
+                *char_Adress = attr;
+                char_Adress ++;
+                
+        } while (flag);
+        
+        return 0;
+
 
 }
 
