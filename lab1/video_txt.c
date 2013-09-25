@@ -19,7 +19,10 @@ void vt_fill(char ch, char attr) {
   
   /* DONE - *testing* - WORKS BAD */
 
+
+	// get the address of the VRAM
 	char* char_address = video_mem;
+
 
 	unsigned int i;
 
@@ -28,13 +31,15 @@ void vt_fill(char ch, char attr) {
 		(*char_address) = ch; // puts the wanted char
 		char_address++; // incs the pointer to the next chat (attributes)
 		(*char_address) = attr;
+		char_address++;
 	}
   
 }
 
 void vt_blank() {
 
-  /* To complete ... */
+	// filling the screen with black smiley faces in a black background
+	vt_fill(0x01, 0x80);
 
 }
 
