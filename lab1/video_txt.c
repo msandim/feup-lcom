@@ -68,6 +68,7 @@ int vt_print_char(char ch, char attr, int r, int c) {
 
 int vt_print_string(char *str, char attr, int r, int c) {
 
+/* Completing .... */
 
 
 }
