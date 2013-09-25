@@ -37,26 +37,31 @@ void vt_fill(char ch, char attr) {
 void vt_blank() {
 
 	// filling the screen with black smiley faces in a black background
-	vt_fill(0x01, 0x0A);
+	vt_fill(0x01, 0x00);
 }
 
 int vt_print_char(char ch, char attr, int r, int c) {
 // NOTE: "r" and "c" start in 0 and go to scr_"height/width"-1
 
-	if ()
+	if (r >= 0 && r < scr_lines && c >= 0 && c < scr_width)
+	{ // if the number is valid
 
-	char* char_address = video_mem;
+		char* char_address = video_mem;
 
-	// sum the lines before the line we are putting the car on
-	char_address += r * scr_width * 2;
+		// sum the lines before the line we are putting the car on
+		char_address += r * scr_width * 2;
 
-	char_address += c * 2;
+		char_address += c * 2;
 
-	*char_address = ch;
-	char_address ++;
-	*char_address = attr;
+		*char_address = ch;
+		char_address ++;
+		*char_address = attr;
 
-	return 0;
+		return 0;
+	}
+
+	else // if it's not valid, we return 1
+		return 1;
 
 }
 
