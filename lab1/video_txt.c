@@ -57,6 +57,7 @@ int vt_print_char(char ch, char attr, int r, int c) {
 		*char_address = ch;
 		char_address ++;
 		*char_address = attr;
+		char_address ++;
 
 		return 0;
 	}
