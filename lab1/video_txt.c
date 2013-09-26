@@ -3,6 +3,7 @@
 #include <sys/mman.h>
 
 #include <assert.h>
+#include <stdbool.h>
 
 #include "vt_info.h"
 
@@ -30,7 +31,7 @@ void vt_fill(char ch, char attr) {
 		(*char_address) = attr;
 		char_address++; // incs the pointer to the char (next line/column
 	}
-  
+
 }
 
 void vt_blank() {
@@ -40,7 +41,7 @@ void vt_blank() {
 }
 
 int vt_print_char(char ch, char attr, int r, int c) {
-// NOTE: "r" and "c" start in 0 and go to scr_"height/width"-1
+	// NOTE: "r" and "c" start in 0 and go to scr_"height/width"-1
 
 	if (r >= 0 && r < scr_lines && c >= 0 && c < scr_width)
 	{ // if the number is valid
@@ -67,47 +68,51 @@ int vt_print_char(char ch, char attr, int r, int c) {
 
 int vt_print_string(char *str, char attr, int r, int c) {
 
-/* Completing .... */
+/*
+	//Checks if the input is valid
+	if ( r < scr_lines && c < scr_width && c >= 0 && r >= 0)
+	{
+		//Start by increasing the pointer to the starting point
+		char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
 
-//Checks if the input is valid
-        if ( r > scr_lines || c > scr_width || c < 0 || r < 0) {
-                return 1;
-        }
-//Start by increasing the pointer to the starting point
-        char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
+		//Loop the string printing each character
+		bool flag = true;
 
-//Loop the string printing each character
-        bool flag == true;
+		do{
+			if (*str == 0x00){
+				break;
+			}
 
-        do{
-                if (*str == 0x00){
-                        break;
-                }
+			c ++;
 
-                c ++;
+			if (c == scr_width-1){
+				r++;
+				c=0;
+			}
 
-                if (c == scr_width-1){
-                        r++;
-                        c=0;
-                }
+			if (r>scr_lines){
+				return 1;                }
+			*char_Adress = *str;
+			char_Adress ++;
+			*char_Adress = attr;
+			char_Adress ++;
 
-                if (r>scr_lines){
-                        return 1;                }
-                *char_Adress = *str;
-                char_Adress ++;
-                *char_Adress = attr;
-                char_Adress ++;
+		} while (flag);
 
-        } while (flag);
 
-        return 0;
+		return 0;
+	}
 
+
+	return 1;
+*/
 
 }
 
 int vt_print_int(int num, char attr, int r, int c) {
 
-	/*char digit;
+	int new_num, digit_int;
+	char digit_char;
 	char* char_address = video_mem;
 
 	// sum the lines before the line we are putting the int on
@@ -116,23 +121,56 @@ int vt_print_int(int num, char attr, int r, int c) {
 	// sum the columns to the one where we put our int on
 	char_address += c * 2;
 
-
-
-	do
+	//checks if the number is negative and adds a "-"
+	if (num < 0)
 	{
-		*char_address = string_with_int[i]; // gets the char to VRAM
+		*char_address = 0x2D;
 		char_address++;
-		*char_address = attr; // sets the attribute
+		*char_address = attr;
+		char_address++;
+	}
+
+	/*if (num > -10 && num < 10) // if the number has only one digit, just print it
+	{
+		*char_address = sqrt(num*num) + '0';
+		char_address++;
+		*char_address = attr;
 		char_address++;
 
-		i++; // incs counter
-	} while (i < int_length);*/
+		return 0;
+	}*/
+
+	new_num = num;
+
+	while (new_num != 0)
+	{
+		digit_int = new_num % 10; // extract last digit
+		new_num = new_num / 10; // saves the other ones
+
+		if (c < scr_width && r < scr_lines) // if it has space left
+		{
+			*char_address = digit_int + '0';
+			char_address++;
+			*char_address = attr;
+			char_address++;
+
+			if (c >= scr_width) // changes line
+			{
+				c=0;
+				r++;
+			}
+			else c++; // only changes column
+		}
+		else return 1; // if it has no space left returns error 1
+	}
+
+	return 0; // successful!
 }
 
 
 int vt_draw_frame(int width, int height, char attr, int r, int c) {
 
-  /* To complete ... */
+	/* To complete ... */
 
 }
 
@@ -142,28 +180,28 @@ int vt_draw_frame(int width, int height, char attr, int r, int c) {
 
 char *vt_init(vt_info_t *vi_p) {
 
-  int r;
-  struct mem_range mr;
+	int r;
+	struct mem_range mr;
 
-  /* Allow memory mapping */
+	/* Allow memory mapping */
 
-  mr.mr_base = (phys_bytes)(vi_p->vram_base);
-  mr.mr_limit = mr.mr_base + vi_p->vram_size;
+	mr.mr_base = (phys_bytes)(vi_p->vram_base);
+	mr.mr_limit = mr.mr_base + vi_p->vram_size;
 
-  if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
-	  panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", r);
+	if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mr)))
+		panic("video_txt: sys_privctl (ADD_MEM) failed: %d\n", r);
 
-  /* Map memory */
+	/* Map memory */
 
-  video_mem = vm_map_phys(SELF, (void *)mr.mr_base, vi_p->vram_size);
+	video_mem = vm_map_phys(SELF, (void *)mr.mr_base, vi_p->vram_size);
 
-  if(video_mem == MAP_FAILED)
-	  panic("video_txt couldn't map video memory");
+	if(video_mem == MAP_FAILED)
+		panic("video_txt couldn't map video memory");
 
-  /* Save text mode resolution */
+	/* Save text mode resolution */
 
-  scr_lines = vi_p->scr_lines;
-  scr_width = vi_p->scr_width;
+	scr_lines = vi_p->scr_lines;
+	scr_width = vi_p->scr_width;
 
-  return video_mem;
+	return video_mem;
 }
