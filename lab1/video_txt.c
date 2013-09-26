@@ -63,7 +63,10 @@ int vt_print_char(char ch, char attr, int r, int c) {
 	}
 
 	else // if it's not valid, we return 1
+	{
+		printf("\n\nvt_print_char error: Invalid position\n\n");
 		return 1;
+	}
 
 }
 
@@ -114,6 +117,7 @@ int vt_print_string(char *str, char attr, int r, int c) {
 int vt_print_int(int num, char attr, int r, int c) {
 
 	unsigned int numberOfCharsNeeded;
+	bool negativeNumber =  false;
 	unsigned int numberOfCharsLeftInScreen = (scr_width - c) + (scr_lines - r - 1) * scr_width;
 	int new_num, digit_int;
 	char digit_char;
@@ -121,7 +125,6 @@ int vt_print_int(int num, char attr, int r, int c) {
 
 	if (r >= 0 && r < scr_lines && c >= 0 && c < scr_width)
 	{
-
 		numberOfCharsNeeded = floor (log10 (abs (num))) + 1;
 
 		if (num < 0)
@@ -130,16 +133,31 @@ int vt_print_int(int num, char attr, int r, int c) {
 		}
 
 		if (numberOfCharsNeeded > numberOfCharsLeftInScreen)
-			return 1;
-
-		//checks if the number is negative and adds a "-" and changes the sign in new_num
-		if (num < 0)
 		{
-			vt_print_char(0x2D, attr, r, c);
-			new_num = -num;
+			printf("\n\nvt_print_int error: There is not enough space for that int\n\n");
+			return 1;
 		}
 
+		//checks if the number is negative turns the flag into true and changes the sign in new_num
+		if (num < 0)
+		{
+			negativeNumber = true;
+			new_num = -num;
+		}
 		else new_num = num;
+
+
+		//puts r and c ready to put the last element
+		for (--numberOfCharsNeeded; numberOfCharsNeeded > 0; numberOfCharsNeeded--)
+		{
+			if (c == scr_width - 1) // if its in the last element, go to the next line
+			{
+				c = 0;
+				r++;
+			}
+			else // otherwise, inc the column
+				c++;
+		}
 
 		while (new_num != 0)
 		{
@@ -149,18 +167,24 @@ int vt_print_int(int num, char attr, int r, int c) {
 			digit_char = digit_int + '0';
 			vt_print_char(digit_char, attr, r, c);
 
-			if (c >= scr_width) // changes line
+			if (c == 0) // changes line
 			{
-				c=0;
-				r++;
+				c = scr_width - 1;
+				r--;
 			}
-			else c++; // only changes column
+			else c--; // only changes column
 		}
+
+		if (negativeNumber) // if it's a negative number, print "-"
+			vt_print_char(0x2D, attr, r, c);
 
 		return 0; // successful
 	}
-else
-	return 1;
+	else
+	{
+		printf("\n\nvt_print_int error: Invalid position\n\n");
+		return 1;
+	}
 }
 
 
