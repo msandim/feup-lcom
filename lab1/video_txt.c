@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "vt_info.h"
 
@@ -68,7 +69,7 @@ int vt_print_char(char ch, char attr, int r, int c) {
 
 int vt_print_string(char *str, char attr, int r, int c) {
 
-/*
+	/*
 	//Checks if the input is valid
 	if ( r < scr_lines && c < scr_width && c >= 0 && r >= 0)
 	{
@@ -92,9 +93,9 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 			if (r>scr_lines){
 				return 1;                }
-			*char_Adress = *str;
+	 *char_Adress = *str;
 			char_Adress ++;
-			*char_Adress = attr;
+	 *char_Adress = attr;
 			char_Adress ++;
 
 		} while (flag);
@@ -105,54 +106,48 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 
 	return 1;
-*/
+
+	 */
 
 }
 
 int vt_print_int(int num, char attr, int r, int c) {
 
+	unsigned int numberOfCharsNeeded;
+	unsigned int numberOfCharsLeftInScreen = (scr_width - c) + (scr_lines - r - 1) * scr_width;
 	int new_num, digit_int;
 	char digit_char;
 	char* char_address = video_mem;
 
-	// sum the lines before the line we are putting the int on
-	char_address += r * scr_width * 2;
-
-	// sum the columns to the one where we put our int on
-	char_address += c * 2;
-
-	//checks if the number is negative and adds a "-"
-	if (num < 0)
+	if (r >= 0 && r < scr_lines && c >= 0 && c < scr_width)
 	{
-		*char_address = 0x2D;
-		char_address++;
-		*char_address = attr;
-		char_address++;
-	}
 
-	/*if (num > -10 && num < 10) // if the number has only one digit, just print it
-	{
-		*char_address = sqrt(num*num) + '0';
-		char_address++;
-		*char_address = attr;
-		char_address++;
+		numberOfCharsNeeded = floor (log10 (abs (num))) + 1;
 
-		return 0;
-	}*/
-
-	new_num = num;
-
-	while (new_num != 0)
-	{
-		digit_int = new_num % 10; // extract last digit
-		new_num = new_num / 10; // saves the other ones
-
-		if (c < scr_width && r < scr_lines) // if it has space left
+		if (num < 0)
 		{
-			*char_address = digit_int + '0';
-			char_address++;
-			*char_address = attr;
-			char_address++;
+			numberOfCharsNeeded++; // because "-" occupies a space
+		}
+
+		if (numberOfCharsNeeded > numberOfCharsLeftInScreen)
+			return 1;
+
+		//checks if the number is negative and adds a "-" and changes the sign in new_num
+		if (num < 0)
+		{
+			vt_print_char(0x2D, attr, r, c);
+			new_num = -num;
+		}
+
+		else new_num = num;
+
+		while (new_num != 0)
+		{
+			digit_int = new_num % 10; // extract last digit
+			new_num = new_num / 10; // saves the other ones
+
+			digit_char = digit_int + '0';
+			vt_print_char(digit_char, attr, r, c);
 
 			if (c >= scr_width) // changes line
 			{
@@ -161,10 +156,11 @@ int vt_print_int(int num, char attr, int r, int c) {
 			}
 			else c++; // only changes column
 		}
-		else return 1; // if it has no space left returns error 1
-	}
 
-	return 0; // successful!
+		return 0; // successful
+	}
+else
+	return 1;
 }
 
 
