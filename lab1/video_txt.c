@@ -72,9 +72,14 @@ int vt_print_char(char ch, char attr, int r, int c) {
 
 int vt_print_string(char *str, char attr, int r, int c) {
 
-	/*
+	unsigned int count = strlen(str);
+	unsigned int charsleft = (scr_lines-r-1)*scr_width + (scr_width-c);
+	if (count > charsleft){
+		printf("\n\nvt_print_string error: Invalid position\n\n");
+		return 1;
+	}
 	//Checks if the input is valid
-	if ( r < scr_lines && c < scr_width && c >= 0 && r >= 0)
+	else if ( r < scr_lines && c < scr_width && c >= 0 && r >= 0)
 	{
 		//Start by increasing the pointer to the starting point
 		char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
@@ -95,22 +100,21 @@ int vt_print_string(char *str, char attr, int r, int c) {
 			}
 
 			if (r>scr_lines){
-				return 1;                }
-	 *char_Adress = *str;
-			char_Adress ++;
-	 *char_Adress = attr;
-			char_Adress ++;
+				return 1;
+			}
 
+			*char_Adress = *str;
+			char_Adress ++;
+			*char_Adress = attr;
+			char_Adress ++;
+			*str ++;
 		} while (flag);
 
 
 		return 0;
+	} else {
+		return 1;
 	}
-
-
-	return 1;
-
-	 */
 
 }
 
