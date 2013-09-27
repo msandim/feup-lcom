@@ -76,44 +76,35 @@ int vt_print_string(char *str, char attr, int r, int c) {
 	unsigned int charsleft = (scr_lines-r-1)*scr_width + (scr_width-c);
 
 	if (count > charsleft){
-		printf("\n\nvt_print_string error: Invalid position\n\n");
+		printf("\n\nvt_print_string error: There is not enough space for that string\n\n");
 		return 1;
 	}
+
 	//Checks if the input is valid
-	else if ( r < scr_lines && c < scr_width && c >= 0 && r >= 0)
+	else if (r < scr_lines && c < scr_width && c >= 0 && r >= 0)
 	{
 		//Start by increasing the pointer to the starting point
 		char* char_Adress = video_mem + (scr_width * r * 2) + (c*2);
 
-		//Loop the string printing each character
-		bool flag = true;
-
+		// Loop the string to print each character, only breaks if we find the
+		// string terminator
 		do{
-			if (*str == 0x00){
-				break;
-			}
+			// print the char
+			vt_print_char(*str, attr, r, c);
+			*str ++; // points to the next element
 
-			c ++;
-
-			if (c == scr_width-1){
+			if (c == scr_width-1){ // change row for next element
 				r++;
 				c=0;
 			}
 
-			if (r>scr_lines){
-				return 1;
-			}
-
-			*char_Adress = *str;
-			char_Adress ++;
-			*char_Adress = attr;
-			char_Adress ++;
-			*str ++;
-		} while (flag);
-
-
+			else // change column for next element
+				c++;
+		} while (*str != 0x00);
 		return 0;
+
 	} else {
+		printf("\n\nvt_print_string error: Invalid position\n\n");
 		return 1;
 	}
 
@@ -194,32 +185,58 @@ int vt_print_int(int num, char attr, int r, int c) {
 
 int vt_draw_frame(int width, int height, char attr, int r, int c) {
 
-	if ((width + r) >= scr_width - 1 || (height + c) >= scr_lines - 1){
+	char LEFT_UP_CORNER = 0xC9;
+	char RIGHT_UP_CORNER = 0xBB;
+	char LEFT_DOWN_CORNER = 0xC8;
+	char RIGHT_DOWN_CORNER = 0xBC;
+
+	char LINE_HORIZONTAL = 0xCD;
+	char LINE_VERTICAL = 0xBA;
+
+	if ((width + c) >= scr_width - 1 || (height + r) >= scr_lines - 1){
 		printf("\nFrame does not fit screen\n");
 		return 1;
 	}
 
+	// put the r/c in position for left-upper corner
 	char* char_adress = video_mem + (scr_width * r * 2) + (c*2);
 	unsigned int i, r_actual = r, c_actual = c;
 
-	vt_print_char(0xC9, attr, r_actual, c_actual);
+	// print left-upper corner
+	vt_print_char(LEFT_UP_CORNER, attr, r_actual, c_actual);
 	c_actual++;
+
+	// print upper line
 	for (i = 0; i < width; i++){
-		vt_print_char(0xCD, attr, r_actual, c_actual++);
+		vt_print_char(LINE_HORIZONTAL, attr, r_actual, c_actual++);
 	}
-	vt_print_char(0xBB, attr, r_actual, c_actual);
+
+	// print right-upper corner
+	vt_print_char(RIGHT_UP_CORNER, attr, r_actual, c_actual);
+
+	// prepare to print left line
 	r_actual = ++r;
 	c_actual = c;
+
+	// print left line
 	for (i = 0; i < height; i++){
-		vt_print_char(0xBA, attr, r_actual++, c_actual);
+		vt_print_char(LINE_VERTICAL, attr, r_actual++, c_actual);
 	}
-	vt_print_char(0xC8, attr, r_actual, c_actual++);
+
+	// print left-bottom corner
+	vt_print_char(LEFT_DOWN_CORNER, attr, r_actual, c_actual++);
+
+	// print bottom line
 	for (i = 0; i < width; i++){
-		vt_print_char(0xCD, attr, r_actual, c_actual++);
+		vt_print_char(LINE_HORIZONTAL, attr, r_actual, c_actual++);
 	}
-	vt_print_char(0xBC, attr, r_actual--, c_actual);
+
+	// print right-bottom corner
+	vt_print_char(RIGHT_DOWN_CORNER, attr, r_actual--, c_actual);
+
+	// print right line
 	for (i = 0; i < height; i++){
-		vt_print_char(0xBA, attr, r_actual--, c_actual);
+		vt_print_char(LINE_VERTICAL, attr, r_actual--, c_actual);
 	}
 }
 
