@@ -193,7 +193,9 @@ int vt_draw_frame(int width, int height, char attr, int r, int c) {
 	char LINE_HORIZONTAL = 0xCD;
 	char LINE_VERTICAL = 0xBA;
 
-	if ((width + c) >= scr_width - 1 || (height + r) >= scr_lines - 1){
+	if ((width + c) >= (scr_width - 1) || (height + r) >= (scr_lines - 1)
+			|| (width < 0) || (height < 0) || (r < 0) || (c < 0))
+	{
 		printf("\nFrame does not fit screen\n\n");
 		return 1;
 	}
