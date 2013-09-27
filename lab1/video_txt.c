@@ -74,6 +74,7 @@ int vt_print_string(char *str, char attr, int r, int c) {
 
 	unsigned int count = strlen(str);
 	unsigned int charsleft = (scr_lines-r-1)*scr_width + (scr_width-c);
+
 	if (count > charsleft){
 		printf("\n\nvt_print_string error: Invalid position\n\n");
 		return 1;
@@ -191,11 +192,35 @@ int vt_print_int(int num, char attr, int r, int c) {
 	}
 }
 
-
 int vt_draw_frame(int width, int height, char attr, int r, int c) {
 
-	/* To complete ... */
+	if ((width + r) >= scr_width - 1 || (height + c) >= scr_lines - 1){
+		printf("\nFrame does not fit screen\n");
+		return 1;
+	}
 
+	char* char_adress = video_mem + (scr_width * r * 2) + (c*2);
+	unsigned int i, r_actual = r, c_actual = c;
+
+	vt_print_char(0xC9, attr, r_actual, c_actual);
+	c_actual++;
+	for (i = 0; i < width; i++){
+		vt_print_char(0xCD, attr, r_actual, c_actual++);
+	}
+	vt_print_char(0xBB, attr, r_actual, c_actual);
+	r_actual = ++r;
+	c_actual = c;
+	for (i = 0; i < height; i++){
+		vt_print_char(0xBA, attr, r_actual++, c_actual);
+	}
+	vt_print_char(0xC8, attr, r_actual, c_actual++);
+	for (i = 0; i < width; i++){
+		vt_print_char(0xCD, attr, r_actual, c_actual++);
+	}
+	vt_print_char(0xBC, attr, r_actual--, c_actual);
+	for (i = 0; i < height; i++){
+		vt_print_char(0xBA, attr, r_actual--, c_actual);
+	}
 }
 
 /*
