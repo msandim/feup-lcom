@@ -1,0 +1,17 @@
+service lab2
+{
+	system
+		UMAP		# 14
+		INT86		# 20
+		PRIVCTL
+		READBIOS	
+		;
+	ipc
+		SYSTEM	# to retrieve system information
+                rs      # for service initialization
+	        vm	# to map video RAM
+	        pm      # for malloc, if needed
+	        vfs
+		;
+	uid 0;
+};
