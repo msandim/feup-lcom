@@ -54,17 +54,38 @@ void * vg_init(unsigned short mode) {
 		return NULL;
 	}
 
-	/* Map memory IS THIS NECESSARY????? */
+	/* Allow memory mapping */
 
-	//struct mem_range mr;
-	//video_mem = vm_map_phys(SELF, (void *)mr.mr_base, 1024*768);
-	video_mem = (char*) VRAM_PHYS_ADDR;
+	struct mem_range mem;
+	int r;
+
+	mem.mr_base = (phys_bytes) VRAM_PHYS_ADDR;
+	mem.mr_limit = mem.mr_base + (h_res*v_res);
+
+	if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mem)))
+		panic("video_gr: sys_privctl (ADD_MEM) failed: %d\n", r);
+
+	/* Map memory */
+
+	video_mem = vm_map_phys(SELF, (void *)mem.mr_base, h_res*v_res);
+
+	if(video_mem == MAP_FAILED)
+		panic("video_gr couldn't map video memory");
 
 	return video_mem;
 }
 
 int vg_fill(unsigned long color) {
-	return 0;
+
+	unsigned int i;
+	char* ptrVRAM = video_mem;
+
+	// fill all the pixels
+	for (i=0; i < h_res * v_res; i++)
+	{
+		*ptrVRAM = color;
+		ptrVRAM++;
+	}
 }
 
 int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
