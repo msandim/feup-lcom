@@ -54,9 +54,9 @@ void * vg_init(unsigned short mode) {
 		return NULL;
 	}
 
-	/* Map memory */
+	/* Map memory IS THIS NECESSARY????? */
 
-	struct mem_range mr;
+	//struct mem_range mr;
 	//video_mem = vm_map_phys(SELF, (void *)mr.mr_base, 1024*768);
 	video_mem = (char*) VRAM_PHYS_ADDR;
 
