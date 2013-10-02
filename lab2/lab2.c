@@ -27,9 +27,6 @@ int main(int argc, char **argv) {
 	vg_exit();*/
 
 	if ( argc == 1 ) {
-		video_mem = vg_init(0x105);
-		vg_exit();
-		printf("\nVRAM virtual address at %p\n\n", video_mem);
 		print_usage(argv);
 		return 0;
 	} else {
@@ -41,12 +38,17 @@ int main(int argc, char **argv) {
 
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
-	printf("Usage: one of the following:\n"
-			"-   service run %s -args \"init <mode (hex)>\" \n"
-			"-   service run %s -args \"fill <color (hex)>\" \n"
-			"-   service run %s -args \"setpixel <x> <y> <color (hex)>\" \n"
-			"-   service run %s -args \"getpixel <x> <y>\" \n"
-			"-   service run %s -args \"drawline <xi> <xf> <yi> <yf> <color (hex)>\" \n",
+	printf("Usage: :\n"
+			"-   service run %s -args \"init <mode(hex)>\" \n"
+			"    . initiates graphic mode and displays the virtual address \n"
+			"-   service run %s -args \"fill <color(hex)>\" \n"
+			"    . fills the screen with a specific color \n"
+			"-   service run %s -args \"setpixel <col> <line> <color(hex)>\"\n"
+			"    . sets a specific color on a pixel defined by its column and line \n"
+			"-   service run %s -args \"getpixel <col> <line>\" \n"
+			"    . returns the code of the color used for a specific pixel \n"
+			"-   service run %s -args \"drawline <coli> <colf> <lini> <linf> <color(hex)>\" \n"
+			"    . draws a line from pixel (coli, linei) to pixel (colf, linef) \n\n",
 			argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 
@@ -57,7 +59,7 @@ static int proc_args(int argc, char *argv[]) {
 	char *str;
 	long num;
 
-// check the function to test: if the first characters match, accept it
+	// check the function to test: if the first characters match, accept it
 
 	if (strncmp(argv[1], "init", strlen("init")) == 0) {
 		if( argc != 3 ) {
@@ -69,12 +71,10 @@ static int proc_args(int argc, char *argv[]) {
 		if( (mode = parse_ulong(argv[2], 16)) == ULONG_MAX )
 			return 1;
 
-		// do init, sleep with X time and exits
-		vg_init(mode);
-
-		sleep(3);
-
+		// do init, shows address and exits
+		char* video_mem = vg_init(0x105);
 		vg_exit();
+		printf("\nVRAM virtual address at %p\n\n", video_mem);
 
 		printf("video_gr:: vg_init(0x%X)\n", (unsigned) mode);
 		return 0;
@@ -113,7 +113,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		return vg_set_pixel(x1,y1,color);
 		printf("video_gr:: vg_set_pixel(0x%lu, 0x%lu, %X)\n",
-						x1, y1, color);
+				x1, y1, color);
 
 	} else if (strncmp(argv[1], "getpixel", strlen("getpixel")) == 0) {
 		if( argc != 4 ) {
@@ -126,7 +126,7 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		return vg_get_pixel(col, row);
 		printf("video_gr:: vg_get_pixel(%lu, 0x%lu)\n",
-						col, row);
+				col, row);
 
 	} else if (strncmp(argv[1], "drawline", strlen("drawline")) == 0) {
 		if( argc != 7 ) {
@@ -155,27 +155,27 @@ static int proc_args(int argc, char *argv[]) {
 }
 
 static unsigned long parse_ulong(char *str, int base) {
-  char *endptr;
-  unsigned long val;
+	char *endptr;
+	unsigned long val;
 
-  val = strtoul(str, &endptr, base);
+	val = strtoul(str, &endptr, base);
 
-  if ((errno == ERANGE && val == ULONG_MAX )
-	  || (errno != 0 && val == 0)) {
-	  perror("strtol");
-	  return ULONG_MAX;
-  }
+	if ((errno == ERANGE && val == ULONG_MAX )
+			|| (errno != 0 && val == 0)) {
+		perror("strtol");
+		return ULONG_MAX;
+	}
 
-  if (endptr == str) {
-	  printf("video_txt: parse_ulong: no digits were found in %s \n", str);
-	  return ULONG_MAX;
-  }
+	if (endptr == str) {
+		printf("video_txt: parse_ulong: no digits were found in %s \n", str);
+		return ULONG_MAX;
+	}
 
 
 
-// Successful conversion
+	// Successful conversion
 
-  return val;
+	return val;
 }
 
 static long parse_long(char *str, int base) {
@@ -195,7 +195,7 @@ static long parse_long(char *str, int base) {
 		return LONG_MAX;
 	}
 
-// Successful conversion
+	// Successful conversion
 
 	return val;
 }
