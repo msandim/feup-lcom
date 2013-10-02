@@ -42,11 +42,11 @@ int main(int argc, char **argv) {
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
 	printf("Usage: one of the following:\n"
-			"\t service run %s -args \"init <mode>\" \n"
-			"\t service run %s -args \"fill <color>\" \n"
-			"\t service run %s -args \"setpixel <x> <y> <color>\" \n"
-			"\t service run %s -args \"getpixel <x> <y>\" \n"
-			"\t service run %s -args \"drawline <xi> <xf> <yi> <yf>\" \n",
+			"-   service run %s -args \"init <mode (hex)>\" \n"
+			"-   service run %s -args \"fill <color (hex)>\" \n"
+			"-   service run %s -args \"setpixel <x> <y> <color (hex)>\" \n"
+			"-   service run %s -args \"getpixel <x> <y>\" \n"
+			"-   service run %s -args \"drawline <xi> <xf> <yi> <yf> <color (hex)>\" \n",
 			argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
 
