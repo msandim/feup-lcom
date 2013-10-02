@@ -78,6 +78,7 @@ void * vg_init(unsigned short mode) {
 int vg_fill(unsigned long color) {
 
 	unsigned int i;
+
 	char* ptrVRAM = video_mem;
 
 	// fill all the pixels
@@ -86,6 +87,10 @@ int vg_fill(unsigned long color) {
 		*ptrVRAM = color;
 		ptrVRAM++;
 	}
+
+	sleep(3);
+
+	return 0;
 }
 
 int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
