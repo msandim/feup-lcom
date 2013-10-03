@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
-	printf("Usage: :\n"
+	printf("\n\nUsage: :\n"
 			"-   service run %s -args \"init <mode(hex)>\" \n"
 			"    . initiates graphic mode and displays the virtual address \n"
 			"-   service run %s -args \"fill <color(hex)>\" \n"

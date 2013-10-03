@@ -48,7 +48,7 @@ void * vg_init(unsigned short mode) {
 
 	/*  Bit 14 of the BX register should be set to use
 	a linear frame buffer model */
-	reg86.u.w.bx = BIT(LINEAR_MODEL_BIT) | mode; /* try to use 015 */
+	reg86.u.w.bx = BIT(LINEAR_MODEL_BIT) | mode;
 	if( sys_int86(&reg86) != OK ) {
 		printf("vg_init: sys_int86() failed \n");
 		return NULL;
