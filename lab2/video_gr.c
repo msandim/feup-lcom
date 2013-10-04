@@ -122,29 +122,8 @@ long vg_get_pixel(unsigned long x, unsigned long y) {
 	return *ptrVRAM;
 }
 
-int vg_draw_line(unsigned long xi, unsigned long yi, 
+int vg_draw_line(unsigned long xi, unsigned long yi,
 		unsigned long xf, unsigned long yf, unsigned long color) {
-
-	int a,b,p,x,y;
-	a=2*(yf-yi);
-	b=a-2*(xf-xi);
-	p=a-(xf-xi);
-
-	vg_set_pixel(xi,yi,color);
-
-	x = xi+1;
-	y=yi;
-
-	for (x; x<xf;x++){
-		if (p<0){
-			vg_set_pixel(x,y,color);
-			p+=a;
-		} else if (p>=0){
-			y++;
-			vg_set_pixel(x,y,color);
-			p+=b;
-		}
-	}
 
 
 	return 0;

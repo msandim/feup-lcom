@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 
 	sef_startup();
 
-	/* Maps the virtual space to store the struct to get info from vbe */
+	/* For future use of lm_malloc */
 	lm_init();
 
 	/*video_mem = vg_init(0x105);
@@ -147,25 +147,27 @@ static int proc_args(int argc, char *argv[]) {
 				x1, y1);
 
 	} else if (strncmp(argv[1], "drawline", strlen("drawline")) == 0) {
-		if( argc != 7 ) {
-			printf("video_gr: wrong no of arguments for test of vg_draw_line() \n");
-			return 1;
-		}
-		if( (x1 = parse_long(argv[2], 10)) == LONG_MAX )
-			return 1;
-		if( (y1 = parse_ulong(argv[3], 10)) == ULONG_MAX )
-			return 1;
-		if( (x2 = parse_ulong(argv[4], 10)) == ULONG_MAX )
-			return 1;
-		if( (y2 = parse_ulong(argv[5], 10)) == ULONG_MAX )
-			return 1;
-		if( (color = parse_ulong(argv[6], 10)) == ULONG_MAX )
-			return 1;
+        if( argc != 7 ) {
+                printf("video_gr: wrong no of arguments for test of vg_draw_line() \n");
+                return 1;
+        }
+        if( (x1 = parse_long(argv[2], 10)) == LONG_MAX )
+                return 1;
+        if( (y1 = parse_ulong(argv[3], 10)) == ULONG_MAX )
+                return 1;
+        if( (x2 = parse_ulong(argv[4], 10)) == ULONG_MAX )
+                return 1;
+        if( (y2 = parse_ulong(argv[5], 10)) == ULONG_MAX )
+                return 1;
+        if( (color = parse_ulong(argv[6], 16)) == ULONG_MAX )
+                return 1;
+        vg_init(0x105);
+        vg_draw_line(x1,y1,x2,y2,color);
+        sleep(3);
+        vg_exit();
 
-		return vg_draw_line(x1,y1,x2,y2,color);
-
-		printf("video_gr:: vg_draw_line(%lu, %lu, %lu, %lu, %lu)\n",
-				x1, y1, x2, y2, color);
+        printf("video_gr:: vg_draw_line(%lu, %lu, %lu, %lu, 0x%X)\n",
+                        x1, y1, x2, y2, color);
 	} else {
 		printf("video_gr: non valid function \"%s\" to test\n", argv[1]);
 		return 1;
