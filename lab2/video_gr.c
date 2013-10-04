@@ -129,10 +129,7 @@ int vg_draw_line(unsigned long xi, unsigned long yi,
 
 	if (xf<xi){
 		vg_draw_line(xf,yf,xi,yi,color);
-	}
-
-	else
-	{
+	} else {
 
 		dx = xf-xi;
 		dy = yf-yi;
@@ -202,10 +199,11 @@ int vg_draw_line(unsigned long xi, unsigned long yi,
 			} else {
 				for (x=xi+1; x<xf; x++){
 					if (p<0){
+						y++;
 						vg_set_pixel(x,y,color);
 						p=a+p;
 					} else {
-						y++;
+
 						vg_set_pixel(x,y,color);
 						p=b+p;
 					}
@@ -214,7 +212,6 @@ int vg_draw_line(unsigned long xi, unsigned long yi,
 
 		}
 	}
-
 
 	return 0;
 }
