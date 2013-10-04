@@ -99,8 +99,6 @@ int vg_fill(unsigned long color) {
 		ptrVRAM++;
 	}
 
-	sleep(3);
-
 	return 0;
 }
 
