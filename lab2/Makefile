@@ -10,7 +10,7 @@ SRCS=	lab2.c video_gr.c vbe.c
 CCFLAGS= -Wall
 
 DPADD+=	${LIBDRIVER} ${LIBSYS}
-LDADD+=	-ldriver -lsys
+LDADD+=	-lml -ldriver -lsys
 
 LDFLAGS+= -L .
 

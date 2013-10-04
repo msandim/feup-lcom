@@ -39,6 +39,16 @@ void * vg_init(unsigned short mode) {
 	v_res = V_RES;
 	bits_per_pixel = BITS_PER_PIXEL;
 
+
+	/* VERSION WITH GET MODE INFO
+
+	struct vbe_mode_info_t info_vbe;
+
+	vbe_get_mode_info(mode, &info_vbe);
+
+
+	*/
+
 	struct reg86u reg86;
 
 	reg86.u.b.intno = 0x10; /* BIOS video services */
