@@ -59,6 +59,7 @@ void * vg_init(unsigned short mode) {
 	/*  Bit 14 of the BX register should be set to use
 	a linear frame buffer model */
 	reg86.u.w.bx = BIT(LINEAR_MODEL_BIT) | mode;
+
 	if( sys_int86(&reg86) != OK ) {
 		printf("vg_init: sys_int86() failed \n");
 		return NULL;
@@ -88,6 +89,7 @@ void * vg_init(unsigned short mode) {
 int vg_fill(unsigned long color) {
 
 	unsigned int i;
+
 	char* ptrVRAM = video_mem;
 
 	// fill all the pixels
@@ -96,18 +98,54 @@ int vg_fill(unsigned long color) {
 		*ptrVRAM = color;
 		ptrVRAM++;
 	}
+
+	sleep(3);
+
+	return 0;
 }
 
 int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
+	char* ptrVRAM = video_mem;
+
+	ptrVRAM += ((y*H_RES) + x);
+	*ptrVRAM = color;
+
 	return 0;
 }
 
 long vg_get_pixel(unsigned long x, unsigned long y) {
-	return 0;
+	char* ptrVRAM = video_mem;
+
+	ptrVRAM += ((y*H_RES) + x);
+
+	return *ptrVRAM;
 }
 
 int vg_draw_line(unsigned long xi, unsigned long yi, 
 		unsigned long xf, unsigned long yf, unsigned long color) {
+
+	int a,b,p,x,y;
+	a=2*(yf-yi);
+	b=a-2*(xf-xi);
+	p=a-(xf-xi);
+
+	vg_set_pixel(xi,yi,color);
+
+	x = xi+1;
+	y=yi;
+
+	for (x; x<xf;x++){
+		if (p<0){
+			vg_set_pixel(x,y,color);
+			p+=a;
+		} else if (p>=0){
+			y++;
+			vg_set_pixel(x,y,color);
+			p+=b;
+		}
+	}
+
+
 	return 0;
 }
 
