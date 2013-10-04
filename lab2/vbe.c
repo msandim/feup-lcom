@@ -12,7 +12,7 @@
 
 int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
-	phys_bytes buf;
+	/*phys_bytes buf;
 	struct reg86u rg;
 
 	struct mmap_t map; // this will have the virtual address to the struct vbe mode info
@@ -29,6 +29,7 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 
 	if( sys_int86(&rg) != OK ) // fills the buffer with the info, right?
 		return 1;
+		*/
 
 
 

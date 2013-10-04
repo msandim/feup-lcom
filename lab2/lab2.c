@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	sef_startup();
 
 	/* Maps the virtual space to store the struct to get info from vbe */
-	lm_init();
+	//lm_init();
 
 	/*video_mem = vg_init(0x105);
 
@@ -58,7 +58,7 @@ static void print_usage(char *argv[]) {
 // this function treats the args
 static int proc_args(int argc, char *argv[]) {
 
-	unsigned long mode, x1, x2, y1, y2, color, row, col, width, height;
+	unsigned long mode, x1, x2, y1, y2, color, row, col, width, height, colorPixel;
 	char *str;
 	long num;
 
@@ -114,9 +114,16 @@ static int proc_args(int argc, char *argv[]) {
 		if( (color = parse_ulong(argv[4], 16)) == ULONG_MAX )
 			return 1;
 
-		return vg_set_pixel(x1,y1,color);
+		vg_init(0x105);
+		vg_set_pixel(x1,y1,color);
+
+		sleep(3);
+
+		vg_exit();
+
 		printf("video_gr:: vg_set_pixel(0x%lu, 0x%lu, %X)\n",
 				x1, y1, color);
+
 
 	} else if (strncmp(argv[1], "getpixel", strlen("getpixel")) == 0) {
 		if( argc != 4 ) {
@@ -127,9 +134,17 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		if( (y1 = parse_ulong(argv[3], 10)) == ULONG_MAX )
 			return 1;
-		return vg_get_pixel(col, row);
-		printf("video_gr:: vg_get_pixel(%lu, 0x%lu)\n",
-				col, row);
+
+		vg_init(0x105);
+
+		colorPixel = (unsigned) vg_get_pixel(x1,y1);
+
+		vg_exit();
+
+		printf("Pixel with color code: 0x%lu\n\n", colorPixel);
+
+		printf("video_gr:: vg_get_pixel(%lu, %lu)\n",
+				x1, y1);
 
 	} else if (strncmp(argv[1], "drawline", strlen("drawline")) == 0) {
 		if( argc != 7 ) {
