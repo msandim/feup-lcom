@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 	sef_startup();
 
 	/* Maps the virtual space to store the struct to get info from vbe */
-	//lm_init();
+	lm_init();
 
 	/*video_mem = vg_init(0x105);
 

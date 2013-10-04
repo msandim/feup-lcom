@@ -21,8 +21,8 @@
 #define BITS_PER_PIXEL	  8
 
 /* Stuff to make the VBE call */
-#define BIT(n) (0x1 << (n))
 #define LINEAR_MODEL_BIT 14
+#define BIT(n) (0x1 << (n))
 
 /* Private global variables */
 
@@ -34,20 +34,23 @@ static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 
 void * vg_init(unsigned short mode) {
 
-	// version with hardcoded values
-	h_res = H_RES;
-	v_res = V_RES;
-	bits_per_pixel = BITS_PER_PIXEL;
+	// VERSION WITH GET MODE INFO
 
-
-	/* VERSION WITH GET MODE INFO
-
-	struct vbe_mode_info_t info_vbe;
+	vbe_mode_info_t info_vbe;
 
 	vbe_get_mode_info(mode, &info_vbe);
 
+	// version with hardcoded values
+	//h_res = H_RES;
+	//v_res = V_RES;
+	//bits_per_pixel = BITS_PER_PIXEL;
+	//phys_bytes flat_address = (phys_bytes) VRAM_PHYS_ADDR;
 
-	*/
+	// VERSION WITH VBE
+	h_res = info_vbe.XResolution;
+	v_res = info_vbe.YResolution;
+	bits_per_pixel = info_vbe.BitsPerPixel;
+	phys_bytes flat_address = (phys_bytes) info_vbe.PhysBasePtr;
 
 	struct reg86u reg86;
 
@@ -70,15 +73,15 @@ void * vg_init(unsigned short mode) {
 	struct mem_range mem;
 	int r;
 
-	mem.mr_base = (phys_bytes) VRAM_PHYS_ADDR;
-	mem.mr_limit = mem.mr_base + (h_res*v_res);
+	mem.mr_base = flat_address;
+	mem.mr_limit = mem.mr_base + (h_res*v_res*bits_per_pixel);
 
 	if( OK != (r = sys_privctl(SELF, SYS_PRIV_ADD_MEM, &mem)))
 		panic("video_gr: sys_privctl (ADD_MEM) failed: %d\n", r);
 
 	/* Map memory */
 
-	video_mem = vm_map_phys(SELF, (void *)mem.mr_base, h_res*v_res);
+	video_mem = vm_map_phys(SELF, (void *)mem.mr_base, h_res*v_res*bits_per_pixel);
 
 	if(video_mem == MAP_FAILED)
 		panic("video_gr couldn't map video memory");
