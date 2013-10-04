@@ -33,7 +33,7 @@ int vbe_get_mode_info(unsigned short mode, vbe_mode_info_t *vmi_p) {
 	if( sys_int86(&rg) != OK ) // fills the buffer with the info, right?
 		return 1;
 
-	*vmi_p = *( (vbe_mode_info_t*) map.virtual);
+	*vmi_p = *( (vbe_mode_info_t*) map.virtual); // returns the map virtual!!
 
 	lm_free(&map); // free the memory block
 

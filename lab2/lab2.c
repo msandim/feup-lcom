@@ -50,7 +50,7 @@ static void print_usage(char *argv[]) {
 			"    . sets a specific color on a pixel defined by its column and line \n"
 			"-   service run %s -args \"getpixel <col> <line>\" \n"
 			"    . returns the code of the color used for a specific pixel \n"
-			"-   service run %s -args \"drawline <coli> <colf> <lini> <linf> <color(hex)>\" \n"
+			"-   service run %s -args \"drawline <coli - xi> <lini - yi> <colf - xf> <linf - yf> <color(hex)>\" \n"
 			"    . draws a line from pixel (coli, linei) to pixel (colf, linef) \n\n",
 			argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
@@ -76,7 +76,9 @@ static int proc_args(int argc, char *argv[]) {
 
 		// do init, shows address and exits
 		char* video_mem = vg_init(0x105);
+
 		vg_exit();
+
 		printf("\nVRAM virtual address at %p\n\n", video_mem);
 
 		printf("video_gr:: vg_init(0x%X)\n", (unsigned) mode);
@@ -115,6 +117,7 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 
 		vg_init(0x105);
+
 		vg_set_pixel(x1,y1,color);
 
 		sleep(3);
@@ -161,9 +164,13 @@ static int proc_args(int argc, char *argv[]) {
                 return 1;
         if( (color = parse_ulong(argv[6], 16)) == ULONG_MAX )
                 return 1;
+
         vg_init(0x105);
+
         vg_draw_line(x1,y1,x2,y2,color);
+
         sleep(3);
+
         vg_exit();
 
         printf("video_gr:: vg_draw_line(%lu, %lu, %lu, %lu, 0x%X)\n",

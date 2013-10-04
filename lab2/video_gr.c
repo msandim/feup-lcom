@@ -125,6 +125,96 @@ long vg_get_pixel(unsigned long x, unsigned long y) {
 int vg_draw_line(unsigned long xi, unsigned long yi,
 		unsigned long xf, unsigned long yf, unsigned long color) {
 
+	int a,b,p,x,y,dx,dy;
+
+	if (xf<xi){
+		vg_draw_line(xf,yf,xi,yi,color);
+	}
+
+	else
+	{
+
+		dx = xf-xi;
+		dy = yf-yi;
+
+
+		if (abs(dy)>abs(dx)){
+			//Calculate the A,B and initial P value
+			a=2*(xf-xi);
+			b=a-2*(yf-yi);
+			p=a-(yf-yi);
+
+			//Paint first pixel
+			vg_set_pixel(xi,yi,color);
+
+			//Set x as xi
+			x=xi;
+
+
+			if (dx <= 0){
+				for (y=yi+1; y<yf; y++){
+					if (p<0){
+						vg_set_pixel(x,y,color);
+						p=a+p;
+					} else {
+						x--;
+						vg_set_pixel(x,y,color);
+						p=b+p;
+					}
+				}
+			} else {
+				for (y=yi+1; y<yf; y++){
+					if (p<0){
+						vg_set_pixel(x,y,color);
+						p=a+p;
+					} else {
+						x++;
+						vg_set_pixel(x,y,color);
+						p=b+p;
+					}
+				}
+			}
+
+		}
+		else{
+			//Calculate the A,B and initial P value
+			a=2*(yf-yi);
+			b=a-2*(xf-xi);
+			p=a-(xf-xi);
+
+			//Paint first pixel
+			vg_set_pixel(xi,yi,color);
+
+			//Set y as yi
+			y=yi;
+
+			if (dy <= 0){
+				for (x=xi+1; x<xf; x++){
+					if (p<0){
+						y--;
+						vg_set_pixel(x,y,color);
+						p=a+p;
+					} else {
+						vg_set_pixel(x,y,color);
+						p=b+p;
+					}
+				}
+			} else {
+				for (x=xi+1; x<xf; x++){
+					if (p<0){
+						vg_set_pixel(x,y,color);
+						p=a+p;
+					} else {
+						y++;
+						vg_set_pixel(x,y,color);
+						p=b+p;
+					}
+				}
+			}
+
+		}
+	}
+
 
 	return 0;
 }
