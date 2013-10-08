@@ -1,7 +1,6 @@
 #include <minix/drivers.h>
 
-#include "vbe.h"
-#include "video_gr.h"
+#include "timer.h"
 
 static int proc_args(int argc, char *argv[]);
 static unsigned long parse_ulong(char *str, int base);
@@ -10,24 +9,12 @@ static void print_usage(char *argv[]);
 
 int main(int argc, char **argv) {
 
-	char *video_mem;
-
-	unsigned long color;
-
 	/* Initialize service */
 
 	sef_startup();
 
 	/* For future use of lm_malloc */
 	lm_init();
-
-	/*video_mem = vg_init(0x105);
-
-	vg_fill(0x34);
-
-	sleep(4);
-
-	vg_exit();*/
 
 	if ( argc == 1 ) {
 		print_usage(argv);
@@ -42,15 +29,17 @@ int main(int argc, char **argv) {
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
 	printf("\n\nUsage: :\n"
-			"-   service run %s -args \"init <mode(hex)>\" \n"
+			"-   service run %s -args \"set_square <timer> <freq>\" \n"
 			"    . initiates graphic mode and displays the virtual address \n"
-			"-   service run %s -args \"fill <color(hex)>\" \n"
+			"-   service run %s -args \"get_config <timer> <char*>\" \n"
 			"    . fills the screen with a specific color \n"
-			"-   service run %s -args \"setpixel <col> <line> <color(hex)>\"\n"
+			"-   service run %s -args \"show_config <timer>\"\n"
 			"    . sets a specific color on a pixel defined by its column and line \n"
-			"-   service run %s -args \"getpixel <col> <line>\" \n"
+			"-   service run %s -args \"test_square <freq>\" \n"
 			"    . returns the code of the color used for a specific pixel \n"
-			"-   service run %s -args \"drawline <coli - xi> <lini - yi> <colf - xf> <linf - yf> <color(hex)>\" \n"
+			"-   service run %s -args \"test_int <time>\" \n"
+			"    . returns the code of the color used for a specific pixel \n"
+			"-   service run %s -args \"test_config <timer>\" \n"
 			"    . draws a line from pixel (coli, linei) to pixel (colf, linef) \n\n",
 			argv[0], argv[0], argv[0], argv[0], argv[0]);
 }
