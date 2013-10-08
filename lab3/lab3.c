@@ -13,9 +13,6 @@ int main(int argc, char **argv) {
 
 	sef_startup();
 
-	/* For future use of lm_malloc */
-	lm_init();
-
 	if ( argc == 1 ) {
 		print_usage(argv);
 		return 0;
