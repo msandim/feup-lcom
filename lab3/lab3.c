@@ -10,7 +10,6 @@ static void print_usage(char *argv[]);
 int main(int argc, char **argv) {
 
 	/* Initialize service */
-
 	sef_startup();
 
 	if ( argc == 1 ) {
@@ -54,7 +53,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		timer_test_square(freq);
 
-		printf("timer.c:: square(%X)\n", (unsigned) freq);
+		printf("timer.c:: square(%lu)\n", (unsigned) freq);
 		return 0;
 
 
@@ -69,7 +68,7 @@ static int proc_args(int argc, char *argv[]) {
 		timer_test_int(time);
 
 
-		printf("timer.c:: int(%X)\n", (unsigned) time);
+		printf("timer.c:: int(%lu)\n", (unsigned) time);
 		return 0;
 
 	} else if (strncmp(argv[1], "setpixel", strlen("setpixel")) == 0) {
@@ -82,7 +81,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		timer_test_config(timer);
 
-		printf("timer.c:: config(%X)\n", (unsigned) timer);
+		printf("timer.c:: config(%lu)\n", (unsigned) timer);
 
 	} else {
 		printf("timer.c: non valid function \"%s\" to test\n", argv[1]);

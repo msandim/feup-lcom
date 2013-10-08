@@ -10,7 +10,7 @@ SRCS=	lab3.c timer.c
 CCFLAGS= -Wall
 
 DPADD+=	${LIBDRIVER} ${LIBSYS}
-LDADD+=	-llm -ldriver -lsys
+LDADD+=	-ldriver -lsys
 
 LDFLAGS+= -L .
 
