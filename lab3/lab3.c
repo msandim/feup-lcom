@@ -29,11 +29,11 @@ int main(int argc, char **argv) {
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
 	printf("\n\nUsage: :\n"
-			"-   service run %s -args \"test_square <freq>\" \n"
+			"-   service run %s -args \"square <freq>\" \n"
 			"    . Tests programming timer in square wave mode \n"
-			"-   service run %s -args \"test_int <time>\" \n"
+			"-   service run %s -args \"int <time>\" \n"
 			"    . Tests Timer 0 interrupt handling \n"
-			"-   service run %s -args \"test_config <timer>\" \n"
+			"-   service run %s -args \"config <timer>\" \n"
 			"    . Tests display of timer config \n\n",
 			argv[0], argv[0], argv[0]);
 }
@@ -41,30 +41,23 @@ static void print_usage(char *argv[]) {
 // this function treats the args
 static int proc_args(int argc, char *argv[]) {
 
-	unsigned long mode, x1, x2, y1, y2, color, row, col, width, height, colorPixel;
+	unsigned long freq, x1, x2, y1, y2, color, row, col, width, height, colorPixel;
 	char *str;
 	long num;
 
 	// check the function to test: if the first characters match, accept it
 
-	if (strncmp(argv[1], "init", strlen("init")) == 0) {
+	if (strncmp(argv[1], "square", strlen("square")) == 0) {
 		if( argc != 3 ) {
-			printf("video_gr: wrong no of arguments for test of vg_init() \n");
+			printf("timer.c: wrong no of arguments for test of square() \n");
 			return 1;
 		}
 
 		// get the arguments
-		if( (mode = parse_ulong(argv[2], 16)) == ULONG_MAX )
+		if( (freq = parse_ulong(argv[2], 16)) == ULONG_MAX )
 			return 1;
 
-		// do init, shows address and exits
-		char* video_mem = vg_init(0x105);
-
-		vg_exit();
-
-		printf("\nVRAM virtual address at %p\n\n", video_mem);
-
-		printf("video_gr:: vg_init(0x%X)\n", (unsigned) mode);
+		printf("timer.c:: square(0x%X)\n", (unsigned) freq);
 		return 0;
 
 
