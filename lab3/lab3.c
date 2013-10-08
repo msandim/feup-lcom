@@ -29,19 +29,13 @@ int main(int argc, char **argv) {
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
 	printf("\n\nUsage: :\n"
-			"-   service run %s -args \"set_square <timer> <freq>\" \n"
-			"    . initiates graphic mode and displays the virtual address \n"
-			"-   service run %s -args \"get_config <timer> <char*>\" \n"
-			"    . fills the screen with a specific color \n"
-			"-   service run %s -args \"show_config <timer>\"\n"
-			"    . sets a specific color on a pixel defined by its column and line \n"
 			"-   service run %s -args \"test_square <freq>\" \n"
-			"    . returns the code of the color used for a specific pixel \n"
+			"    . Tests programming timer in square wave mode \n"
 			"-   service run %s -args \"test_int <time>\" \n"
-			"    . returns the code of the color used for a specific pixel \n"
+			"    . Tests Timer 0 interrupt handling \n"
 			"-   service run %s -args \"test_config <timer>\" \n"
-			"    . draws a line from pixel (coli, linei) to pixel (colf, linef) \n\n",
-			argv[0], argv[0], argv[0], argv[0], argv[0]);
+			"    . Tests display of timer config \n\n",
+			argv[0], argv[0], argv[0]);
 }
 
 // this function treats the args
