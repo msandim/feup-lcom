@@ -41,7 +41,7 @@ static void print_usage(char *argv[]) {
 // this function treats the args
 static int proc_args(int argc, char *argv[]) {
 
-	unsigned long freq, time;
+	unsigned long freq, time, timer;
 
 	// check the function to test: if the first characters match, accept it
 
@@ -77,77 +77,18 @@ static int proc_args(int argc, char *argv[]) {
 
 	} else if (strncmp(argv[1], "setpixel", strlen("setpixel")) == 0) {
 		if( argc != 5 ) {
-			printf("video_gr: wrong no of arguments for test of vg_set_pixel() \n");
+			printf("timer.c: wrong no of arguments for test of config() \n");
 			return 1;
 		}
-		if( (x1 = parse_ulong(argv[2], 10)) == ULONG_MAX )
-			return 1;
-		if( (y1 = parse_ulong(argv[3], 10)) == ULONG_MAX )
-			return 1;
-		if( (color = parse_ulong(argv[4], 16)) == ULONG_MAX )
+		if( (timer = parse_ulong(argv[2], 10)) == ULONG_MAX )
 			return 1;
 
-		vg_init(0x105);
+		timer_test_config(timer);
 
-		vg_set_pixel(x1,y1,color);
+		printf("timer.c:: config(%X)\n", (unsigned) timer);
 
-		sleep(3);
-
-		vg_exit();
-
-		printf("video_gr:: vg_set_pixel(0x%lu, 0x%lu, %X)\n",
-				x1, y1, color);
-
-
-	} else if (strncmp(argv[1], "getpixel", strlen("getpixel")) == 0) {
-		if( argc != 4 ) {
-			printf("video_gr: wrong no of arguments for test of vg_get_pixel() \n");
-			return 1;
-		}
-		if( (x1 = parse_ulong(argv[2], 10)) == ULONG_MAX )
-			return 1;
-		if( (y1 = parse_ulong(argv[3], 10)) == ULONG_MAX )
-			return 1;
-
-		vg_init(0x105);
-
-		colorPixel = (unsigned) vg_get_pixel(x1,y1);
-
-		vg_exit();
-
-		printf("Pixel with color code: 0x%lu\n\n", colorPixel);
-
-		printf("video_gr:: vg_get_pixel(%lu, %lu)\n",
-				x1, y1);
-
-	} else if (strncmp(argv[1], "drawline", strlen("drawline")) == 0) {
-        if( argc != 7 ) {
-                printf("video_gr: wrong no of arguments for test of vg_draw_line() \n");
-                return 1;
-        }
-        if( (x1 = parse_long(argv[2], 10)) == LONG_MAX )
-                return 1;
-        if( (y1 = parse_ulong(argv[3], 10)) == ULONG_MAX )
-                return 1;
-        if( (x2 = parse_ulong(argv[4], 10)) == ULONG_MAX )
-                return 1;
-        if( (y2 = parse_ulong(argv[5], 10)) == ULONG_MAX )
-                return 1;
-        if( (color = parse_ulong(argv[6], 16)) == ULONG_MAX )
-                return 1;
-
-        vg_init(0x105);
-
-        vg_draw_line(x1,y1,x2,y2,color);
-
-        sleep(3);
-
-        vg_exit();
-
-        printf("video_gr:: vg_draw_line(%lu, %lu, %lu, %lu, 0x%X)\n",
-                        x1, y1, x2, y2, color);
 	} else {
-		printf("video_gr: non valid function \"%s\" to test\n", argv[1]);
+		printf("timer.c: non valid function \"%s\" to test\n", argv[1]);
 		return 1;
 	}
 }
