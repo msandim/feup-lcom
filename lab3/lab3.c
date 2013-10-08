@@ -41,9 +41,7 @@ static void print_usage(char *argv[]) {
 // this function treats the args
 static int proc_args(int argc, char *argv[]) {
 
-	unsigned long freq, x1, x2, y1, y2, color, row, col, width, height, colorPixel;
-	char *str;
-	long num;
+	unsigned long freq, time;
 
 	// check the function to test: if the first characters match, accept it
 
@@ -54,30 +52,27 @@ static int proc_args(int argc, char *argv[]) {
 		}
 
 		// get the arguments
-		if( (freq = parse_ulong(argv[2], 16)) == ULONG_MAX )
+		if( (freq = parse_ulong(argv[2], 10)) == ULONG_MAX )
 			return 1;
 
-		printf("timer.c:: square(0x%X)\n", (unsigned) freq);
+		timer_test_square(freq);
+
+		printf("timer.c:: square(%X)\n", (unsigned) freq);
 		return 0;
 
 
-	} else if (strncmp(argv[1], "fill", strlen("fill")) == 0) {
+	} else if (strncmp(argv[1], "int", strlen("int")) == 0) {
 		if( argc != 3 ) {
-			printf("video_gr: wrong no of arguments for test of vg_fill() \n");
+			printf("timer.c: wrong no of arguments for test of int() \n");
 			return 1;
 		}
-		if( (color = parse_ulong(argv[2], 16)) == ULONG_MAX )
+		if( (time = parse_ulong(argv[2], 10)) == ULONG_MAX )
 			return 1;
 
-		vg_init(0x105);
+		timer_test_int(time);
 
-		vg_fill(color);
 
-		sleep(3);
-
-		vg_exit();
-
-		printf("video_gr:: vt_fill(0x%X)\n", (unsigned) color);
+		printf("timer.c:: int(%X)\n", (unsigned) time);
 		return 0;
 
 	} else if (strncmp(argv[1], "setpixel", strlen("setpixel")) == 0) {
