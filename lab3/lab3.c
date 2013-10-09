@@ -71,7 +71,7 @@ static int proc_args(int argc, char *argv[]) {
 		printf("timer.c:: int(%lu)\n", (unsigned) time);
 		return 0;
 
-	} else if (strncmp(argv[1], "setpixel", strlen("setpixel")) == 0) {
+	} else if (strncmp(argv[1], "config", strlen("config")) == 0) {
 		if( argc != 5 ) {
 			printf("timer.c: wrong no of arguments for test of config() \n");
 			return 1;

@@ -1,10 +1,11 @@
 #include <minix/syslib.h>
 #include <minix/drivers.h>
+#include <minix/com.h>
 
 #include "i8254.h"
 
 unsigned int intCounter = 0;
-int* hook_id = 0;
+int hook_id;
 // STATIC ???????
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
@@ -59,22 +60,29 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 		return 1;
 }
 
-int timer_subscribe_int(void ) {
-	int timer0_irq = TIMER0_IRQ;
-	hook_id = &timer0_irq;
+int timer_subscribe_int() {
 
-	int irq_set = sys_irqsetpolicy(0,IRQ_REENABLE,hook_id);
-	sys_irqenable(hook_id);
+	// set hoo_id with the bit to put to one
+	hook_id = TIMER0_IRQ;
 
-	return irq_set;
+	// create a bit_mask with the int active
+	int bit_mask = BIT(hook_id);
+
+	// hook_id will be changed with a different ID, but no problem
+	// because we have the bit_mask already :-)
+	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id) != OK ||
+	sys_irqenable(&hook_id) != OK)
+		return -1;
+
+	return bit_mask;
 }
 
 int timer_unsubscribe_int() {
 
-	sys_irqdisable(hook_id);
-	sys_irqrmpolicy(hook_id);
-
-	return 1;
+	if (sys_irqdisable(&hook_id) != OK || sys_irqrmpolicy(&hook_id) != OK)
+		return 1;
+	else
+		return 0;
 }
 
 void timer_int_handler() {
@@ -102,9 +110,8 @@ int timer_test_square(unsigned long freq) {
 }
 
 int timer_test_int(unsigned long time) {
-	printf("1\n");
+
 	int irq_set = timer_subscribe_int();
-	printf("2\n");
 
 	printf("Time = %u\n",time);
 	int ipc_status;
@@ -112,7 +119,6 @@ int timer_test_int(unsigned long time) {
 
 	unsigned int i= 0;
 	while( /*intCounter*/ i < time*60 ) {
-		printf("Inside while\n");
 		/* Get a request message. */
 
 		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
@@ -130,15 +136,12 @@ int timer_test_int(unsigned long time) {
 				}
 				break;
 			default:
-				printf("Default\n");
 				break; /* no other notifications expected: do nothing */
 			}
 		} else { /* received a standard message, not a notification */
-			printf("Else\n");
 			/* no standard messages expected: do nothing */
 		}
 	}
-	printf("3\n");
 	timer_unsubscribe_int();
 	return 1;
 }
