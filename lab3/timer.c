@@ -4,7 +4,7 @@
 #include "i8254.h"
 
 unsigned int intCounter = 0;
-unsigned int hook_id = 0;
+int* hook_id = 0;
 // STATIC ???????
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
@@ -28,10 +28,15 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 		timer_mask = TIMER_SEL1;
 		timer_port = TIMER_1;
 	}
-	else
+	else if (timer == 2)
 	{
 		timer_mask = TIMER_SEL2;
 		timer_port = TIMER_2;
+	}
+
+	else
+	{
+		printf("\nTIME_SET_SQUARE: INVALID TIMER\n");
 	}
 
 	input_to_control |= timer_mask; // select timer
@@ -55,13 +60,19 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 }
 
 int timer_subscribe_int(void ) {
+	int timer0_irq = TIMER0_IRQ;
+	hook_id = &timer0_irq;
 
-	return 1;
+	int irq_set = sys_irqsetpolicy(0,IRQ_REENABLE,hook_id);
+	sys_irqenable(hook_id);
+
+	return irq_set;
 }
 
 int timer_unsubscribe_int() {
 
-	sys_irqsetpolicy(???,IRQ_REENABLE,hook_id);
+	sys_irqdisable(hook_id);
+	sys_irqrmpolicy(hook_id);
 
 	return 1;
 }
@@ -91,34 +102,44 @@ int timer_test_square(unsigned long freq) {
 }
 
 int timer_test_int(unsigned long time) {
+	printf("1\n");
+	int irq_set = timer_subscribe_int();
+	printf("2\n");
 
-
-	// ALTERAR COM O NETO
-
+	printf("Time = %u\n",time);
 	int ipc_status;
 	message msg;
-	6:
-	while( 1 ) { /* You may want to use a different condition */
+
+	unsigned int i= 0;
+	while( /*intCounter*/ i < time*60 ) {
+		printf("Inside while\n");
 		/* Get a request message. */
+
 		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-			printf("driver_receive failed with: %d", r);
+			printf("driver_receive failed\n");
 			continue;
 		}
+
 		if (is_ipc_notify(ipc_status)) { /* received notification */
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE: /* hardware interrupt notification */
 				if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
-					...   /* process it */
+					//timer_int_handler();
+					i++;
+					printf("Interruption number: %u\n",/*intCounter*/ i);
 				}
 				break;
 			default:
+				printf("Default\n");
 				break; /* no other notifications expected: do nothing */
 			}
 		} else { /* received a standard message, not a notification */
+			printf("Else\n");
 			/* no standard messages expected: do nothing */
 		}
 	}
-
+	printf("3\n");
+	timer_unsubscribe_int();
 	return 1;
 }
 
