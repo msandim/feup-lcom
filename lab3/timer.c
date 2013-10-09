@@ -28,10 +28,15 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 		timer_mask = TIMER_SEL1;
 		timer_port = TIMER_1;
 	}
-	else
+	else if (timer == 2)
 	{
 		timer_mask = TIMER_SEL2;
 		timer_port = TIMER_2;
+	}
+
+	else
+	{
+		printf("\nTIME_SET_SQUARE: INVALID TIMER\n");
 	}
 
 	input_to_control |= timer_mask; // select timer
