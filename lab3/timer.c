@@ -3,6 +3,10 @@
 
 #include "i8254.h"
 
+unsigned int intCounter = 0;
+unsigned int hook_id = 0;
+// STATIC ???????
+
 int timer_set_square(unsigned long timer, unsigned long freq) {
 
 	if (timer > 2 || freq == 0) // since it's unsigned
@@ -57,11 +61,14 @@ int timer_subscribe_int(void ) {
 
 int timer_unsubscribe_int() {
 
+	sys_irqsetpolicy(???,IRQ_REENABLE,hook_id);
+
 	return 1;
 }
 
 void timer_int_handler() {
 
+	intCounter++;
 }
 
 int timer_get_config(unsigned long timer, unsigned char *st) {
@@ -84,6 +91,33 @@ int timer_test_square(unsigned long freq) {
 }
 
 int timer_test_int(unsigned long time) {
+
+
+	// ALTERAR COM O NETO
+
+	int ipc_status;
+	message msg;
+	6:
+	while( 1 ) { /* You may want to use a different condition */
+		/* Get a request message. */
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("driver_receive failed with: %d", r);
+			continue;
+		}
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+					...   /* process it */
+				}
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
 
 	return 1;
 }
