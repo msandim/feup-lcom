@@ -34,6 +34,7 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 		timer_port = TIMER_2;
 	}
 
+
 	input_to_control |= timer_mask; // select timer
 
 	input_to_control |= TIMER_LSB_MSB; // select to send lsb and msb
@@ -87,7 +88,7 @@ void timer_int_handler() {
 	intCounter++;
 }
 
-int timer_get_config(unsigned long timer, unsigned char *st) {
+int timer_get_config(unsigned long timer, unsigned char* st) {
 
 	unsigned char timer_port;
 
@@ -108,11 +109,9 @@ int timer_get_config(unsigned long timer, unsigned char *st) {
 		timer_port = TIMER_2;
 	}
 
-	if (sys_inb(timer_port,st)!= OK){
+	if (sys_inb(timer_port,(unsigned long * ) st)!= OK){
 		return 1;
 	}
-
-	printf("%s\n",st);
 
 	return 0;
 }
@@ -120,12 +119,15 @@ int timer_get_config(unsigned long timer, unsigned char *st) {
 
 int timer_show_config(unsigned long timer) {
 
-	unsigned char *st;
+	unsigned char string;
+	unsigned char* st = &string;
 	if(timer_get_config (timer,st)!=0){
 		printf("Error\n");
+		return 1;
 	}
 
-	return 1;
+	printf("%x\n",&st);
+	return 0;
 }
 
 int timer_test_square(unsigned long freq) {
