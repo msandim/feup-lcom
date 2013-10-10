@@ -9,7 +9,7 @@ int hook_id;
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
 
-	if (timer > 2 || freq <= 0) // since it's unsigned
+	if (timer > 2 || freq == 0) // since it's unsigned
 		return 1;
 
 	// input_to_control is what we're changing to pass as parameter to kernel call
@@ -40,6 +40,7 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 	input_to_control |= TIMER_LSB_MSB; // select to send lsb and msb
 
 	input_to_control |= TIMER_SQR_WAVE; // select option 3 (square wave) in counting mode
+
 	/*
 	 * Not supposed to change LSB
 	input_to_control |= TIMER_BIN; // count in binary
@@ -90,11 +91,15 @@ void timer_int_handler() {
 
 int timer_get_config(unsigned long timer, unsigned char* st) {
 
-	unsigned char timer_port;
+	unsigned char timer_port, timer_sel, input_mask = 0;
 
-	if (timer < 0 || timer > 2){
+	unsigned char pato;
+
+	if (timer > 2){
 		return 1;
 	}
+
+	// select port
 
 	if (timer == 0)
 	{
@@ -109,9 +114,25 @@ int timer_get_config(unsigned long timer, unsigned char* st) {
 		timer_port = TIMER_2;
 	}
 
-	if (sys_inb(timer_port,(unsigned long * ) st)!= OK){
+	// select to readback
+	input_mask |= BIT(7);
+	input_mask |= BIT(6);
+
+	// select the timer to read
+	timer_sel = TIMER_RB_SEL(timer);
+	input_mask |= timer_sel;
+
+	//input_mask |= TIMER_RB_COUNT_; // read counted value?
+
+	//input_mask |= TIMER_RB_STATUS_; // read status value?
+
+	if (sys_outb(TIMER_CTRL, input_mask)
+			|| sys_inb(timer_port,(unsigned long * ) st) != OK
+			|| sys_inb(timer_port,(unsigned long * ) &pato) != OK){
 		return 1;
 	}
+
+	printf("COUNTER: %x\n", pato);
 
 	return 0;
 }
@@ -126,7 +147,8 @@ int timer_show_config(unsigned long timer) {
 		return 1;
 	}
 
-	printf("%x\n",&st);
+	printf("%x\n",*
+			st);
 	return 0;
 }
 
@@ -183,5 +205,6 @@ int timer_test_int(unsigned long time) {
 
 int timer_test_config(unsigned long timer) {
 
+	timer_show_config(timer);
 	return 1;
 }
