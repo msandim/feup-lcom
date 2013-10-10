@@ -9,7 +9,7 @@ int hook_id;
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
 
-	if (timer > 2 || freq == 0) // since it's unsigned
+	if (timer > 2 || freq <= 0) // since it's unsigned
 		return 1;
 
 	// input_to_control is what we're changing to pass as parameter to kernel call
@@ -39,9 +39,10 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 	input_to_control |= TIMER_LSB_MSB; // select to send lsb and msb
 
 	input_to_control |= TIMER_SQR_WAVE; // select option 3 (square wave) in counting mode
-
+	/*
+	 * Not supposed to change LSB
 	input_to_control |= TIMER_BIN; // count in binary
-
+	 */
 	freq_divisor = TIMER_FREQ / freq; // obtain the divisor
 
 	// divide divisor in LSB and MSB
@@ -52,6 +53,8 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 			|| sys_outb(timer_port, lsb_freq) != OK
 			|| sys_outb(timer_port, msb_freq) != OK) // IF ONE OF THESE GIVE ERROR
 		return 1;
+
+	return 0;
 }
 
 int timer_subscribe_int() {
@@ -65,7 +68,7 @@ int timer_subscribe_int() {
 	// hook_id will be changed with a different ID, but no problem
 	// because we have the bit_mask already :-)
 	if (sys_irqsetpolicy(TIMER0_IRQ,IRQ_REENABLE,&hook_id) != OK ||
-	sys_irqenable(&hook_id) != OK)
+			sys_irqenable(&hook_id) != OK)
 		return -1;
 
 	return bit_mask;
@@ -86,10 +89,41 @@ void timer_int_handler() {
 
 int timer_get_config(unsigned long timer, unsigned char *st) {
 
-	return 1;
+	unsigned char timer_port;
+
+	if (timer < 0 || timer > 2){
+		return 1;
+	}
+
+	if (timer == 0)
+	{
+		timer_port = TIMER_0;
+	}
+	else if (timer == 1)
+	{
+		timer_port = TIMER_1;
+	}
+	else
+	{
+		timer_port = TIMER_2;
+	}
+
+	if (sys_inb(timer_port,st)!= OK){
+		return 1;
+	}
+
+	printf("%s\n",st);
+
+	return 0;
 }
 
+
 int timer_show_config(unsigned long timer) {
+
+	unsigned char *st;
+	if(timer_get_config (timer,st)!=0){
+		printf("Error\n");
+	}
 
 	return 1;
 }
