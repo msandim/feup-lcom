@@ -53,7 +53,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		timer_test_square(freq);
 
-		printf("timer.c:: square(%lu)\n", (unsigned) freq);
+		printf("timer.c:: square(%lu)\n\n", (unsigned) freq);
 		return 0;
 
 
@@ -68,7 +68,7 @@ static int proc_args(int argc, char *argv[]) {
 		timer_test_int(time);
 
 
-		printf("timer.c:: int(%lu)\n", (unsigned) time);
+		printf("timer.c:: int(%lu)\n\n", (unsigned) time);
 		return 0;
 
 	} else if (strncmp(argv[1], "config", strlen("config")) == 0) {
@@ -81,7 +81,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		timer_test_config(timer);
 
-		printf("timer.c:: config(%lu)\n", (unsigned) timer);
+		printf("timer.c:: config(%lu)\n\n", (unsigned) timer);
 
 	} else {
 		printf("timer.c: non valid function \"%s\" to test\n", argv[1]);

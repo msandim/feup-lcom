@@ -147,8 +147,9 @@ int timer_test_int(unsigned long time) {
 	int ipc_status;
 	message msg;
 
-	unsigned int i= 0;
-	while( /*intCounter*/ i < time*60 ) {
+	unsigned int nseconds = 0;
+
+	while( intCounter <= time*60 ) {
 		/* Get a request message. */
 
 		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
@@ -160,9 +161,13 @@ int timer_test_int(unsigned long time) {
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE: /* hardware interrupt notification */
 				if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
-					//timer_int_handler();
-					i++;
-					printf("Interruption number: %u\n",/*intCounter*/ i);
+
+					if (intCounter % 60 == 0)
+					{
+						printf("Second number: %u\n",nseconds++);
+					}
+
+					timer_int_handler(); // incs counter
 				}
 				break;
 			default:
