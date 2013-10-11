@@ -9,7 +9,7 @@ int hook_id;
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
 
-	if (timer > 2 || freq == 0) // since it's unsigned
+	if (timer > 2 || freq < 19) // if freq < 19, the divisor cant be put in 16 bits (overflow)
 	{
 		printf("Error on set_square::timer.c\n");
 		return 1;
@@ -103,8 +103,6 @@ int timer_get_config(unsigned long timer, unsigned char* st) {
 
 	unsigned char timer_port, timer_sel, input_mask = 0;
 
-	unsigned char pato;
-
 	if (timer > 2){
 		printf("Error on get_config\n");
 		return 1;
@@ -185,9 +183,9 @@ int timer_show_config(unsigned long timer) {
 		printf("Operating Mode: 5\n");
 
 	if (BCD == 0)
-		printf("Counting Mode: Binary (16 bits)\n");
+		printf("Counting Mode: Binary (16 bits)\n\n");
 	else
-		printf("Counting Mode: BCD (4 digits with 4 bits each)\n");
+		printf("Counting Mode: BCD (4 digits with 4 bits each)\n\n");
 
 	return 0;
 }

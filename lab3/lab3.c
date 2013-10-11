@@ -25,11 +25,11 @@ int main(int argc, char **argv) {
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
 	printf("\n\nUsage: :\n"
-			"-   service run %s -args \"square <freq>\" \n"
+			"-   service run %s -args \"square <freq (Hz)>\" \n"
 			"    . Tests programming timer in square wave mode \n"
-			"-   service run %s -args \"int <time>\" \n"
+			"-   service run %s -args \"int <time (decimal)>\" \n"
 			"    . Tests Timer 0 interrupt handling \n"
-			"-   service run %s -args \"config <timer>\" \n"
+			"-   service run %s -args \"config <timer (decimal)>\" \n"
 			"    . Tests display of timer config \n\n",
 			argv[0], argv[0], argv[0]);
 }
