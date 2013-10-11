@@ -44,6 +44,7 @@ int timer_set_square(unsigned long timer, unsigned long freq) {
 
 	input_to_control |= TIMER_SQR_WAVE; // select option 3 (square wave) in counting mode
 
+
 	unsigned char timer_config;
 
 	timer_get_config(timer,&timer_config);
