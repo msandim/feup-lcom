@@ -1,11 +1,11 @@
-# Makefile for the lab3 driver.
+# Makefile for the lab4 driver.
 
 COMPILER_TYPE= gnu
 
 CC=gcc
 
-PROG=	lab3
-SRCS=	lab3.c timer.c 
+PROG=	lab4
+SRCS=	test4.c 
 
 CCFLAGS= -Wall
 
