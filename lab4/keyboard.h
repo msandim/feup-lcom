@@ -31,6 +31,7 @@
 // ******* KBD COMMANDS
 
 #define enableKBDdefault 0xF6
+#define toggleLEDS 0xED
 
 // ******* FUNCTIONS ****************************************************
 
