@@ -5,7 +5,7 @@
 #include "i8254.h"
 
 unsigned int intCounter = 0;
-int hook_id;
+static int hook_id;
 
 int timer_set_square(unsigned long timer, unsigned long freq) {
 

@@ -57,11 +57,14 @@ int test_scan() {
 }
 
 int test_leds(unsigned short n, unsigned short *leds) {
-  int led;
+
+
+  unsigned short led;
   for (led = 0; led < n; led++){
 	  printf("Toggling LED number %d in array.\n",leds[led]);
 	  int i = leds[led];
 	  keyboard_toggle_led(i);
 	  sleep(1);
   }
+
 }

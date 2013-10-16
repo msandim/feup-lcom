@@ -52,7 +52,6 @@ int keyboard_unsubscribe_int()
 // returns 0 in sucess, 1 in non-success
 int keyboard_send_kbc_cmd(unsigned long cmd, port_t port)
 {
-
   unsigned long stat;
 
   unsigned long timeoutcounter = 0;
@@ -127,5 +126,5 @@ int keyboard_make_or_break(unsigned char code)
 
 int keyboard_toggle_led(unsigned short led){
 	keyboard_send_kbc_cmd(toggleLEDS, 0x64);
-	return(keyboard_send_kbc_cmd(1<<led,0x60));
+	return(keyboard_send_kbc_cmd(0x01 << led,0x60));
 }
