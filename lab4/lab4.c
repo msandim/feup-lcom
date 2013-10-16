@@ -58,8 +58,8 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		}
 
-		unsigned short leds[5] = {0,1,1,0,0};
-		test_leds(5,leds);
+		unsigned short leds[6] = {0,1,2,1,2,0};
+		test_leds(6,leds);
 		printf("test4.c:: test_leds()\n\n");
 		return 0;
 

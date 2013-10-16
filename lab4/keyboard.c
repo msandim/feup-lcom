@@ -125,6 +125,7 @@ int keyboard_make_or_break(unsigned char code)
 }
 
 int keyboard_toggle_led(unsigned short led){
-	keyboard_send_kbc_cmd(toggleLEDS, 0x64);
-	return(keyboard_send_kbc_cmd(0x01 << led,0x60));
+	//keyboard_send_kbc_cmd(toggleLEDS, KBC_CMD_REG);
+  keyboard_send_kbc_cmd(toggleLEDS, 0x60);
+	return(keyboard_send_kbc_cmd((0x01 << led),0x60));
 }
