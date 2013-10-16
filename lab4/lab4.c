@@ -5,9 +5,9 @@
 #include "test4.h"
 
 static int proc_args(int argc, char *argv[]);
+static void print_usage(char *argv[]);
 static unsigned long parse_ulong(char *str, int base);
 static long parse_long(char *str, int base);
-static void print_usage(char *argv[]);
 
 int main(int argc, char **argv) {
 
@@ -33,7 +33,7 @@ static void print_usage(char *argv[]) {
       "-   service run %s -args \"scan\" \n"
       "    . Tests reading the scancodes from the KBC using an interrupt handler \n"
       "-   service run %s -args \"leds <time (decimal)>\" \n"
-      "    . Tests leds \n"
+      "    . Tests leds \n",
       argv[0], argv[0]);
 }
 
@@ -48,10 +48,8 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		}
 
-		printf("test4.c::test_scan()\n\n");
-
 		test_scan();
-
+		printf("\ntest4.c::test_scan()\n\n");
 		return 0;
 
 	} else if (strncmp(argv[1], "leds", strlen("leds")) == 0) {
