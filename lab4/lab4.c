@@ -1,4 +1,6 @@
+#include <minix/syslib.h>
 #include <minix/drivers.h>
+#include <minix/com.h>
 
 #include "test4.h"
 
@@ -27,65 +29,42 @@ int main(int argc, char **argv) {
 
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
-	printf("\n\nUsage: :\n"
-			"-   service run %s -args \"scan\" \n"
-			"    . Tests reading the scancodes from the KBC using an interrupt handler \n"
-			"-   service run %s -args \"leds <time (decimal)>\" \n"
-			"    . Tests Timer 0 interrupt handling \n"
-			argv[0], argv[0]);
+  printf("\n\nUsage: :\n"
+      "-   service run %s -args \"scan\" \n"
+      "    . Tests reading the scancodes from the KBC using an interrupt handler \n"
+      "-   service run %s -args \"leds <time (decimal)>\" \n"
+      "    . Tests leds \n"
+      argv[0], argv[0]);
 }
 
 // this function treats the args
 static int proc_args(int argc, char *argv[]) {
 
-	unsigned long freq, time, timer;
-
 	// check the function to test: if the first characters match, accept it
 
-	if (strncmp(argv[1], "square", strlen("square")) == 0) {
-		if( argc != 3 ) {
-			printf("timer.c: wrong no of arguments for test of square() \n");
+	if (strncmp(argv[1], "scan", strlen("scan")) == 0) {
+		if( argc != 2 ) {
+			printf("test4.c: wrong no of arguments for test scan \n");
 			return 1;
 		}
 
-		// get the arguments
-		if( (freq = parse_ulong(argv[2], 10)) == ULONG_MAX )
-			return 1;
+		printf("test4.c::test_scan()\n\n");
 
-		timer_test_square(freq);
+		test_scan();
 
-		printf("timer.c:: square(%lu)\n\n", (unsigned) freq);
 		return 0;
 
-
-	} else if (strncmp(argv[1], "int", strlen("int")) == 0) {
-		if( argc != 3 ) {
-			printf("timer.c: wrong no of arguments for test of int() \n");
+	} else if (strncmp(argv[1], "leds", strlen("leds")) == 0) {
+		if( argc != 2 ) {
+			printf("test4.c: wrong no of arguments for test of int() \n");
 			return 1;
 		}
-		if( (time = parse_ulong(argv[2], 10)) == ULONG_MAX )
-			return 1;
 
-		timer_test_int(time);
-
-
-		printf("timer.c:: int(%lu)\n\n", (unsigned) time);
+		printf("test4.c:: test_leds()\n\n");
 		return 0;
-
-	} else if (strncmp(argv[1], "config", strlen("config")) == 0) {
-		if( argc != 3 ) {
-			printf("timer.c: wrong no of arguments for test of config() \n");
-			return 1;
-		}
-		if( (timer = parse_ulong(argv[2], 10)) == ULONG_MAX )
-			return 1;
-
-		timer_test_config(timer);
-
-		printf("timer.c:: config(%lu)\n\n", (unsigned) timer);
 
 	} else {
-		printf("timer.c: non valid function \"%s\" to test\n", argv[1]);
+		printf("test4.c: non valid function \"%s\" to test\n", argv[1]);
 		return 1;
 	}
 }
@@ -103,7 +82,7 @@ static unsigned long parse_ulong(char *str, int base) {
 	}
 
 	if (endptr == str) {
-		printf("video_txt: parse_ulong: no digits were found in %s \n", str);
+		printf("test4.c: parse_ulong: no digits were found in %s \n", str);
 		return ULONG_MAX;
 	}
 
@@ -127,7 +106,7 @@ static long parse_long(char *str, int base) {
 	}
 
 	if (endptr == str) {
-		printf("video_gr: parse_long: no digits were found in %s \n", str);
+		printf("test4.c: parse_long: no digits were found in %s \n", str);
 		return LONG_MAX;
 	}
 
