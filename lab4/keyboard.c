@@ -33,6 +33,18 @@ int keyboard_unsubscribe_int()
     return 0;
 }
 
+char keyboard_get_code()
+{
+
+}
+
+int keyboard_make_or_break(char code)
+{
+  if (code & 0x80 == 0x80)
+    return 1;
+  else return 0;
+}
+
 void keyboard_int_handler()
 {
 
