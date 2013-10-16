@@ -15,6 +15,9 @@ int test_scan() {
   // know what ints are we interested in
   int irq_set = keyboard_subscribe_int();
 
+  // enable KBD and set default values
+  keyboard_send_kbc_cmd(enableKBDdefault, KBC_CMD_REG);
+
   unsigned char makebreakcode = 0;
 
   // while esc isnt pressed (and released)
@@ -31,7 +34,7 @@ int test_scan() {
       case HARDWARE: /* hardware interrupt notification */
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          keyboard_return_makebreakcore(&makebreakcode);
+          keyboard_receive_data_kbc(&makebreakcode);
 
           if (keyboard_make_or_break(makebreakcode) == 0)
             printf("\nMakecode: ");

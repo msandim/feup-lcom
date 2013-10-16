@@ -38,7 +38,7 @@ int keyboard_unsubscribe_int()
     return 0;
 }
 
-unsigned char keyboard_return_makebreakcore(unsigned char* makebreakcode)
+/*unsigned char keyboard_return_makebreakcore(unsigned char* makebreakcode)
 {
   if (keyboard_send_kbc_cmd(enableKBDdefault) == 1 ||
       keyboard_receive_data_kbc(makebreakcode) == 1)
@@ -46,11 +46,11 @@ unsigned char keyboard_return_makebreakcore(unsigned char* makebreakcode)
     printf("\nError returning make/break code in keyboard.c\n");
     return 1;
   }
-}
+}*/
 
 // executes a cmd to IN_BUF
 // returns 0 in sucess, 1 in non-success
-int keyboard_send_kbc_cmd(unsigned long cmd)
+int keyboard_send_kbc_cmd(unsigned long cmd, port_t port)
 {
 
   unsigned long stat;
@@ -65,7 +65,7 @@ int keyboard_send_kbc_cmd(unsigned long cmd)
     /* loop while 8042 input buffer is not empty */
     if( (stat & IBF) == 0 ) { // if the IBF bit is 0!
 
-      if (sys_outb(KBC_CMD_REG, cmd) != OK)
+      if (sys_outb(port, cmd) != OK)
         return 1;
 
       // SUCCESS

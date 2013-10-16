@@ -41,11 +41,12 @@ int keyboard_unsubscribe_int();
 // executes keyboard_send_kbc_cmd() and keyboard_receive_data_kbc
 // to return a make or break code
 // returns 0 in success, 1 in non-success
+// ASK TEACHER - WILL THIS BE USED?!??!?!?!??!?!
 unsigned char keyboard_return_makebreakcore(unsigned char* makebreakcode);
 
 // executes a cmd to IN_BUF
 // returns 0 in success, 1 in non-success
-int keyboard_send_kbc_cmd(unsigned long cmd);
+int keyboard_send_kbc_cmd(unsigned long cmd, port_t port);
 
 // receives data from OUT_BUF
 // returns 0 in success, 1 in non-success
