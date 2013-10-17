@@ -92,5 +92,5 @@ int timer_test_int(unsigned long time);
  * @return Return 0 upon success and non-zero otherwise
  */
 int timer_test_config(unsigned long timer);
-
+int timer_interrupt_wait(unsigned long time);
 #endif /* __TIMER_H */

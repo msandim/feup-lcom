@@ -64,7 +64,7 @@ int test_leds(unsigned short n, unsigned short *leds) {
 	  printf("Toggling LED number %d in array.\n",leds[led]);
 	  int i = leds[led];
 	  keyboard_toggle_led(i);
-	  sleep(1);
+	  timer_interrupt_wait(1);
   }
 
 }

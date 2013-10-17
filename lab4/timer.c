@@ -191,6 +191,46 @@ int timer_show_config(unsigned long timer) {
 	return 0;
 }
 
+int timer_interrupt_wait(unsigned long time){
+	int irq_set = timer_subscribe_int();
+
+	int ipc_status;
+	message msg;
+
+	unsigned int nseconds = 0;
+
+	while( nseconds < time ) {
+		/* Get a request message. */
+
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("driver_receive failed\n");
+			continue;
+		}
+
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+
+					if (intCounter % 60 == 0)
+					{
+						nseconds ++;
+					}
+
+					timer_int_handler(); // incs counter
+				}
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+	timer_unsubscribe_int();
+	return 0;
+}
+
 int timer_test_square(unsigned long freq) {
 
 	// test for 0
