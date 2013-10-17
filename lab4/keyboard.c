@@ -8,6 +8,8 @@
 
 static int hook_id;
 
+static char led_bitmask = 0; // this will turn off every led, but cant ready current state
+
 // KEYBOARD FUNCTIONS
 
 int keyboard_subscribe_int()
@@ -125,6 +127,17 @@ int keyboard_make_or_break(unsigned char code)
 }
 
 int keyboard_toggle_led(unsigned short led){
-	keyboard_send_kbc_cmd(toggleLEDS, KBC_CMD_REG);
-	return(keyboard_send_kbc_cmd((0x01 << led),0x60));
+
+  // send the command to kbd port (input)
+	keyboard_send_kbc_cmd(TOGGLE_LEDS, KBD_IN_BUF);
+
+	// puts on that led
+	led_bitmask ^= BIT(led);
+
+	printf("\n\nLED ASKED: %u\nSTATE OF LED_BITMASK: 0x%X\n\n", led, led_bitmask);
+
+	// sends the arg to kbd port (input)
+	keyboard_send_kbc_cmd(led_bitmask,KBD_IN_BUF);
+
+	return 0;
 }

@@ -15,6 +15,7 @@
 #define STAT_REG 0x64
 #define KBC_CMD_REG 0x64
 #define OUT_BUF 0x60
+#define KBD_IN_BUF 0x60
 
 // ******* bitmasks
 
@@ -30,8 +31,8 @@
 
 // ******* KBD COMMANDS
 
-#define enableKBDdefault 0xF6
-#define toggleLEDS 0xED
+#define ENABLE_KBD_DEFAULT 0xF6
+#define TOGGLE_LEDS 0xED
 
 // ******* FUNCTIONS ****************************************************
 

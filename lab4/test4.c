@@ -16,7 +16,7 @@ int test_scan() {
   int irq_set = keyboard_subscribe_int();
 
   // enable KBD and set default values
-  keyboard_send_kbc_cmd(enableKBDdefault, KBC_CMD_REG);
+  //keyboard_send_kbc_cmd(ENABLE_KBD_DEFAULT, KBC_CMD_REG);
 
   unsigned char makebreakcode = 0;
 
@@ -58,12 +58,11 @@ int test_scan() {
 
 int test_leds(unsigned short n, unsigned short *leds) {
 
-
-  unsigned short led;
-  for (led = 0; led < n; led++){
-	  printf("Toggling LED number %d in array.\n",leds[led]);
-	  int i = leds[led];
-	  keyboard_toggle_led(i);
+  unsigned short i;
+  for (i = 0; i < n; i++){
+	  printf("Toggling LED number %d in array.\n",leds[i]);
+	  int led = leds[i];
+	  keyboard_toggle_led(led);
 	  timer_interrupt_wait(1);
   }
 
