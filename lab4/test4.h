@@ -3,6 +3,6 @@
 
 // FUNCTIONS FOR TESTING
 int test_scan();
-int test_leds(unsigned short n, unsigned short *leds);
+int test_leds();
 
 #endif
