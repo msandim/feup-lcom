@@ -69,7 +69,7 @@ static int proc_args(int argc, char *argv[]) {
 		unsigned short arguments [argc-2];
 
 		while (i < argc ){
-			arguments[i-2] = parse_ulong(argv[i]);
+			arguments[i-2] = parse_ulong(argv[i], 10);
 			i++;
 		}
 
@@ -77,6 +77,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		while (i < argc){
 			printf ("%d\n",argv[i-2]);
+			i++;
 		}
 
 
