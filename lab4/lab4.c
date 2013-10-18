@@ -69,14 +69,23 @@ static int proc_args(int argc, char *argv[]) {
 		unsigned short arguments [argc-2];
 
 		while (i < argc ){
-			arguments[i-2] = parse_ulong(argv[i], 10);
+			unsigned long argument;
+
+			if ( (argument =  parse_ulong(argv[i], 10)) == ULONG_MAX || (argument > 2)){
+
+				printf("Led number %u, %u, is not valid.\n", i-1, argument);
+
+				return 1;
+			}
+
+			arguments[i-2] = argument;
 			i++;
 		}
 
 		i = 2;
 
 		while (i < argc){
-			printf ("%d\n",argv[i-2]);
+			printf ("%d\n",arguments[i-2]);
 			i++;
 		}
 
