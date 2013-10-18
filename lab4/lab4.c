@@ -78,7 +78,7 @@ static int proc_args(int argc, char *argv[]) {
 				return 1;
 			}
 
-			arguments[i-2] = argument;
+			arguments[i-2] = (unsigned short)argument;
 			i++;
 		}
 
@@ -89,6 +89,7 @@ static int proc_args(int argc, char *argv[]) {
 			i++;
 		}
 
+		test_leds(argc-2, arguments);
 
 		printf("test4.c:: test_leds()\n\n");
 		return 0;
