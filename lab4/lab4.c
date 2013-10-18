@@ -2,6 +2,8 @@
 #include <minix/drivers.h>
 #include <minix/com.h>
 
+#include <stdio.h>
+
 #include "test4.h"
 
 static int proc_args(int argc, char *argv[]);
