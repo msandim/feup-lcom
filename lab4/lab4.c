@@ -56,36 +56,30 @@ static int proc_args(int argc, char *argv[]) {
 
 	} else if (strncmp(argv[1], "leds", strlen("leds")) == 0) {
 
-		if( argc < 2 ) {
+	  // if we only write "leds" this isnt valid. must have leds to put "on"/"off"
+		if( argc < 3 ) {
 			printf("test4.c: wrong no of arguments for test of leds() \n");
 			return 1;
 		}
 
-		// CHECK IF IT WORKS
-
-
 		int i = 2;
 
+		// because argc has the number of led commands + path + "leds"
 		unsigned short arguments [argc-2];
 
+		// if we reach the end
 		while (i < argc ){
 			unsigned long argument;
 
+			// we can get the long, and this long is 0,1,2 (3,4 .. must be invalid!)
 			if ( (argument =  parse_ulong(argv[i], 10)) == ULONG_MAX || (argument > 2)){
 
-				printf("Led number %u, %u, is not valid.\n", i-1, argument);
+				printf("Led command number %u (%u) is not valid.\n", i-1, argument);
 
 				return 1;
 			}
 
 			arguments[i-2] = (unsigned short)argument;
-			i++;
-		}
-
-		i = 2;
-
-		while (i < argc){
-			printf ("%d\n",arguments[i-2]);
 			i++;
 		}
 

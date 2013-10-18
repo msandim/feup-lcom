@@ -45,12 +45,6 @@ int keyboard_subscribe_int();
 
 int keyboard_unsubscribe_int();
 
-// executes keyboard_send_cmd() and keyboard_receive_data_kbc
-// to return a make or break code
-// returns 0 in success, 1 in non-success
-// ASK TEACHER - WILL THIS BE USED?!??!?!?!??!?!
-unsigned char keyboard_return_makebreakcore(unsigned char* makebreakcode);
-
 // executes a cmd to IN_BUF
 // returns 0 in success, 1 in non-success
 int keyboard_send_cmd(unsigned long cmd, port_t port);
@@ -59,10 +53,17 @@ int keyboard_send_cmd(unsigned long cmd, port_t port);
 // returns 0 in success, 1 in non-success
 int keyboard_receive_data_kbc(unsigned char *data);
 
+// receives data from OUT_BUF in LEDs (doesnt need to read status to check OBF)
+// returns 0 in success, 1 in non-sucess
+int keyboard_receive_data_kbd(unsigned char *data);
+
 // checks if a code is make or break
+// returns 2 if it's a 0xE0 byte from the scan code
 // returns 1 if it's a break code
 // returns 0 if it's a make code
 int keyboard_make_or_break(unsigned char code);
 
-
+// receives a led number, and toggles that led
+// returns 0 in success; 1 in non_success
+int keyboard_toggle_led(unsigned short led);
 #endif

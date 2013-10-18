@@ -15,13 +15,13 @@ int test_scan() {
   // know what ints are we interested in
   int irq_set = keyboard_subscribe_int();
 
-  // enable KBD and set default values
-  //keyboard_send_cmd(ENABLE_KBD_DEFAULT, KBC_CMD_REG);
-
   unsigned char makebreakcode = 0;
 
-  // var that tells if the current element is a makecode
-  int ismakecode = 1;
+  // two_byte_scan_code verifies if the current scan code is 2 byte long
+  int two_byte_scan_code = 0;
+
+  // 0-> makecode; 1-> breakcode; 2-> E0
+  int codeType;
 
   // while esc isnt pressed (and released)
   while( makebreakcode != 0x81 ) {
@@ -37,17 +37,38 @@ int test_scan() {
       case HARDWARE: /* hardware interrupt notification */
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          keyboard_receive_data_kbc(&makebreakcode);
+          // receive the breakcode
+          if (keyboard_receive_data_kbc(&makebreakcode))
+            return 1;
 
-          if (!keyboard_make_or_break(makebreakcode))
+          // check if it's break, make or E0
+          codeType = keyboard_make_or_break(makebreakcode);
+
+          if (codeType == 0)
+          {
             printf("Makecode: ");
-          else
+
+            if (two_byte_scan_code == 1)
+            {
+              printf("0xE0 ");
+              two_byte_scan_code = 0;
+            }
+          }
+          else if (codeType == 1)
+          {
             printf("Breakcode: ");
 
-          printf("0x%X\n",makebreakcode);
+            if (two_byte_scan_code == 1)
+            {
+              printf("0xE0 ");
+              two_byte_scan_code = 0;
+            }
+          }
 
-          if (keyboard_make_or_break(makebreakcode))
-            printf("\n");
+          else two_byte_scan_code = 1;
+
+          if (codeType != 2)
+            printf("0x%X\n\n",makebreakcode);
         }
         break;
       default:
@@ -64,9 +85,8 @@ int test_scan() {
 
 int test_leds(unsigned short n, unsigned short *leds) {
 
-
   unsigned short i;
-  for (i = 0; i < n; i++){
+  for (i = 0; i < n; i++) {
     printf("Toggling LED number %d in array.\n",leds[i]);
     int led = leds[i];
     keyboard_toggle_led(led);
