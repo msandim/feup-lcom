@@ -16,9 +16,12 @@ int test_scan() {
   int irq_set = keyboard_subscribe_int();
 
   // enable KBD and set default values
-  //keyboard_send_kbc_cmd(ENABLE_KBD_DEFAULT, KBC_CMD_REG);
+  //keyboard_send_cmd(ENABLE_KBD_DEFAULT, KBC_CMD_REG);
 
   unsigned char makebreakcode = 0;
+
+  // var that tells if the current element is a makecode
+  int ismakecode = 1;
 
   // while esc isnt pressed (and released)
   while( makebreakcode != 0x81 ) {
@@ -36,12 +39,15 @@ int test_scan() {
 
           keyboard_receive_data_kbc(&makebreakcode);
 
-          if (keyboard_make_or_break(makebreakcode) == 0)
-            printf("\nMakecode: ");
+          if (!keyboard_make_or_break(makebreakcode))
+            printf("Makecode: ");
           else
-            printf("\nBreakcode: ");
+            printf("Breakcode: ");
 
           printf("0x%X\n",makebreakcode);
+
+          if (keyboard_make_or_break(makebreakcode))
+            printf("\n");
         }
         break;
       default:
@@ -58,12 +64,13 @@ int test_scan() {
 
 int test_leds(unsigned short n, unsigned short *leds) {
 
+
   unsigned short i;
   for (i = 0; i < n; i++){
-	  printf("Toggling LED number %d in array.\n",leds[i]);
-	  int led = leds[i];
-	  keyboard_toggle_led(led);
-	  timer_interrupt_wait(1);
+    printf("Toggling LED number %d in array.\n",leds[i]);
+    int led = leds[i];
+    keyboard_toggle_led(led);
+    timer_interrupt_wait(1);
   }
 
 }

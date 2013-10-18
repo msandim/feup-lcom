@@ -11,16 +11,16 @@ static long parse_long(char *str, int base);
 
 int main(int argc, char **argv) {
 
-	/* Initialize service */
-	sef_startup();
+  /* Initialize service */
+  sef_startup();
 
-	if ( argc == 1 ) {
-		print_usage(argv);
-		return 0;
-	} else {
-		proc_args(argc, argv);
-	}
-	return 0;
+  if ( argc == 1 ) {
+    print_usage(argv);
+    return 0;
+  } else {
+    proc_args(argc, argv);
+  }
+  return 0;
 }
 /*
  * int test_scan(void);
@@ -40,77 +40,91 @@ static void print_usage(char *argv[]) {
 // this function treats the args
 static int proc_args(int argc, char *argv[]) {
 
-	// check the function to test: if the first characters match, accept it
+  // check the function to test: if the first characters match, accept it
 
-	if (strncmp(argv[1], "scan", strlen("scan")) == 0) {
-		if( argc != 2 ) {
-			printf("test4.c: wrong no of arguments for test scan \n");
-			return 1;
-		}
+  if (strncmp(argv[1], "scan", strlen("scan")) == 0) {
+    if( argc != 2 ) {
+      printf("test4.c: wrong no of arguments for test scan \n");
+      return 1;
+    }
 
-		test_scan();
-		printf("\ntest4.c::test_scan()\n\n");
-		return 0;
+    test_scan();
+    printf("\ntest4.c::test_scan()\n\n");
+    return 0;
 
-	} else if (strncmp(argv[1], "leds", strlen("leds")) == 0) {
-		if( argc != 2 ) {
-			printf("test4.c: wrong no of arguments for test of int() \n");
-			return 1;
-		}
+  } else if (strncmp(argv[1], "leds", strlen("leds")) == 0) {
+    if( argc != 2 ) {
+      printf("test4.c: wrong no of arguments for test of int() \n");
+      return 1;
+    }
 
-		unsigned short leds[6] = {0,1,2,1,2,0};
-		test_leds(6,leds);
-		printf("test4.c:: test_leds()\n\n");
-		return 0;
+    // CHECK IF IT WORKS
+    int j = 0;
+    int length = 0;
+    printf ("Enter length of array you wish to pass to function:\n");
+    scanf("%u ", &length);
 
-	} else {
-		printf("test4.c: non valid function \"%s\" to test\n", argv[1]);
-		return 1;
-	}
+    int leds[length];
+
+    while (j < length){
+      printf("Enter element number %d in array: ");
+      scanf("%u ", &leds[j]);
+      j++;
+    }
+
+    unsigned short leds2[6] = {0,1,2,1,2,0};
+    test_leds(6,leds2);
+    printf("test4.c:: test_leds()\n\n");
+    return 0;
+
+  } else {
+    printf("test4.c: non valid function \"%s\" to test\n", argv[1]);
+    return 1;
+  }
 }
 
 static unsigned long parse_ulong(char *str, int base) {
-	char *endptr;
-	unsigned long val;
+  char *endptr;
+  unsigned long val;
 
-	val = strtoul(str, &endptr, base);
+  val = strtoul(str, &endptr, base);
 
-	if ((errno == ERANGE && val == ULONG_MAX )
-			|| (errno != 0 && val == 0)) {
-		perror("strtol");
-		return ULONG_MAX;
-	}
+  if ((errno == ERANGE && val == ULONG_MAX )
+      || (errno != 0 && val == 0)) {
+    perror("strtol");
+    return ULONG_MAX;
+  }
 
-	if (endptr == str) {
-		printf("test4.c: parse_ulong: no digits were found in %s \n", str);
-		return ULONG_MAX;
-	}
+  if (endptr == str) {
+    printf("test4.c: parse_ulong: no digits were found in %s \n", str);
+    return ULONG_MAX;
+  }
 
 
 
-	// Successful conversion
+  // Successful conversion
 
-	return val;
+  return val;
 }
 
 static long parse_long(char *str, int base) {
-	char *endptr;
-	unsigned long val;
+  char *endptr;
+  unsigned long val;
 
-	val = strtol(str, &endptr, base);
+  val = strtol(str, &endptr, base);
 
-	if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
-			|| (errno != 0 && val == 0)) {
-		perror("strtol");
-		return LONG_MAX;
-	}
+  if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
+      || (errno != 0 && val == 0)) {
+    perror("strtol");
+    return LONG_MAX;
+  }
 
-	if (endptr == str) {
-		printf("test4.c: parse_long: no digits were found in %s \n", str);
-		return LONG_MAX;
-	}
+  if (endptr == str) {
+    printf("test4.c: parse_long: no digits were found in %s \n", str);
+    return LONG_MAX;
+  }
 
-	// Successful conversion
+  // Successful conversion
 
-	return val;
+  return val;
 }

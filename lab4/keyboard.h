@@ -29,6 +29,11 @@
 // TIMEOUT BIT
 #define TO_ERR 0x40
 
+// ******* TYPES OF ERRORS
+
+#define RESEND 0xFE
+#define ERROR 0xFC
+
 // ******* KBD COMMANDS
 
 #define ENABLE_KBD_DEFAULT 0xF6
@@ -40,7 +45,7 @@ int keyboard_subscribe_int();
 
 int keyboard_unsubscribe_int();
 
-// executes keyboard_send_kbc_cmd() and keyboard_receive_data_kbc
+// executes keyboard_send_cmd() and keyboard_receive_data_kbc
 // to return a make or break code
 // returns 0 in success, 1 in non-success
 // ASK TEACHER - WILL THIS BE USED?!??!?!?!??!?!
@@ -48,7 +53,7 @@ unsigned char keyboard_return_makebreakcore(unsigned char* makebreakcode);
 
 // executes a cmd to IN_BUF
 // returns 0 in success, 1 in non-success
-int keyboard_send_kbc_cmd(unsigned long cmd, port_t port);
+int keyboard_send_cmd(unsigned long cmd, port_t port);
 
 // receives data from OUT_BUF
 // returns 0 in success, 1 in non-success
