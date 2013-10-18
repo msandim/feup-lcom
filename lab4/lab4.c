@@ -66,10 +66,19 @@ static int proc_args(int argc, char *argv[]) {
 
 		int i = 2;
 
-		while (i < argc - 2){
-			scanf("%u ", &leds[parse_ulong(i)]);
+		unsigned short arguments [argc-2];
+
+		while (i < argc ){
+			arguments[i-2] = parse_ulong(argv[i]);
 			i++;
 		}
+
+		i = 2;
+
+		while (i < argc){
+			printf ("%d\n",argv[i-2]);
+		}
+
 
 		printf("test4.c:: test_leds()\n\n");
 		return 0;
