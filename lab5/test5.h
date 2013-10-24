@@ -5,7 +5,7 @@
 
 #define BIT(n) (0x01<<(n))
 
-#define DELAY_US 20000
+#define DELAY_US 10000
 #define WAIT_KBC 20
 
 #define MOUSE_IRQ 12
@@ -31,10 +31,14 @@
 
 // - for MOUSE:
 #define bit3_mask 0x08
-#define ret_mask 0x03
+#define ret_mask 0x03 // has left + right
 #define MB_mask 0x04
 #define RB_mask 0x02
 #define LB_mask 0x01
+#define XOV_mask 0x40
+#define YOV_mask 0x80
+#define XSIGN_mask 0x10
+#define YSIGN_mask 0x20
 
 // ******* TYPES OF ERRORS
 

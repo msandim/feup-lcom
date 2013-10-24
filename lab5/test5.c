@@ -13,6 +13,7 @@ unsigned char packet[3];
 unsigned short count=0;
 
 typedef enum {stateInit, stateLeft, stateRight} state_mouse;
+// for the states
 
 // ********************************************
 // TEST FUNCTIONS
@@ -46,7 +47,7 @@ int test_packet() {
 
 					if (count == 0 && ((packet[0] & bit3_mask) == bit3_mask)){
 						if (mouse_exit_handler()){
-							printf("BREAK");
+							printf("User stopped process\n");
 							exit_flag = 1;
 						}
 					}
@@ -214,17 +215,17 @@ int mouse_receive_data_outbuf(unsigned char *data)
 
 	while( timeoutcounter < DELAY_US*20 ) {
 
-		// if (sys_inb(STAT_REG, &stat) != OK)
-		// return 1;
+		 if (sys_inb(STAT_REG, &stat) != OK)
+		 return 1;
 
-		// only receive if OBF is 1 -> out_buffer is full
-		//if( stat & OBF ) {
+		 //only receive if OBF is 1 -> out_buffer is full
+		if( stat & OBF ) {
 		if (sys_inb(OUT_BUF, &data_long) != OK)
 			return 1;
 
 		*data = (unsigned char) data_long;
 		return 0;
-		// }
+		 }
 
 		tickdelay(micros_to_ticks(DELAY_US));
 		timeoutcounter += DELAY_US;
@@ -242,42 +243,47 @@ void mouse_interrupt_handler()
 		return;
 	}
 
-
-	printf("COUNT: %u\n",count);
-	printf("CODE: 0x%X\n",code);
-	printf("CONDICAO: 0x%X\n", (code & bit3_mask));
-	printf("BITMASK: 0x%X\n\n", bit3_mask);
-
 	if (count == 0 && ((code & bit3_mask) == bit3_mask))
 	{
-		printf("IF1\n\n");
 		packet[count] = code;
 		count++;
 	}
 	else if (count == 1)
 	{
-		printf("IF2\n\n");
 		packet[count] = code;
 		count++;
 	}
 	else if (count == 2)
 	{
-		printf("IF3\n\n");
 		packet[count] = code;
 		count = 0; // initializes
 		mouse_print_packet(); // prints packet
 	}
-
-
-
-	return;
-
 }
 
 void mouse_print_packet()
 {
-	printf("B1=0x%X B2=0x%X B3=0x%X\n",packet[0],packet[1],packet[2]);
-	//printf("a");
+	unsigned char LB, MB, RB, XOV, YOV, XSIGN, YSIGN;
+	signed int X,Y;
+	LB = (packet[0] & LB_mask);
+	RB = (packet[0] & RB_mask) >> 1;
+	MB = (packet[0] & MB_mask) >> 2;
+	XOV = (packet[0] & XOV_mask) >> 6;
+	YOV = (packet[0] & YOV_mask) >> 7;
+	XSIGN = (packet[0] & XSIGN_mask) >> 4;
+	YSIGN = (packet[0] & YSIGN_mask) >> 5;
+	X = packet[1];
+	Y = packet[2];
+
+	if (XSIGN)
+	  X = -X;
+
+
+	if (YSIGN)
+	  Y = -Y;
+
+  printf("B1=0x%X  B2=0x%X  B3=0x%X  ",packet[0],packet[1],packet[2]);
+	printf("LB=%u  MB=%u   RB=%u  XOV=%u  YOV=%u  X=%d Y=%d\n",LB,MB,RB,XOV,YOV,X,Y);
 }
 
 int mouse_exit_handler(){
@@ -295,7 +301,7 @@ int mouse_exit_handler(){
 		if ((packet[0] & ret_mask) == ret_mask){
 			printf("Press Right with Left Button\n\n");
 			st = stateRight;
-			return 1;
+			return 1; // SUCCESS
 		}
 		else
 			st = stateInit;
