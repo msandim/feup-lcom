@@ -31,6 +31,7 @@
 
 // - for MOUSE:
 #define bit3_mask 0x08
+#define ret_mask 0x03
 #define MB_mask 0x04
 #define RB_mask 0x02
 #define LB_mask 0x01
