@@ -91,7 +91,7 @@ int test_asynch(unsigned short duration) {
 		if (is_ipc_notify(ipc_status)) { /* received notification */
 			switch (_ENDPOINT_P(msg.m_source)) {
 			case HARDWARE: /* hardware interrupt notification */
-				count ++;
+
 
 				if (msg.NOTIFY_ARG & irq_set_mouse) { /* subscribed interrupt */
 					mouse_interrupt_handler();
@@ -103,6 +103,7 @@ int test_asynch(unsigned short duration) {
 					}
 				}
 				if (msg.NOTIFY_ARG & irq_set_timer) {
+					count ++;
 					if (count%60 == 0){
 						count = 0;
 						timer ++;
