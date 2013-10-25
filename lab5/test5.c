@@ -150,7 +150,7 @@ int test_config(void) {
   mouse_receive_data_outbuf(&byte2) ||
   mouse_receive_data_outbuf(&byte3))
   {
-    printf("ALGO FALHOU :(((");
+    printf("test_config failed sending/receiving data\n");
     return 1;
   }
 
@@ -221,12 +221,9 @@ int mouse_send_cmd(unsigned long cmd)
       if (info == ACK)
       {
         // SUCCESS
-        printf("DEU ACK COM O COMANDO 0x%X",cmd);
         tickdelay(micros_to_ticks(DELAY_US));
         return 0;
       }
-
-      printf("NAO DEU ACK :( no cmd 0x%X SABES O QUE DEU?? 0x%X\n",cmd,info);
     }
 
     // if the input buffer is not empty, lets check again
@@ -253,17 +250,14 @@ int mouse_receive_data_outbuf(unsigned char *data)
       return 1;
 
     //only receive if OBF is 1 -> out_buffer is full
-    //if( stat & OBF ) {
+    if( stat & OBF ) {
       if (sys_inb(OUT_BUF, &data_long) != OK)
         return 1;
 
-      printf("CONSEGUI O DATA VOU MANDAR\n");
-
       *data = (unsigned char) data_long;
       return 0;
-    //}
+    }
 
-    printf("EISH N CONSEGUI DATA\n\n");
     tickdelay(micros_to_ticks(DELAY_US));
     timeoutcounter += DELAY_US;
   }
@@ -312,8 +306,8 @@ void mouse_print_packet()
   X = packet[1];
   Y = packet[2];
 
-  printf("B1=0x%*X  B2=0x%*X  B3=0x%*X  ",2,packet[0],2,packet[1],2,packet[2]);
-  printf("LB=%*u MB=%*u RB=%*u XOV=%*u YOV=%*u X=%*d Y=%*d\n\n",1,LB,1,MB,1,RB,1,XOV,1,YOV,3,X,3,Y);
+  printf("B1=0x%*X  B2=0x%*X  B3=0x%*X  ",-1,packet[0],-1,packet[1],-1,packet[2]);
+  printf("LB=%*u MB=%*u RB=%*u XOV=%*u YOV=%*u X=%*d Y=%*d\n\n",-1,LB,-1,MB,-1,RB,-1,XOV,-1,YOV,-3,X,-3,Y);
 }
 
 int mouse_exit_handler(){
