@@ -95,15 +95,10 @@ int test_asynch(unsigned short duration) {
 
         if (msg.NOTIFY_ARG & irq_set_mouse) { /* subscribed interrupt */
 
-          printf("RECEBEU NOTIFICACAO MOUSE\n\n");
           mouse_interrupt_handler();
 
-          /*if (count == 0 && ((packet[0] & bit3_mask) == bit3_mask)){
-            if (mouse_exit_handler()){
-
-            }
-          }*/
         }
+
         if (msg.NOTIFY_ARG & irq_set_timer) {
 
           int_count ++;
@@ -126,7 +121,7 @@ int test_asynch(unsigned short duration) {
   timer_unsubscribe_int();
   mouse_unsubscribe_int();
 
-  // clean outbuf -> in the worst case the timer stops after he received 1 package ..
+  // clean outbuf -> in the worst case the timer stops after he received 1 byte ..
   // we have to clean 2 times!
   unsigned char garbage;
 
@@ -141,23 +136,28 @@ int test_config(void) {
 
   unsigned char byte1, byte2, byte3;
 
-  if (
-  // request the 3 config bytes
-  mouse_send_cmd(DISABLE_STREAM_MODE) ||
-  mouse_send_cmd(STATUS_REQUEST) ||
-
-  mouse_receive_data_outbuf(&byte1) ||
-  mouse_receive_data_outbuf(&byte2) ||
-  mouse_receive_data_outbuf(&byte3))
-  {
-    printf("test_config failed sending/receiving data\n");
+  if (mouse_get_config(&byte1, &byte2, &byte3))
     return 1;
-  }
 
-  printf("BYTES: 0x%X,0x%X,0x%X\n\n", byte1, byte2, byte3);
+  unsigned char mode, enable, scaling, leftbtn, middlebtn, rightbtn;
+
+  mode = (byte1 & mode_mask) >> 6;
+  enable = (byte1 & enable_mask) >> 5;
+  scaling = (byte1 & scaling_mask) >> 4;
+  leftbtn = (byte1 & leftbtn_mask) >> 2;
+  middlebtn = (byte1 & middlebtn_mask) >> 1;
+  rightbtn = byte1 & rightbtn_mask;
+
+  printf("CONFIG BYTES: 0x%X,0x%X,0x%X\n\n", byte1, byte2, byte3);
+
+  printf("Mode: %u  Enable: %u  Scaling: %u  Left Btn: %u  Middle Btn: %u  Right Btn: %u\n",
+      mode, enable, scaling, leftbtn, middlebtn, rightbtn);
+  printf("Resolution: %u\n",byte2);
+  printf("Sample Rate: %u\n\n",byte3);
 
   mouse_unsubscribe_int();
 
+  return 0;
 }
 
 // ********************************************************
@@ -292,6 +292,31 @@ void mouse_interrupt_handler()
   }
 }
 
+int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *byte3)
+{
+  // temp variables
+  unsigned char byte1_temp, byte2_temp, byte3_temp;
+
+  if (
+      // request the 3 config bytes
+      mouse_send_cmd(DISABLE_STREAM_MODE) ||
+      mouse_send_cmd(STATUS_REQUEST) ||
+
+      mouse_receive_data_outbuf(&byte1_temp) ||
+      mouse_receive_data_outbuf(&byte2_temp) ||
+      mouse_receive_data_outbuf(&byte3_temp))
+  {
+    printf("Failed receiving mouse config\n");
+    return 1;
+  }
+
+  *byte1 = byte1_temp;
+  *byte2 = byte2_temp;
+  *byte3 = byte3_temp;
+
+  return 0;
+}
+
 void mouse_print_packet()
 {
   unsigned char LB, MB, RB, XOV, YOV, XSIGN, YSIGN;
@@ -311,6 +336,7 @@ void mouse_print_packet()
 }
 
 int mouse_exit_handler(){
+
   static state_mouse st = stateInit;
 
   switch (st){

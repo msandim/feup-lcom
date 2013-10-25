@@ -40,6 +40,14 @@
 #define XSIGN_mask 0x10
 #define YSIGN_mask 0x20
 
+//    - for config bytes
+#define mode_mask 0x40
+#define enable_mask 0x20
+#define scaling_mask 0x10
+#define leftbtn_mask 0x04
+#define middlebtn_mask 0x02
+#define rightbtn_mask 0x01
+
 // ******* TYPES OF ERRORS
 
 #define NACK_RESEND 0xFE
@@ -73,6 +81,10 @@ int moused_send_cmd(unsigned long cmd, port_t port);
 int mouse_receive_data_outbuf(unsigned char *data);
 
 void mouse_interrupt_handler();
+
+int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *byte3);
+
+int mouse_exit_handler();
 
 void mouse_print_packet();
 
