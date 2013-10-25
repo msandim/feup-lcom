@@ -50,6 +50,8 @@
 
 #define WRITE_BYTE_MOUSE 0xD4
 #define ENABLE_PACKETS 0xF4
+#define DISABLE_STREAM_MODE 0xF5
+#define STATUS_REQUEST 0xE9
 
 // FUNCTIONS FOR TESTING
 int test_packet();

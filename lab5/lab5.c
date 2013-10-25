@@ -35,7 +35,7 @@ static void print_usage(char *argv[]) {
 	printf("\n\nUsage:\n"
 			"-   service run %s -args \"packet\" \n"
 			"    . Tests reading the command byte from mouse \n"
-			"-   service run %s -args \"asynch <time>\" \n"
+			"-   service run %s -args \"asynch <time (secs)>\" \n"
 			"    . Tests measuring time from timer 0\n"
 			"-   service run %s -args \"config\" \n"
 			"    . Shows mouse configuration \n",
@@ -106,7 +106,7 @@ static unsigned long parse_ulong(char *str, int base) {
 	}
 
 	if (endptr == str) {
-		printf("test4.c: parse_ulong: no digits were found in %s \n", str);
+		printf("test5.c: parse_ulong: no digits were found in %s \n", str);
 		return ULONG_MAX;
 	}
 
@@ -130,7 +130,7 @@ static long parse_long(char *str, int base) {
 	}
 
 	if (endptr == str) {
-		printf("test4.c: parse_long: no digits were found in %s \n", str);
+		printf("test5.c: parse_long: no digits were found in %s \n", str);
 		return LONG_MAX;
 	}
 
