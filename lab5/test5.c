@@ -64,6 +64,10 @@ int test_packet() {
 
   mouse_unsubscribe_int();
 
+  // disable stream mode
+  mouse_send_cmd(DISABLE_STREAM_MODE);
+
+
   return 0;
 
 }
@@ -127,6 +131,9 @@ int test_asynch(unsigned short duration) {
 
   mouse_receive_data_outbuf(&garbage);
   mouse_receive_data_outbuf(&garbage);
+
+  // disable stream mode
+  mouse_send_cmd(DISABLE_STREAM_MODE);
 
   return 0;
 }
@@ -299,7 +306,6 @@ int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *
 
   if (
       // request the 3 config bytes
-      mouse_send_cmd(DISABLE_STREAM_MODE) ||
       mouse_send_cmd(STATUS_REQUEST) ||
 
       mouse_receive_data_outbuf(&byte1_temp) ||
@@ -320,7 +326,7 @@ int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *
 void mouse_print_packet()
 {
   unsigned char LB, MB, RB, XOV, YOV, XSIGN, YSIGN;
-  char X,Y;
+  int X=0,Y=0;
   LB = (packet[0] & LB_mask);
   RB = (packet[0] & RB_mask) >> 1;
   MB = (packet[0] & MB_mask) >> 2;
@@ -328,11 +334,19 @@ void mouse_print_packet()
   YOV = (packet[0] & YOV_mask) >> 7;
   XSIGN = (packet[0] & XSIGN_mask) >> 4;
   YSIGN = (packet[0] & YSIGN_mask) >> 5;
-  X = packet[1];
-  Y = packet[2];
 
-  printf("B1=0x%*X  B2=0x%*X  B3=0x%*X  ",-1,packet[0],-1,packet[1],-1,packet[2]);
-  printf("LB=%*u MB=%*u RB=%*u XOV=%*u YOV=%*u X=%*d Y=%*d\n\n",-1,LB,-1,MB,-1,RB,-1,XOV,-1,YOV,-3,X,-3,Y);
+  if (XSIGN)
+    X = -1;
+
+  if (YSIGN)
+    Y = -1;
+
+  // BECAUSE THE NUMBER IS IN 9 BITS IN C//2
+  X = (X << 8) | packet[1];
+  Y = (Y << 8) | packet[2];
+
+  printf("B1=0x%0*X  B2=0x%0*X  B3=0x%0*X  ",2,packet[0],2,packet[1],2,packet[2]);
+  printf("LB=%u MB=%*u RB=%u XOV=%u YOV=%u X=%d Y=%d\n\n",LB,MB,RB,XOV,YOV,X,Y);
 }
 
 int mouse_exit_handler(){

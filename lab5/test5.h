@@ -66,10 +66,14 @@ int test_packet();
 int test_asynch(unsigned short duration);
 int test_config(void);
 
-// ******* FUNCTIONS ****************************************************
+// ******* MOUSE FUNCTIONS ****************************************************
 
+// Subscribes and enables mouse interrupts
+// Returns a bit order in interrupt mask if sucessful, -1 if not
 int mouse_subscribe_int();
 
+// Unsubscribes mouse interrupts
+// Returns 0 if sucessful, non-zero if not
 int mouse_unsubscribe_int();
 
 // executes a cmd to IN_BUF
