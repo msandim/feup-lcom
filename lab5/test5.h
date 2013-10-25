@@ -73,23 +73,31 @@ int test_config(void);
 int mouse_subscribe_int();
 
 // Unsubscribes mouse interrupts
-// Returns 0 if sucessful, non-zero if not
+// Returns 0 if success, non-zero if not
 int mouse_unsubscribe_int();
 
-// executes a cmd to IN_BUF
+// Sends a byte to mouse (with 0xD4 first to 0x64)
 // returns 0 in success, 1 in non-success
-int moused_send_cmd(unsigned long cmd, port_t port);
+int mouse_send_cmd(unsigned long cmd);
 
 // receives data from OUT_BUF
-// returns 0 in success, 1 in non-success
+// returns 0 in success, 1 in non-succcess
 int mouse_receive_data_outbuf(unsigned char *data);
 
+// Handles the interrupts from the mouse (syncs the bytes, saves ..)
 void mouse_interrupt_handler();
 
+// Gets the 3 config bytes from the status, changes the arguments
+// Returns 0 in success, 1 in non-success
 int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *byte3);
 
+// shows the config
+void mouse_show_config(unsigned char byte1, unsigned char byte2, unsigned char byte3);
+
+// changes the state (if reaches the final state returns 1, otherwise 0)
 int mouse_exit_handler();
 
+// Prints a packet
 void mouse_print_packet();
 
 

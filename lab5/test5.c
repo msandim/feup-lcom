@@ -144,23 +144,11 @@ int test_config(void) {
   unsigned char byte1, byte2, byte3;
 
   if (mouse_get_config(&byte1, &byte2, &byte3))
+  {
+    mouse_unsubscribe_int();
     return 1;
-
-  unsigned char mode, enable, scaling, leftbtn, middlebtn, rightbtn;
-
-  mode = (byte1 & mode_mask) >> 6;
-  enable = (byte1 & enable_mask) >> 5;
-  scaling = (byte1 & scaling_mask) >> 4;
-  leftbtn = (byte1 & leftbtn_mask) >> 2;
-  middlebtn = (byte1 & middlebtn_mask) >> 1;
-  rightbtn = byte1 & rightbtn_mask;
-
-  printf("CONFIG BYTES: 0x%X,0x%X,0x%X\n\n", byte1, byte2, byte3);
-
-  printf("Mode: %u  Enable: %u  Scaling: %u  Left Btn: %u  Middle Btn: %u  Right Btn: %u\n",
-      mode, enable, scaling, leftbtn, middlebtn, rightbtn);
-  printf("Resolution: %u\n",byte2);
-  printf("Sample Rate: %u\n\n",byte3);
+  }
+  mouse_show_config(byte1,byte2,byte3);
 
   mouse_unsubscribe_int();
 
@@ -199,8 +187,6 @@ int mouse_unsubscribe_int()
     return 0;
 }
 
-// executes a cmd (byte) to the mouse
-// returns 0 in sucess, 1 in non-success
 int mouse_send_cmd(unsigned long cmd)
 {
   unsigned long stat;
@@ -243,8 +229,6 @@ int mouse_send_cmd(unsigned long cmd)
   return 1;
 }
 
-// receives data from OUT_BUF
-// returns 0 in success, 1 in non-sucess
 int mouse_receive_data_outbuf(unsigned char *data)
 {
   unsigned long stat, data_long;
@@ -277,7 +261,7 @@ void mouse_interrupt_handler()
 
   if (mouse_receive_data_outbuf(&code))
   {
-    printf("Didnt receive data from mouse\n\n");
+    printf("Didnt receive data from mouse yet. Try to move the mouse\n\n");
     return;
   }
 
@@ -323,6 +307,25 @@ int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *
   return 0;
 }
 
+void mouse_show_config(unsigned char byte1, unsigned char byte2, unsigned char byte3)
+{
+  unsigned char mode, enable, scaling, leftbtn, middlebtn, rightbtn;
+
+  mode = (byte1 & mode_mask) >> 6;
+  enable = (byte1 & enable_mask) >> 5;
+  scaling = (byte1 & scaling_mask) >> 4;
+  leftbtn = (byte1 & leftbtn_mask) >> 2;
+  middlebtn = (byte1 & middlebtn_mask) >> 1;
+  rightbtn = byte1 & rightbtn_mask;
+
+  printf("CONFIG BYTES: 0x%X,0x%X,0x%X\n\n", byte1, byte2, byte3);
+
+  printf("Mode: %u  Enable: %u  Scaling: %u  Left Btn: %u  Middle Btn: %u  Right Btn: %u\n",
+      mode, enable, scaling, leftbtn, middlebtn, rightbtn);
+  printf("Resolution: %u\n",byte2);
+  printf("Sample Rate: %u\n\n",byte3);
+}
+
 void mouse_print_packet()
 {
   unsigned char LB, MB, RB, XOV, YOV, XSIGN, YSIGN;
@@ -346,7 +349,7 @@ void mouse_print_packet()
   Y = (Y << 8) | packet[2];
 
   printf("B1=0x%0*X  B2=0x%0*X  B3=0x%0*X  ",2,packet[0],2,packet[1],2,packet[2]);
-  printf("LB=%u MB=%*u RB=%u XOV=%u YOV=%u X=%d Y=%d\n\n",LB,MB,RB,XOV,YOV,X,Y);
+  printf("LB=%u MB=%u RB=%u XOV=%u YOV=%u X=%-4d Y=%-4d\n\n",LB,MB,RB,XOV,YOV,X,Y);
 }
 
 int mouse_exit_handler(){
