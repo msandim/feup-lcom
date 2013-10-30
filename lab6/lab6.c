@@ -78,7 +78,7 @@ static int proc_args(int argc, char *argv[]) {
 		return 0;
 
 	} else {
-		printf("test5.c: non valid function \"%s\" to test\n", argv[1]);
+		printf("test6.c: non valid function \"%s\" to test\n", argv[1]);
 		return 1;
 	}
 }
@@ -96,7 +96,7 @@ static unsigned long parse_ulong(char *str, int base) {
 	}
 
 	if (endptr == str) {
-		printf("test5.c: parse_ulong: no digits were found in %s \n", str);
+		printf("test6.c: parse_ulong: no digits were found in %s \n", str);
 		return ULONG_MAX;
 	}
 
