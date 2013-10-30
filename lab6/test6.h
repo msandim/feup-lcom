@@ -26,6 +26,26 @@
 // CONSTANTS
 #define RTC_IRQ 0x8
 
+// MASKS *****************************************
+#define UIP_mask 0x80
+#define RATE_mask 0x0F
+
+#define SET_mask 0x80
+#define PIE_mask 0x40
+#define AIE_mask 0x20
+#define UIE_mask 0x10
+#define SQWE_mask 0x08
+#define DM_mask 0x04
+#define HOUR_12_24_mask 0x02
+#define DSE_mask 0x01
+
+#define IRQF_mask 0x80
+#define PF_mask 0x40
+#define AF_mask 0x20
+#define UF_mask 0x10
+
+#define VRT_mask 0x80
+
 
 
 
@@ -46,3 +66,5 @@ int rtc_load_data(unsigned long addr, unsigned long *info);
 int rtc_save_data(unsigned long addr, unsigned long info_to_send);
 
 int rtc_get_config(unsigned long config[]);
+
+void rtc_show_config(unsigned long config[]);
