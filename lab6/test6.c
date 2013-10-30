@@ -122,20 +122,20 @@ void rtc_show_config(unsigned long config[])
   // regD
   VRT = (config[3] & VRT_mask) >> 7;
 
-  printf("A: 0x%X, B: 0x%X, C: 0x%X, D: 0x%X\n",
+  printf("A: 0x%X, B: 0x%X, C: 0x%X, D: 0x%X\n\n",
       config[0],config[1],config[2],config[3]);
 
-  printf("Register A\n");
-  printf("UIP: %X\nRate: %u\n\n",UIP,rate);
+  printf("Register A:\n");
+  printf("UIP: %X | Rate: %u\n\n",UIP,rate);
 
-  printf("Register B\n");
-  printf("SET: %X\nPIE: %X\nAIE: %X\nUIE: %X\nSQWE: %X\nDM: %X\n24/12: %X\nDSE: %X\n\n",
+  printf("Register B:\n");
+  printf("SET: %X | PIE: %X | AIE: %X | UIE: %X | SQWE: %X | DM: %X | 12 hour system? (12h-1;24h-0): %X | DSE: %X\n\n",
       SET, PIE, AIE, UIE, SQWE, DM, type_hour, DSE);
 
   printf("Register C\n");
-  printf("IRQF: %X\nPF: %X\nAF: %X\nUF: %X\n\n",
+  printf("IRQF: %X | PF: %X | AF: %X | UF: %X\n\n",
       IRQF, PF, AF, UF);
 
   printf("Register D\n");
-  printf("VRT: %X\n\n",VRT);
+  printf("VRT: %X\n",VRT);
 }
