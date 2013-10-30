@@ -120,7 +120,7 @@ static long parse_long(char *str, int base) {
 	}
 
 	if (endptr == str) {
-		printf("test5.c: parse_long: no digits were found in %s \n", str);
+		printf("test6.c: parse_long: no digits were found in %s \n", str);
 		return LONG_MAX;
 	}
 
