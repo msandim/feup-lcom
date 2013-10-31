@@ -71,8 +71,12 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		}
 
+		unsigned short time_to_alarm;
 
-		rtc_test_int();
+		if( (time_to_alarm = parse_ulong(argv[2], 10)) == ULONG_MAX )
+			return 1;
+
+		rtc_test_int(time_to_alarm);
 
 		printf("test6.c:: rtc_test_int()\n\n");
 		return 0;
