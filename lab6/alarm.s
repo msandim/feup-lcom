@@ -2,18 +2,22 @@
 
 /* char rtc_interrupt_handler(); */
 
+.global _rtc_interrupt_handler
+.global _clear_interrupts
+.global _set_interrupts
+
 _rtc_interrupt_handler:
-
-movb $RTC_REG_B, %al
-outb $RTC_ADDR_REG
-inb $RTC_DATA_REG
-
-ret
+	movb $0xC, %al
+	outb $0x70
+	inb $0x71
+	andb $0x20, %al
+	ret
 
 _clear_interrupts:
-cli
-ret
+	cli
+	ret
 
 _set_interrupts:
-sti
-ret
+	sti
+	ret
+

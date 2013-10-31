@@ -85,6 +85,7 @@ void rtc_show_data(unsigned long data[])
   printf("Week day: %x\n",data[3]);
 }
 
+
 int rtc_set_alarm(unsigned long data[])
 {
   // read data

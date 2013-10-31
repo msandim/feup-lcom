@@ -155,7 +155,7 @@ int rtc_test_int(unsigned long delta) {
 
   //Enable Alarm interrupts in register B
   rtc_load_info(RTC_REG_B, &info);
-  info ^= AIE_mask;
+  info |= AIE_mask;
   rtc_save_info(RTC_REG_B, info);
 
   //Subscribe interrupts
@@ -182,7 +182,9 @@ int rtc_test_int(unsigned long delta) {
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
           result = rtc_interrupt_handler();
-
+          if (result){
+        	  exit_flag = 1;
+          }
         }
         break;
       default:
@@ -193,14 +195,13 @@ int rtc_test_int(unsigned long delta) {
     }
   }
 
-  printf("result = %X", result);
-
-
   rtc_unsubscribe_int();
 
   //Disable Alarm interrupts in register B
   rtc_load_info(RTC_REG_B, &info);
   info ^= AIE_mask;
   rtc_save_info(RTC_REG_B, info);
+
+  printf("test_int: Alarm raised after %u s", delta);
 
 }

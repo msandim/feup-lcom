@@ -92,4 +92,9 @@ int rtc_subscribe_int();
 // Returns 0 if success, non-zero if not
 int rtc_unsubscribe_int();
 
+//ASEMBLY
+
+char rtc_interrupt_handler();
+
+
 #endif
