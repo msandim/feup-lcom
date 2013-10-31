@@ -98,6 +98,16 @@ int rtc_load_info(unsigned long addr, unsigned long *info)
   return 0;
 }
 
+int rtc_set_alarm(unsigned long data[])
+{
+  // read data
+  rtc_save_info(RTC_REG_SECONDS_ALARM,data[0]);
+  rtc_save_info(RTC_REG_MINUTES_ALARM,data[1]);
+  rtc_save_info(RTC_REG_HOURS_ALARM,data[2]);
+
+  return 0;
+}
+
 int rtc_save_info(unsigned long addr, unsigned long info_to_send)
 {
   // send the address to RTC_ADDR_REG

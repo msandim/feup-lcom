@@ -51,6 +51,11 @@
 
 #define VRT_mask 0x80
 
+// MASKS FOR BCD ****************************************
+
+#define left_mask 0xF0
+#define right_mask 0x0F
+
 // FUNCTIONS ****************************************************
 
 // returns the config-data in the array config (each position -> a register from A to D)
