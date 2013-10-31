@@ -66,7 +66,7 @@ static int proc_args(int argc, char *argv[]) {
 
 	} else if (strncmp(argv[1], "interrupt", strlen("interrupt")) == 0) {
 
-		if( argc != 2 ) {
+		if( argc != 3 ) {
 			printf("test6.c: wrong no of arguments for test of interrupt \n");
 			return 1;
 		}

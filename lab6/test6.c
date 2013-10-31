@@ -7,6 +7,7 @@
 #include "test6.h"
 #include "rtc.h"
 
+
 int rtc_test_conf(void) {
 
   unsigned long config[4];
@@ -102,6 +103,6 @@ int rtc_test_date(void) {
   rtc_unsubscribe_int();
 }
 
-int rtc_test_int(/* to be defined in class */) { 
-  /* To be completed */
+int rtc_test_int(unsigned long delta) {
+	printf("\ntest_int: Setting alarm within %u s\n\n", delta);
 }

@@ -1,3 +1,6 @@
+#ifndef _LCOM_RTC_H_
+#define _LCOM_RTC_H_
+
 // CONSTANTS ***********************************************************
 
 #define BIT(n) (0x01<<(n))
@@ -81,3 +84,5 @@ int rtc_subscribe_int();
 // Unsubscribes mouse interrupts
 // Returns 0 if success, non-zero if not
 int rtc_unsubscribe_int();
+
+#endif
