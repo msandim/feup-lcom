@@ -52,14 +52,15 @@ int rtc_test_date(void) {
   //Subscribe interrupts
   int irq_set = rtc_subscribe_int();
 
-  //Enable Update ended interrupts in register B
+  //Enable Periodic interrupts in register B
   rtc_load_info(RTC_REG_B, &info);
-  info ^= UIE_mask;
+  info ^= PIE_mask;
   rtc_save_info(RTC_REG_B, info);
 
   int exit_flag = 0;
 
   while( exit_flag == 0 ) {
+
 
     /* Get a request message. */
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
@@ -94,7 +95,7 @@ int rtc_test_date(void) {
 
   //Disable Update ended interrupts in register B
   rtc_load_info(RTC_REG_B, &info);
-  info ^= UIE_mask;
+  info ^= PIE_mask;
   rtc_save_info(RTC_REG_B, info);
 
 
