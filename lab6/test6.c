@@ -18,15 +18,57 @@ int rtc_test_conf(void) {
     return 1;
 
   rtc_show_config(config);
+
+  return 0;
 }
 
 int rtc_test_date(void) {
-  /* To be completed */
+
+  unsigned long UIP, seconds, minutes, hours, day_week, day_month, month, year;
+  unsigned long data[7];
+
+  // get regA UIP
+  rtc_load_info(RTC_REG_A,&UIP);
+
+  UIP = (UIP & UIP_mask) >> 7;
+
+  // if the flag is on, wait 244 us // !??!?!?! THIS WILL BE LIKE THIS?!?!?
+  if (UIP)
+  {
+    printf("UIP IS ON, LETS WAIT\n");
+    tickdelay(micros_to_ticks(DELAY_244));
+  }
+
+  rtc_get_data(data);
+
+  rtc_show_data(data);
 }
 
 int rtc_test_int(/* to be defined in class */) { 
   /* To be completed */
 }
+
+int rtc_get_data(unsigned long data[])
+{
+  // read data
+   rtc_load_info(RTC_REG_SECONDS,&data[0]);
+   rtc_load_info(RTC_REG_MINUTES,&data[1]);
+   rtc_load_info(RTC_REG_HOURS,&data[2]);
+   rtc_load_info(RTC_REG_WEEK_DAY,&data[3]);
+   rtc_load_info(RTC_REG_MONTH_DAY,&data[4]);
+   rtc_load_info(RTC_REG_MONTH,&data[5]);
+   rtc_load_info(RTC_REG_YEAR,&data[6]);
+
+   return 0;
+}
+
+int rtc_show_data(unsigned long data[])
+{
+  printf("sg,min,hor: %x, %x, %x | week_day,month_day: %x, %x | month,year: %x, %x\n",
+      data[0],data[1],data[2],data[3],data[4],data[5],data[6]);
+  return 0;
+}
+
 
 
 int rtc_subscribe_int()
@@ -58,7 +100,7 @@ int rtc_unsubscribe_int()
     return 0;
 }
 
-int rtc_load_data(unsigned long addr, unsigned long *info)
+int rtc_load_info(unsigned long addr, unsigned long *info)
 {
   // send the address to RTC_ADDR_REG
   if (sys_outb(RTC_ADDR_REG,addr) != OK)
@@ -86,10 +128,10 @@ int rtc_save_data(unsigned long addr, unsigned long info_to_send)
 
 int rtc_get_config(unsigned long config[])
 {
-  if (rtc_load_data(RTC_REG_A,&config[0]) != OK
-      || rtc_load_data(RTC_REG_B,&config[1]) != OK
-      || rtc_load_data(RTC_REG_C,&config[2]) != OK
-      || rtc_load_data(RTC_REG_D,&config[3]) != OK)
+  if (rtc_load_info(RTC_REG_A,&config[0]) != OK
+      || rtc_load_info(RTC_REG_B,&config[1]) != OK
+      || rtc_load_info(RTC_REG_C,&config[2]) != OK
+      || rtc_load_info(RTC_REG_D,&config[3]) != OK)
     return 1;
   else
     return 0;

@@ -26,6 +26,8 @@
 // CONSTANTS
 #define RTC_IRQ 0x8
 
+#define DELAY_244 244
+
 // MASKS *****************************************
 #define UIP_mask 0x80
 #define RATE_mask 0x0F
@@ -57,11 +59,15 @@ int rtc_test_int(/* to be defined in class */);
 
 // PROJECT FUNCTIONS ****************************************************
 
+int rtc_get_data(unsigned long data[]);
+
+int rtc_show_data(unsigned long data[]);
+
 int rtc_subscribe_int();
 
 int rtc_unsubscribe_int();
 
-int rtc_load_data(unsigned long addr, unsigned long *info);
+int rtc_load_info(unsigned long addr, unsigned long *info);
 
 int rtc_save_data(unsigned long addr, unsigned long info_to_send);
 
