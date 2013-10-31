@@ -31,6 +31,8 @@
 
 #define DELAY_244 244
 
+#define RATE_MAX_mask 0xF
+
 // MASKS *****************************************
 #define UIP_mask 0x80
 #define RATE_mask 0x0F
@@ -50,8 +52,6 @@
 #define UF_mask 0x10
 
 #define VRT_mask 0x80
-
-// MASKS FOR BCD ****************************************
 
 #define left_mask 0xF0
 #define right_mask 0x0F
