@@ -10,198 +10,201 @@
 
 int rtc_test_conf(void) {
 
-  unsigned long config[4];
+	unsigned long config[4];
 
-  // get the config from reg A,B,C,D
+	// get the config from reg A,B,C,D
 
-  if (rtc_get_config(config))
-    return 1;
+	if (rtc_get_config(config))
+		return 1;
 
-  rtc_show_config(config);
+	rtc_show_config(config);
 
-  return 0;
+	return 0;
 }
 
 int rtc_test_date(void) {
 
-  unsigned long UIP, info;
-  unsigned long data[7]; // array with the data info
+	unsigned long UIP, info;
+	unsigned long data[7]; // array with the data info
 
-  int ipc_status;
-  message msg;
+	int ipc_status;
+	message msg;
 
-  //Subscribe interrupts
-  int irq_set = rtc_subscribe_int();
+	//Subscribe interrupts
+	int irq_set = rtc_subscribe_int();
 
-  // set MAX period for periodic interrupts
-  rtc_load_info(RTC_REG_A, &info);
-  info |= RATE_MAX_mask;
-  rtc_save_info(RTC_REG_A, info);
+	// set MAX period for periodic interrupts
+	rtc_load_info(RTC_REG_A, &info);
+	info |= RATE_MAX_mask;
+	rtc_save_info(RTC_REG_A, info);
 
-  //Enable Periodic interrupts in register B
-  rtc_load_info(RTC_REG_B, &info);
-  info |= PIE_mask;
-  rtc_save_info(RTC_REG_B, info);
+	//Enable Periodic interrupts in register B
+	rtc_load_info(RTC_REG_B, &info);
+	info |= PIE_mask;
+	rtc_save_info(RTC_REG_B, info);
 
-  int exit_flag = 0;
+	int exit_flag = 0;
 
-  while( exit_flag == 0 ) {
+	while( exit_flag == 0 ) {
 
 
-    /* Get a request message. */
-    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-      printf("driver_receive failed\n");
-      continue;
-    }
+		/* Get a request message. */
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("driver_receive failed\n");
+			continue;
+		}
 
-    if (is_ipc_notify(ipc_status)) { /* received notification */
-      switch (_ENDPOINT_P(msg.m_source)) {
-      case HARDWARE: /* hardware interrupt notification */
-        if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          // read register C
-          rtc_load_info(RTC_REG_C, &info);
+					// read register C
+					rtc_load_info(RTC_REG_C, &info);
 
-          // get data
-          rtc_get_data(data);
-          rtc_show_data(data);
+					// get data
+					rtc_get_data(data);
+					rtc_show_data(data);
 
-          exit_flag = 1;
-        }
-        break;
-      default:
-        break; /* no other notifications expected: do nothing */
-      }
-    } else { /* received a standard message, not a notification */
-      /* no standard messages expected: do nothing */
-    }
-  }
+					exit_flag = 1;
+				}
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
 
-  rtc_unsubscribe_int();
+	rtc_unsubscribe_int();
 
-  //Disable periodic interrupts in register B
-  rtc_load_info(RTC_REG_B, &info);
-  //info &= ~PIE_mask;
-  info ^= PIE_mask;
-  rtc_save_info(RTC_REG_B, info);
+	//Disable periodic interrupts in register B
+	rtc_load_info(RTC_REG_B, &info);
+	//info &= ~PIE_mask;
+	info ^= PIE_mask;
+	rtc_save_info(RTC_REG_B, info);
 
 }
 
 int rtc_test_int(unsigned long delta) {
-  printf("\ntest_int: Setting alarm within %u s\n\n", delta);
+	printf("\ntest_int: Setting alarm within %u s\n\n", delta);
 
-  unsigned long data[7], info;
+	unsigned long data[7], info;
 
-  unsigned long left, right, final_s, final_m, final_h;
+	unsigned long left, right, final_s, final_m, final_h;
 
-  //Reads date and adds delta
-  rtc_get_data(data);
+	//Reads date and adds delta
+	rtc_get_data(data);
 
-  rtc_show_data(data);
+	rtc_show_data(data);
 
-  left = data[0];
-  left = left >> 4;
-  right = data[0]&right_mask;
-  final_s = right + left * 10;
+	left = data[0];
+	left = left >> 4;
+	right = data[0]&right_mask;
+	final_s = right + left * 10;
 
-  left = data[1];
-  left = left >> 4;
-  right = data[1]&right_mask;
-  final_m = right + left * 10;
+	left = data[1];
+	left = left >> 4;
+	right = data[1]&right_mask;
+	final_m = right + left * 10;
 
-  left = data[2];
-  left = left >> 4;
-  right = data[2]&right_mask;
-  final_h = right + left * 10;
+	left = data[2];
+	left = left >> 4;
+	right = data[2]&right_mask;
+	final_h = right + left * 10;
 
-  final_s += delta;
+	final_s += delta;
 
-  while (final_s > 59){
-    final_s -= 60;
-    final_m ++;
-  }
-  while (final_m > 59){
-    final_m -= 60;
-    final_h ++;
-  }
-  while (final_h > 23){
-    final_h -= 24;
-  }
+	while (final_s > 59){
+		final_s -= 60;
+		final_m ++;
+	}
+	while (final_m > 59){
+		final_m -= 60;
+		final_h ++;
+	}
+	while (final_h > 23){
+		final_h -= 24;
+	}
 
-  right = final_s % 10;
-  left = final_s /10;
+	right = final_s % 10;
+	left = final_s /10;
 
-  data[0] = ((left<<4) | right);
+	data[0] = ((left<<4) | right);
 
-  right = final_m % 10;
-  left = final_m /10;
+	right = final_m % 10;
+	left = final_m /10;
 
-  data[1] = ((left<<4) | right);
+	data[1] = ((left<<4) | right);
 
-  right = final_h % 10;
-  left = final_h /10;
+	right = final_h % 10;
+	left = final_h /10;
 
-  data[2] = ((left<<4) | right);
+	data[2] = ((left<<4) | right);
 
-  printf("data0 = %X\n",data[0]);
-  printf("data1 = %X\n",data[1]);
-  printf("data2 = %X\n",data[2]);
+	printf("data0 = %X\n",data[0]);
+	printf("data1 = %X\n",data[1]);
+	printf("data2 = %X\n",data[2]);
 
-  rtc_show_data(data);
-
-
-  rtc_set_alarm(data);
+	rtc_show_data(data);
 
 
-  //Enable Alarm interrupts in register B
-  rtc_load_info(RTC_REG_B, &info);
-  info |= AIE_mask;
-  rtc_save_info(RTC_REG_B, info);
+	rtc_set_alarm(data);
 
-  //Subscribe interrupts
-  int ipc_status;
-  message msg;
 
-  int irq_set = rtc_subscribe_int();
+	rtc_load_info(RTC_REG_C, &info);
 
-  char result;
+	//Subscribe interrupts
+	int ipc_status;
+	message msg;
 
-  int exit_flag = 0;
+	int irq_set = rtc_subscribe_int();
 
-  while( exit_flag == 0 ) {
+	//Enable Alarm interrupts in register B
+	rtc_load_info(RTC_REG_B, &info);
+	info |= AIE_mask;
+	rtc_save_info(RTC_REG_B, info);
 
-    /* Get a request message. */
-    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-      printf("driver_receive failed\n");
-      continue;
-    }
+	char result;
 
-    if (is_ipc_notify(ipc_status)) { /* received notification */
-      switch (_ENDPOINT_P(msg.m_source)) {
-      case HARDWARE: /* hardware interrupt notification */
-        if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+	int exit_flag = 0;
 
-          result = rtc_interrupt_handler();
-          if (result){
-        	  exit_flag = 1;
-          }
-        }
-        break;
-      default:
-        break; /* no other notifications expected: do nothing */
-      }
-    } else { /* received a standard message, not a notification */
-      /* no standard messages expected: do nothing */
-    }
-  }
+	while( exit_flag == 0 ) {
 
-  rtc_unsubscribe_int();
+		/* Get a request message. */
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("driver_receive failed\n");
+			continue;
+		}
 
-  //Disable Alarm interrupts in register B
-  rtc_load_info(RTC_REG_B, &info);
-  info ^= AIE_mask;
-  rtc_save_info(RTC_REG_B, info);
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-  printf("test_int: Alarm raised after %u s", delta);
+					result = rtc_interrupt_handler();
+					if (result){
+						exit_flag = 1;
+					}
+
+					printf("test_int: Alarm raised after %u s", delta);
+				}
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+
+	rtc_unsubscribe_int();
+
+	//Disable Alarm interrupts in register B
+	rtc_load_info(RTC_REG_B, &info);
+	info ^= AIE_mask;
+	rtc_save_info(RTC_REG_B, info);
+
 
 }
