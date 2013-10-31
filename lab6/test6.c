@@ -54,7 +54,7 @@ int rtc_test_date(void) {
 	int irq_set = rtc_subscribe_int();
 
 	//Enable Update ended interrupts
-	rtc_load_info(RTC_REG_B, info);
+	rtc_load_info(RTC_REG_B, &info);
 
 	info ^= UIE_mask;
 
@@ -77,7 +77,7 @@ int rtc_test_date(void) {
 
 					rtc_get_data(data);
 
-					rtc_load_info(RTC_REG_C, info);
+					rtc_load_info(RTC_REG_C, &info);
 
 					info ^= IRQF_mask;
 
