@@ -65,13 +65,15 @@ int rtc_get_config(unsigned long config[]);
 // shows the config-data in the array config (each position -> a register from A to D)
 void rtc_show_config(unsigned long config[]);
 
-// returns the data-info in the array "data" acording to the register order
+// returns the data-info in the array "data" acording to the register order (SECONDS, MINUTES, HOURS)
 // returns 0 in success, 1 in non-success
 int rtc_get_data(unsigned long data[]);
 
 // shows the data-info in the array "data" acording to the register order
 void rtc_show_data(unsigned long data[]);
 
+// sets the alarm with the values given in the array "data", acordint to the register
+// order
 int rtc_set_alarm(unsigned long data[]);
 
 // sends the address "addr" to 0x70, and reads the content of 0x71 into info
