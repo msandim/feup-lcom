@@ -85,6 +85,16 @@ void rtc_show_data(unsigned long data[])
   printf("Week day: %x\n",data[3]);
 }
 
+int rtc_set_alarm(unsigned long data[])
+{
+  // read data
+  rtc_save_info(RTC_REG_SECONDS_ALARM,data[0]);
+  rtc_save_info(RTC_REG_MINUTES_ALARM,data[1]);
+  rtc_save_info(RTC_REG_HOURS_ALARM,data[2]);
+
+  return 0;
+}
+
 int rtc_load_info(unsigned long addr, unsigned long *info)
 {
   // send the address to RTC_ADDR_REG
