@@ -5,7 +5,7 @@ COMPILER_TYPE= gnu
 CC=gcc
 
 PROG=	lab6
-SRCS=	test6.c lab6.c
+SRCS=	test6.c lab6.c rtc.c
 
 CCFLAGS= -Wall
 
