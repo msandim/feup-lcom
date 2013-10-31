@@ -29,12 +29,12 @@ int main(int argc, char **argv) {
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
 	printf("\n\nUsage:\n"
-			"-   service run %s -args \"packet\" \n"
-			"    . Tests reading the command byte from mouse \n"
-			"-   service run %s -args \"asynch <time (secs)>\" \n"
-			"    . Tests measuring time from timer 0\n"
 			"-   service run %s -args \"config\" \n"
-			"    . Shows mouse configuration \n",
+			"    . Tests reading the configuration of the RTC\n"
+			"-   service run %s -args \"date\" \n"
+			"    . Tests measuring date from the RTC\n"
+			"-   service run %s -args \"interrupt <time to alarm(s)>\" \n"
+			"    . Tests alarm from the RTC\n",
 			argv[0], argv[0], argv[0]);
 }
 
