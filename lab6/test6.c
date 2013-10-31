@@ -196,11 +196,6 @@ int rtc_test_int(unsigned long delta) {
   printf("result = %X", result);
 
 
-
-
-
-
-
   rtc_unsubscribe_int();
 
   //Disable Alarm interrupts in register B

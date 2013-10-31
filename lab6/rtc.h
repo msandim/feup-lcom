@@ -72,6 +72,8 @@ int rtc_get_data(unsigned long data[]);
 // shows the data-info in the array "data" acording to the register order
 void rtc_show_data(unsigned long data[]);
 
+int rtc_set_alarm(unsigned long data[]);
+
 // sends the address "addr" to 0x70, and reads the content of 0x71 into info
 // on other words, reads the addr register.
 // returns 0 in success, 1 in non-success
