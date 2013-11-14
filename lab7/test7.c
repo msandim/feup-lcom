@@ -1,5 +1,14 @@
+#include <minix/syslib.h>
+#include <minix/drivers.h>
+#include <minix/com.h>
+
+#include <minix/sysutil.h>
+
+#include "test7.h"
+#include "serial.h"
+
 int ser_test_conf(unsigned short base_addr) {
-    /* To be completed */
+    ser_get_config();
 }
 
 int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long stop, 
