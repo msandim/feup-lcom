@@ -31,7 +31,7 @@ static void print_usage(char *argv[]) {
 	printf("\n\nUsage:\n"
 			"-   service run %s -args \"read_config <base address>\" \n"
 			"    . Tests reading the configuration of the serial Port\n"
-			"-   service run %s -args \"set_config <base address>\" \n"
+			"-   service run %s -args \"set_config <base address> <number of bits> <number of stop bits> <parity> <rate>\" \n"
 			"    . Tests setting the configuration of the serial Port\n"
 			"-   service run %s -args \"poll <base address> <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity> <rate> <number of strings to transmit> <string1> <string2> ...\" \n"
 			"    . Tests polling communication through serial Port\n",
@@ -61,7 +61,7 @@ static int proc_args(int argc, char *argv[]) {
 
 	} else if (strncmp(argv[1], "set_config", strlen("set_config")) == 0) {
 
-		if( argc != 3 ) {
+		if( argc != 7 ) {
 			printf("test7.c: wrong no of arguments to test set_config \n");
 			return 1;
 		}
@@ -69,14 +69,43 @@ static int proc_args(int argc, char *argv[]) {
 		if( (address = parse_ulong(argv[2], 16)) == ULONG_MAX )
 			return 1;
 
-		ser_test_set(address);
+		//Bits
+
+		unsigned long bits;
+
+		if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
+			return 1;
+
+		//Stop
+
+		unsigned long stop;
+
+		if( (stop = parse_ulong(argv[5], 10)) == ULONG_MAX )
+			return 1;
+
+		//Parity
+
+		long parity;
+
+		if( (parity = parse_long(argv[6], 10)) == LONG_MAX )
+			return 1;
+
+		//Rate
+
+		unsigned long rate;
+
+		if( (stop = parse_ulong(argv[7], 10)) == ULONG_MAX )
+			return 1;
+
+
+		ser_test_set(address, bits, stop, parity, rate);
 
 		printf("\ntest7.c::set_config()\n\n");
 		return 0;
 
 	} else if (strncmp(argv[1], "poll", strlen("poll")) == 0) {
 
-		if( argc < 9 ) {
+		if( argc < 10 ) {
 			printf("test7.c: wrong no of arguments for test of poll \n");
 			return 1;
 		}
@@ -88,7 +117,10 @@ static int proc_args(int argc, char *argv[]) {
 
 		//TX
 
-		unsigned char tx = argv[3];
+		unsigned char tx;
+
+		if( (tx = parse_ulong(argv[3], 16)) == ULONG_MAX )
+			return 1;
 
 		//Bits
 
@@ -97,7 +129,7 @@ static int proc_args(int argc, char *argv[]) {
 		if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
 			return 1;
 
-		//Bits
+		//Stop
 
 		unsigned long stop;
 
@@ -127,9 +159,9 @@ static int proc_args(int argc, char *argv[]) {
 
 		//Strings
 
-		unsigned short strings [stringc];
+		unsigned short strings [argc - 9];
 
-		i = 9;
+		int i = 9;
 
 		while (i < argc ){
 			unsigned long argument;
