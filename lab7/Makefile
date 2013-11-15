@@ -1,4 +1,4 @@
-# Makefile for the lab4 driver.
+# Makefile for the lab7 driver.
 
 COMPILER_TYPE= gnu
 
