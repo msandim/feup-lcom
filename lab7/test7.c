@@ -8,24 +8,30 @@
 #include "serial.h"
 
 int ser_test_conf(unsigned short base_addr) {
-    ser_get_config();
+
+  unsigned char lcr_config, ier_config;
+  lcr_config = ser_get_lcr(base_addr);
+  ier_config = ser_get_ier(base_addr);
+
+  ser_show_lcr(lcr_config);
+  ser_show_ier(ier_config);
 }
 
 int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long stop, 
-	           long parity, unsigned long rate) { 
-    /* To be completed */
+    long parity, unsigned long rate) {
+  /* To be completed */
 }
 
 int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits, 
-                    unsigned long stop, long parity, unsigned long rate, 
-                    int stringc, char *strings[]) {
-    /* To be completed */
+    unsigned long stop, long parity, unsigned long rate,
+    int stringc, char *strings[]) {
+  /* To be completed */
 }
 
 int ser_test_int(/* details to be provided */) { 
-    /* To be completed */
+  /* To be completed */
 }
 
 int ser_test_fifo(/* details to be provided */) {
-    /* To be completed */
+  /* To be completed */
 }
