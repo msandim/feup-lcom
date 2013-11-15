@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#include "test6.h"
+#include "test7.h"
 
 static int proc_args(int argc, char *argv[]);
 static void print_usage(char *argv[]);
