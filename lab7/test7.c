@@ -9,7 +9,7 @@
 
 int ser_test_conf(unsigned short base_addr) {
 
-  unsigned long lcr_config, ier_config;
+  unsigned long lcr_config, ier_config, bit_rate;
   if(ser_get_lcr(base_addr,&lcr_config) || ser_get_ier(base_addr,&ier_config))
   {
     printf("Error reading config\n\n");
@@ -18,6 +18,11 @@ int ser_test_conf(unsigned short base_addr) {
 
   ser_show_lcr(lcr_config);
   ser_show_ier(ier_config);
+
+  if (ser_get_bit_rate(base_addr,&bit_rate))
+    printf("Error reading bit rate");
+
+  printf("Bite rate: %d bps\n", bit_rate);
 
   return 0;
 }

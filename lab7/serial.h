@@ -1,6 +1,8 @@
 #ifndef _LCOM_SERIAL_H_
 #define _LCOM_SERIAL_H_
 
+#define BITRATE_CONSTANT 115200
+
 /* REGISTER ADDRESSES */
 #define SER_PORT_COM1 0x3F8
 #define SER_PORT_COM2 0x2F8
@@ -46,16 +48,16 @@
 #define UART_LCR_DLAB_DATA 0x00
 
 /* BITMASKS FOR LSR */
-#define UART_LSR_RBR_READY 0x0
-#define UART_LSR_OVERRUN_ERROR 0x1
-#define UART_LSR_PARITY_ERROR (1<<1)
-#define UART_LSR_FRAMING_ERROR (1<<2)
-#define UART_LSR_THR_EMPTY (1<<5)
+#define UART_LSR_RBR_READY 0x1
+#define UART_LSR_OVERRUN_ERROR 0x2
+#define UART_LSR_PARITY_ERROR (1<<2)
+#define UART_LSR_FRAMING_ERROR (1<<3)
+#define UART_LSR_THR_EMPTY (1<<6)
 
 /* BITMASKS FOR IER */
-#define UART_IER_RD_INT 0x0
-#define UART_IER_TE_INT 0x1
-#define UART_IER_RLS_INT 0x2
+#define UART_IER_RD_INT 0x1
+#define UART_IER_TE_INT 0x2
+#define UART_IER_RLS_INT 0x3
 
 /* FUNCTIONS DECLARATIONS */
 
@@ -64,6 +66,8 @@ int ser_get_lcr(unsigned short base_addr,unsigned long* lcr);
 
 // return 1 if non-success
 int ser_get_ier(unsigned short base_addr,unsigned long* ier);
+
+int ser_get_bit_rate(unsigned short base_addr,unsigned long* bit_rate);
 
 void ser_show_lcr(unsigned long lcr);
 

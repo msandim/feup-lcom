@@ -24,9 +24,40 @@ int ser_get_ier(unsigned short base_addr,unsigned long* ier)
     return 0;
 }
 
+int ser_get_bit_rate(unsigned short base_addr,unsigned long* bit_rate)
+{
+  // get LCR
+  unsigned long lcr;
+
+  if (ser_get_lcr(base_addr,&lcr))
+    return 1;
+
+  // set DLAB in LCR
+  lcr ^= UART_LCR_DLAB;
+
+  // save new LCR
+  if (sys_outb(base_addr + UART_LCR, &lcr) != OK)
+    return 1;
+
+  // read DLL and DLM
+  unsigned long dll,dlm;
+  if (sys_inb(base_addr + UART_DLL,&dll) != OK || sys_inb(base_addr + UART_DLM,&dlm) != OK)
+    return 1;
+
+  // disable DLAB and save
+  lcr ^= UART_LCR_DLAB;
+  if (sys_outb(base_addr + UART_LCR, lcr) != OK)
+    return 1;
+
+  // return bit_rate by parameter
+  *bit_rate = BITRATE_CONSTANT/((dlm << 8) | dll);
+
+  return 0;
+}
+
 void ser_show_lcr(unsigned long lcr)
 {
-  printf("LCR REGISTER: %x\n\n", lcr);
+  printf("LCR REGISTER: 0x%x\n\n", lcr);
 
   printf("Number of bits per char: ");
 
@@ -71,7 +102,7 @@ void ser_show_lcr(unsigned long lcr)
 
 void ser_show_ier(unsigned long ier)
 {
-  printf("IER REGISTER: %x\n\n",ier);
+  printf("IER REGISTER: 0x%x\n\n",ier);
 
   printf("Received Data Interrupts: ");
 
@@ -93,8 +124,6 @@ void ser_show_ier(unsigned long ier)
     printf("ON\n");
   else
     printf("OFF\n");
-
-  printf("\n\n");
 }
 
 
