@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
 // this function prints how to use this library
 static void print_usage(char *argv[]) {
 	printf("\n\nUsage:\n"
-			"-   service run %s -args \"read_config <base address>\" \n"
+			"-   service run %s -args \"read_config 1|2\" \n"
 			"    . Tests reading the configuration of the serial Port\n"
-			"-   service run %s -args \"set_config <base address> <number of bits> <number of stop bits> <parity> <rate>\" \n"
+			"-   service run %s -args \"set_config 1|2 <number of bits> <number of stop bits> <parity> <rate>\" \n"
 			"    . Tests setting the configuration of the serial Port\n"
 			"-   service run %s -args \"poll <base address> <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity> <rate> <number of strings to transmit> <string1> <string2> ...\" \n"
 			"    . Tests polling communication through serial Port\n",
@@ -51,8 +51,15 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		}
 
-		if( (address = parse_ulong(argv[2], 16)) == ULONG_MAX )
+		if( (address = parse_ulong(argv[2], 16)) > 2 )
 			return 1;
+
+		if (address == 1) {
+			address = 0x3F8;
+		} else if (address == 2) {
+			address = 0x2F8;
+		}
+
 
 		ser_test_conf(address);
 
@@ -66,8 +73,14 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		}
 
-		if( (address = parse_ulong(argv[2], 16)) == ULONG_MAX )
+		if( (address = parse_ulong(argv[2], 16)) > 2 )
 			return 1;
+
+		if (address == 1) {
+			address = 0x3F8;
+		} else if (address == 2) {
+			address = 0x2F8;
+		}
 
 		//Bits
 
@@ -110,10 +123,15 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 		}
 
-		//Address
-
-		if( (address = parse_ulong(argv[2], 16)) == ULONG_MAX )
+		if( (address = parse_ulong(argv[2], 16)) > 2 )
 			return 1;
+
+		if (address == 1) {
+			address = 0x3F8;
+		} else if (address == 2) {
+			address = 0x2F8;
+		}
+
 
 		//TX
 
