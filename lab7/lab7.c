@@ -56,7 +56,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		int ser_test_conf(address);
 
-		printf("\ntest7.c::read_config(base_address)\n\n");
+		printf("\ntest7.c::read_config()\n\n");
 		return 0;
 
 	} else if (strncmp(argv[1], "set_config", strlen("set_config")) == 0) {
@@ -71,19 +71,76 @@ static int proc_args(int argc, char *argv[]) {
 
 		int ser_test_set(address);
 
-		printf("\ntest7.c::set_config(base_address)\n\n");
+		printf("\ntest7.c::set_config()\n\n");
 		return 0;
 
 	} else if (strncmp(argv[1], "poll", strlen("poll")) == 0) {
 
-		if( argc != 3 ) {
+		if( argc < 9 ) {
 			printf("test7.c: wrong no of arguments for test of poll \n");
 			return 1;
 		}
 
-		unsigned short strings [argc-2];
+		//Address
 
-		printf("test6.c:: rtc_test_int()\n\n");
+		if( (address = parse_ulong(argv[2], 16)) == ULONG_MAX )
+			return 1;
+
+		//TX
+
+		unsigned char tx = argv[3];
+
+		//Bits
+
+		unsigned long bits;
+
+		if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
+			return 1;
+
+		//Bits
+
+		unsigned long stop;
+
+		if( (stop = parse_ulong(argv[5], 10)) == ULONG_MAX )
+			return 1;
+
+		//Parity
+
+		long parity;
+
+		if( (parity = parse_long(argv[6], 10)) == LONG_MAX )
+			return 1;
+
+		//Rate
+
+		unsigned long rate;
+
+		if( (stop = parse_ulong(argv[7], 10)) == ULONG_MAX )
+			return 1;
+
+		//Stringc
+
+		int stringc;
+
+		if( (stringc = parse_ulong(argv[8], 10)) == ULONG_MAX )
+			return 1;
+
+		//Strings
+
+		unsigned short strings [stringc];
+
+		i = 9;
+
+		while (i < argc ){
+			unsigned long argument;
+
+			strings [i-9] = argv[i];
+			i++;
+		}
+
+		ser_test_poll(address, tx, bits, stop, parity, rate, stringc, strings);
+
+		printf("test7.c:: poll()\n\n");
 		return 0;
 
 	} else {
