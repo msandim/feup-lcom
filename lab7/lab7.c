@@ -54,7 +54,7 @@ static int proc_args(int argc, char *argv[]) {
 		if( (address = parse_ulong(argv[2], 16)) == ULONG_MAX )
 			return 1;
 
-		int ser_test_conf(address);
+		ser_test_conf(address);
 
 		printf("\ntest7.c::read_config()\n\n");
 		return 0;
@@ -69,7 +69,7 @@ static int proc_args(int argc, char *argv[]) {
 		if( (address = parse_ulong(argv[2], 16)) == ULONG_MAX )
 			return 1;
 
-		int ser_test_set(address);
+		ser_test_set(address);
 
 		printf("\ntest7.c::set_config()\n\n");
 		return 0;
