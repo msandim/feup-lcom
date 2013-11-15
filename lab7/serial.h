@@ -16,7 +16,14 @@
 #define UART_DLL 0 // Divisor Latch Least
 #define UART_DLM 1 // Divisor Latch Most
 
-/* BITMASKS FOR LCR */
+/* BITMASKS FOR UART LCR */
+#define UART_LCR_WORD_LENGTH 0x3
+#define UART_LCR_STOP_BIT 0x4
+#define UART_LCR_PARITY 0x38
+#define UART_LCR_PARITY_BIT_3 0x8
+#define UART_LCR_DLAB 0x80
+
+/* SEQUENCES FOR UART LCR */
 // Word size in Line Control
 #define UART_LCR_WORD_LENGTH_5 0x0
 #define UART_LCR_WORD_LENGTH_6 0x1
@@ -50,6 +57,17 @@
 #define UART_IER_TE_INT 0x1
 #define UART_IER_RLS_INT 0x2
 
+/* FUNCTIONS DECLARATIONS */
+
+// return 1 if non-success
+int ser_get_lcr(unsigned short base_addr,unsigned long* lcr);
+
+// return 1 if non-success
+int ser_get_ier(unsigned short base_addr,unsigned long* ier);
+
+void ser_show_lcr(unsigned long lcr);
+
+void ser_show_ier(unsigned long ier);
 
 
 #endif

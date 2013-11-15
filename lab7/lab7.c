@@ -177,7 +177,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		//Strings
 
-		unsigned short strings [argc - 9];
+		char* strings [argc - 9];
 
 		int i = 9;
 

@@ -9,12 +9,17 @@
 
 int ser_test_conf(unsigned short base_addr) {
 
-  unsigned char lcr_config, ier_config;
-  lcr_config = ser_get_lcr(base_addr);
-  ier_config = ser_get_ier(base_addr);
+  unsigned long lcr_config, ier_config;
+  if(ser_get_lcr(base_addr,&lcr_config) || ser_get_ier(base_addr,&ier_config))
+  {
+    printf("Error reading config\n\n");
+    return 1;
+  }
 
   ser_show_lcr(lcr_config);
   ser_show_ier(ier_config);
+
+  return 0;
 }
 
 int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long stop, 
