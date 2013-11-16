@@ -52,12 +52,15 @@
 #define UART_LSR_OVERRUN_ERROR 0x2
 #define UART_LSR_PARITY_ERROR (1<<2)
 #define UART_LSR_FRAMING_ERROR (1<<3)
-#define UART_LSR_THR_EMPTY (1<<6)
+#define UART_LSR_THR_EMPTY (1<<5)
 
 /* BITMASKS FOR IER */
 #define UART_IER_RD_INT 0x1
 #define UART_IER_TE_INT 0x2
 #define UART_IER_RLS_INT 0x3
+
+/* ************************* POLLING *****************************/
+#define DELAY_POLL 5000 // 5ms
 
 /* FUNCTIONS DECLARATIONS */
 
@@ -72,6 +75,10 @@ int ser_get_bit_rate(unsigned short base_addr,unsigned long* bit_rate);
 void ser_show_lcr(unsigned long lcr);
 
 void ser_show_ier(unsigned long ier);
+
+int ser_send_string_poll(base_addr,stringc,strings[]);
+
+int ser_receive_string_poll(base_addr);
 
 
 #endif

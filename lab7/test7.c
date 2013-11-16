@@ -32,13 +32,26 @@ int ser_test_conf(unsigned short base_addr) {
 
 int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long stop, 
     long parity, unsigned long rate) {
-  /* To be completed */
+
+  /* to be done by joao neto */
 }
 
 int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits, 
     unsigned long stop, long parity, unsigned long rate,
     int stringc, char *strings[]) {
-  /* To be completed */
+
+  //ser_test_set(base_addr,bits,stop,parity,rate);
+
+  unsigned int str_count;
+
+  if (tx) // if transmiter
+
+    // send each string!
+    for (str_count=0; str_count < stringc; str_count++)
+      ser_send_string_poll(base_addr,stringc,strings[str_count]);
+
+  else // if receiver
+    ser_receive_string_poll(base_addr);
 }
 
 int ser_test_int(/* details to be provided */) { 

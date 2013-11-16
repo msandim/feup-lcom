@@ -124,4 +124,40 @@ void ser_show_ier(unsigned long ier)
     printf("OFF\n");
 }
 
+int ser_send_string_poll(unsigned short base_addr, char string[])
+{
+  unsigned int char_count=0;
 
+  // continue sending chars till we find the null terminator
+  while (string[char_count] != '\0')
+  {
+    ser_send_char_poll(base_addr,strings[str_count]);
+    char_count++;
+  }
+
+  return 0;
+
+}
+
+void ser_send_char_poll(unsigned short base_addr,unsigned char char_send)
+{
+  unsigned long lsr;
+  ser_get_reg(base_addr,UART_LSR,&lsr);
+
+  unsigned int wait_times = 0;
+
+  while( !(lsr & UART_LSR_THR_EMPTY) || wait_times == 100) // repeat the cycle while THR is not empty or timeout!!!
+  {
+    tickdelay(micros_to_ticks(DELAY_POLL); // lets wait till we check again
+    ser_get_reg(base_addr,UART_LSR,&lsr); // get the reg again and then analyze it
+    wait_times++;
+  }
+
+  // now that it's empty, we can send the char
+  ser_set_reg(base_addr,UART_THR, char_send);
+}
+
+int ser_receive_string_poll(base_addr)
+{
+
+}
