@@ -37,10 +37,12 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
 }
 
 int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits, 
-    unsigned long stop, long parity, unsigned long rate,
-    int stringc, char *strings[]) {
-
+    unsigned long stop, long parity, unsigned long rate,int stringc, char *strings[])
+{
   //ser_test_set(base_addr,bits,stop,parity,rate);
+
+  //printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u",stringc,base_addr,tx,bits,stop,parity,rate);
+  //printf("NUMBER OF STRS: %u, STRINGS: %s,%s",stringc,strings[0],strings[1]);
 
   unsigned int str_count;
 
@@ -48,7 +50,7 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
 
     // send each string!
     for (str_count=0; str_count < stringc; str_count++)
-      ser_send_string_poll(base_addr,stringc,strings[str_count]);
+      ser_send_string_poll(base_addr,strings[str_count]);
 
   else // if receiver
     ser_receive_string_poll(base_addr);

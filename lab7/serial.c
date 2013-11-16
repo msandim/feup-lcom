@@ -131,7 +131,7 @@ int ser_send_string_poll(unsigned short base_addr, char string[])
   // continue sending chars till we find the null terminator
   while (string[char_count] != '\0')
   {
-    ser_send_char_poll(base_addr,strings[str_count]);
+    ser_send_char_poll(base_addr,string[char_count]);
     char_count++;
   }
 
@@ -148,7 +148,7 @@ void ser_send_char_poll(unsigned short base_addr,unsigned char char_send)
 
   while( !(lsr & UART_LSR_THR_EMPTY) || wait_times == 100) // repeat the cycle while THR is not empty or timeout!!!
   {
-    tickdelay(micros_to_ticks(DELAY_POLL); // lets wait till we check again
+    tickdelay(micros_to_ticks(DELAY_POLL)); // lets wait till we check again
     ser_get_reg(base_addr,UART_LSR,&lsr); // get the reg again and then analyze it
     wait_times++;
   }
@@ -157,7 +157,7 @@ void ser_send_char_poll(unsigned short base_addr,unsigned char char_send)
   ser_set_reg(base_addr,UART_THR, char_send);
 }
 
-int ser_receive_string_poll(base_addr)
+int ser_receive_string_poll(unsigned short base_addr)
 {
 
 }

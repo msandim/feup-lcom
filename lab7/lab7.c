@@ -31,9 +31,9 @@ static void print_usage(char *argv[]) {
   printf("\n\nUsage:\n"
       "-   service run %s -args \"read_config 1|2\" \n"
       "    . Tests reading the configuration of the serial Port\n"
-      "-   service run %s -args \"set_config 1|2 <number of bits> <number of stop bits> <parity> <rate>\" \n"
+      "-   service run %s -args \"set_config 1|2 <number of bits> <number of stop bits> <parity (none|even|odd)> <rate>\" \n"
       "    . Tests setting the configuration of the serial Port\n"
-      "-   service run %s -args \"poll <base address> <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity> <rate> <number of strings to transmit> <string1> <string2> ...\" \n"
+      "-   service run %s -args \"poll 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <strings>\" \n"
       "    . Tests polling communication through serial Port\n",
       argv[0], argv[0], argv[0]);
 }
@@ -68,6 +68,8 @@ static int proc_args(int argc, char *argv[]) {
     printf("\ntest7.c::read_config()\n\n");
     return 0;
 
+    // SET CONFIG *************************
+
   } else if (strncmp(argv[1], "set_config", strlen("set_config")) == 0) {
 
     if( argc != 7 ) {
@@ -88,31 +90,36 @@ static int proc_args(int argc, char *argv[]) {
     }
 
     //Bits
-
     unsigned long bits;
 
     if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
       return 1;
 
     //Stop
-
     unsigned long stop;
 
     if( (stop = parse_ulong(argv[5], 10)) == ULONG_MAX )
       return 1;
 
-    //Parity
-
+    //Parity - none|odd|even
     long parity;
 
-    if( (parity = parse_long(argv[6], 10)) == LONG_MAX )
+    if (strncmp(argv[6], "none", strlen("none")) == 0)
+      parity = 0;
+    else if (strncmp(argv[6], "odd", strlen("odd")) == 0)
+      parity = 0x08;
+    else if (strncmp(argv[6], "even", strlen("even")) == 0)
+      parity = 0x18;
+    else
+    {
+      printf("test7.c: invalid parity argument\n");
       return 1;
+    }
 
     //Rate
-
     unsigned long rate;
 
-    if( (stop = parse_ulong(argv[7], 10)) == ULONG_MAX )
+    if( (rate = parse_ulong(argv[7], 10)) == ULONG_MAX )
       return 1;
 
 
@@ -121,9 +128,11 @@ static int proc_args(int argc, char *argv[]) {
     printf("\ntest7.c::set_config()\n\n");
     return 0;
 
+    // ***************************** POLLING
+
   } else if (strncmp(argv[1], "poll", strlen("poll")) == 0) {
 
-    if( argc < 10 ) {
+    if( argc < 9 ) {
       printf("test7.c: wrong no of arguments for test of poll \n");
       return 1;
     }
@@ -140,59 +149,56 @@ static int proc_args(int argc, char *argv[]) {
       address = 0x2F8;
     }
 
-
     //TX
-
     unsigned char tx;
 
     if( (tx = parse_ulong(argv[3], 16)) == ULONG_MAX )
       return 1;
 
     //Bits
-
     unsigned long bits;
 
     if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
       return 1;
 
     //Stop
-
     unsigned long stop;
 
     if( (stop = parse_ulong(argv[5], 10)) == ULONG_MAX )
       return 1;
 
-    //Parity
-
+    //Parity - none|odd|even
     long parity;
 
-    if( (parity = parse_long(argv[6], 10)) == LONG_MAX )
+    if (strncmp(argv[6], "none", strlen("none")) == 0)
+      parity = 0;
+    else if (strncmp(argv[6], "odd", strlen("odd")) == 0)
+      parity = 0x08;
+    else if (strncmp(argv[6], "even", strlen("even")) == 0)
+      parity = 0x18;
+    else
+    {
+      printf("test7.c: invalid parity argument\n");
       return 1;
+    }
+    printf("par: %x\n",parity);
 
     //Rate
-
     unsigned long rate;
 
-    if( (stop = parse_ulong(argv[7], 10)) == ULONG_MAX )
+    if( (rate = parse_ulong(argv[7], 10)) == ULONG_MAX )
       return 1;
 
-    //Stringc
+    // string
+    char* strings [argc - 8];
+    unsigned long stringc = argc - 8;
 
-    int stringc;
-
-    if( (stringc = parse_ulong(argv[8], 10)) == ULONG_MAX )
-      return 1;
-
-    //Strings
-
-    char* strings [argc - 9];
-
-    int i = 9;
+    int i = 8;
 
     while (i < argc ){
       unsigned long argument;
 
-      strings [i-9] = argv[i];
+      strings [i-8] = argv[i];
       i++;
     }
 
@@ -202,7 +208,7 @@ static int proc_args(int argc, char *argv[]) {
     return 0;
 
   } else {
-    printf("test6.c: non valid function \"%s\" to test\n", argv[1]);
+    printf("test7.c: non valid function \"%s\" to test\n", argv[1]);
     return 1;
   }
 }
@@ -220,7 +226,7 @@ static unsigned long parse_ulong(char *str, int base) {
   }
 
   if (endptr == str) {
-    printf("test6.c: parse_ulong: no digits were found in %s \n", str);
+    printf("test7.c: parse_ulong: no digits were found in %s \n", str);
     return ULONG_MAX;
   }
 
@@ -244,7 +250,7 @@ static long parse_long(char *str, int base) {
   }
 
   if (endptr == str) {
-    printf("test6.c: parse_long: no digits were found in %s \n", str);
+    printf("test7.c: parse_long: no digits were found in %s \n", str);
     return LONG_MAX;
   }
 

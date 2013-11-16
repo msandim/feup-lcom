@@ -76,9 +76,12 @@ void ser_show_lcr(unsigned long lcr);
 
 void ser_show_ier(unsigned long ier);
 
-int ser_send_string_poll(base_addr,stringc,strings[]);
+/* FOR POLLING */
 
-int ser_receive_string_poll(base_addr);
+int ser_send_string_poll(unsigned short base_addr, char string[]);
 
+void ser_send_char_poll(unsigned short base_addr,unsigned char char_send);
+
+int ser_receive_string_poll(unsigned short base_addr);
 
 #endif
