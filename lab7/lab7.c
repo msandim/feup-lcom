@@ -92,23 +92,23 @@ static int proc_args(int argc, char *argv[]) {
     //Bits
     unsigned long bits;
 
-    if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
+    if( (bits = parse_ulong(argv[3], 10)) == ULONG_MAX )
       return 1;
 
     //Stop
     unsigned long stop;
 
-    if( (stop = parse_ulong(argv[5], 10)) == ULONG_MAX )
+    if( (stop = parse_ulong(argv[4], 10)) == ULONG_MAX )
       return 1;
 
     //Parity - none|odd|even
     long parity;
 
-    if (strncmp(argv[6], "none", strlen("none")) == 0)
+    if (strncmp(argv[5], "none", strlen("none")) == 0)
       parity = 0;
-    else if (strncmp(argv[6], "odd", strlen("odd")) == 0)
+    else if (strncmp(argv[5], "odd", strlen("odd")) == 0)
       parity = 0x08;
-    else if (strncmp(argv[6], "even", strlen("even")) == 0)
+    else if (strncmp(argv[5], "even", strlen("even")) == 0)
       parity = 0x18;
     else
     {
@@ -119,7 +119,7 @@ static int proc_args(int argc, char *argv[]) {
     //Rate
     unsigned long rate;
 
-    if( (rate = parse_ulong(argv[7], 10)) == ULONG_MAX )
+    if( (rate = parse_ulong(argv[6], 10)) == ULONG_MAX )
       return 1;
 
 

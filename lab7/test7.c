@@ -34,6 +34,7 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
     long parity, unsigned long rate) {
 
   /* to be done by joao neto */
+  //printf("BASE_ADDR: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u",base_addr,bits,stop,parity,rate);
 }
 
 int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits, 
