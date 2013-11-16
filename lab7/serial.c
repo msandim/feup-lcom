@@ -6,20 +6,18 @@
 
 #include "serial.h"
 
-int ser_get_lcr(unsigned short base_addr,unsigned long* lcr)
+int ser_get_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long* result)
 {
-  if (sys_inb(base_addr + UART_LCR, lcr) != OK)
+  if (sys_inb(base_addr + relative_addr, result) != OK)
     return 1;
-
   else
     return 0;
 }
 
-int ser_get_ier(unsigned short base_addr,unsigned long* ier)
+int ser_set_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long value)
 {
-  if (sys_inb(base_addr + UART_IER, ier) != OK)
+  if (sys_outb(base_addr + relative_addr, value) != OK)
     return 1;
-
   else
     return 0;
 }
@@ -29,24 +27,24 @@ int ser_get_bit_rate(unsigned short base_addr,unsigned long* bit_rate)
   // get LCR
   unsigned long lcr;
 
-  if (ser_get_lcr(base_addr,&lcr))
+  if (ser_get_reg(base_addr,UART_LCR,&lcr))
     return 1;
 
   // set DLAB in LCR
   lcr ^= UART_LCR_DLAB;
 
   // save new LCR
-  if (sys_outb(base_addr + UART_LCR, &lcr) != OK)
+  if (ser_set_reg(base_addr,UART_LCR,lcr))
     return 1;
 
   // read DLL and DLM
   unsigned long dll,dlm;
-  if (sys_inb(base_addr + UART_DLL,&dll) != OK || sys_inb(base_addr + UART_DLM,&dlm) != OK)
+  if (ser_get_reg(base_addr,UART_DLL,&dll) || ser_get_reg(base_addr,UART_DLM,&dlm))
     return 1;
 
   // disable DLAB and save
   lcr ^= UART_LCR_DLAB;
-  if (sys_outb(base_addr + UART_LCR, lcr) != OK)
+  if (ser_set_reg(base_addr,UART_LCR,lcr))
     return 1;
 
   // return bit_rate by parameter
