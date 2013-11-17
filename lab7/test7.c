@@ -37,7 +37,7 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
 
   if(ser_get_reg(base_addr,UART_LCR,&lcr_config))
   {
-    printf("Error reading LCR\n\n");
+    printf("ser_test_set: Error reading LCR\n\n");
     return 1;
   }
 
@@ -56,7 +56,7 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
   } else if (bits == 8) {
     new_lcr |= UART_LCR_WORD_LENGTH_8;
   } else {
-    printf ("Invalid number of bits %x\n", bits);
+    printf ("ser_test_set: Invalid number of bits %x\n", bits);
     return 1;
   }
 
@@ -66,7 +66,7 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
   } else if (stop == 2) {
     new_lcr |= UART_LCR_STOP_BIT_2;
   } else {
-    printf ("Invalid number of stop bits %x\n", stop);
+    printf ("ser_test_set: Invalid number of stop bits %x\n", stop);
     return 1;
   }
 
@@ -78,7 +78,7 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
   } else if (parity == 1) {
     new_lcr |= UART_LCR_ODD_PARITY;
   } else {
-    printf ("Invalid parity %x\n", parity);
+    printf ("ser_test_set: Invalid parity %x\n", parity);
     return 1;
   }
 
@@ -103,21 +103,21 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
 
   ser_test_set(base_addr,bits,stop,parity,rate);
 
-  //printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u",stringc,base_addr,tx,bits,stop,parity,rate);
-  //printf("NUMBER OF STRS: %u, STRINGS: %s,%s",stringc,strings[0],strings[1]);
+  // test (maybe deactivate ALL interrupts before it ?!) ********************
+  unsigned long ier = 0;
+  ser_set_reg(base_addr,UART_IER,ier);
+
+  //printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u\n",stringc,base_addr,tx,bits,stop,parity,rate);
+  //printf("NUMBER OF STRS: %u, STRINGS: %s,%s,%s,%s\n",stringc,strings[0],strings[1],strings[2],strings[3]);
 
   unsigned int str_count;
 
-  if (tx) /* if transmiter */ {
-
-    // test ********************
-    unsigned long ier = 0;
-    ser_set_reg(base_addr,UART_IER,ier);
+  if (tx) /* if transmiter */
 
     // send each string!
     for (str_count=0; str_count < stringc; str_count++)
       ser_send_string_poll(base_addr,strings[str_count]);
-  }
+
   else // if receiver
     ser_receive_string_poll(base_addr);
 

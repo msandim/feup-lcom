@@ -57,11 +57,10 @@ static int proc_args(int argc, char *argv[]) {
       return 1;
     }
 
-    if (address == 1) {
+    if (address == 1)
       address = 0x3F8;
-    } else if (address == 2) {
+    else
       address = 0x2F8;
-    }
 
     ser_test_conf(address);
 
@@ -83,11 +82,10 @@ static int proc_args(int argc, char *argv[]) {
       return 1;
     }
 
-    if (address == 1) {
+    if (address == 1)
       address = 0x3F8;
-    } else if (address == 2) {
+    else
       address = 0x2F8;
-    }
 
     //Bits
     unsigned long bits;
@@ -159,11 +157,10 @@ static int proc_args(int argc, char *argv[]) {
       return 1;
     }
 
-    if (address == 1) {
+    if (address == 1)
       address = 0x3F8;
-    } else if (address == 2) {
+    else
       address = 0x2F8;
-    }
 
     //TX
     unsigned char tx;
