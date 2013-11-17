@@ -65,13 +65,13 @@
 
 /* FUNCTIONS DECLARATIONS */
 
-// return 1 if non-success
-int ser_get_lcr(unsigned short base_addr,unsigned long* lcr);
+int ser_get_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long* result);
 
-// return 1 if non-success
-int ser_get_ier(unsigned short base_addr,unsigned long* ier);
+int ser_set_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long value);
 
 int ser_get_bit_rate(unsigned short base_addr,unsigned long* bit_rate);
+
+int ser_set_bit_rate(unsigned short base_addr,unsigned long bit_rate);
 
 void ser_show_lcr(unsigned long lcr);
 

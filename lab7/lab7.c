@@ -51,7 +51,7 @@ static int proc_args(int argc, char *argv[]) {
       return 1;
     }
 
-    if( (address = parse_ulong(argv[2], 16)) > 2 )
+    if( (address = parse_ulong(argv[2], 16)) > 2  || address == 0)
     {
       printf("test7.c: invalid address of serial port\n");
       return 1;
@@ -77,7 +77,7 @@ static int proc_args(int argc, char *argv[]) {
       return 1;
     }
 
-    if( (address = parse_ulong(argv[2], 16)) > 2 )
+    if( (address = parse_ulong(argv[2], 16)) > 2  || address == 0)
     {
       printf("test7.c: invalid address of serial port\n");
       return 1;
@@ -95,21 +95,31 @@ static int proc_args(int argc, char *argv[]) {
     if( (bits = parse_ulong(argv[3], 10)) == ULONG_MAX )
       return 1;
 
+    if (bits != 5 && bits != 6 && bits != 7 && bits != 8) {
+      printf ("test7.c: Invalid number of bits %x\n", bits);
+      return 1;
+    }
+
     //Stop
     unsigned long stop;
 
     if( (stop = parse_ulong(argv[4], 10)) == ULONG_MAX )
       return 1;
 
+    if (stop != 1 && stop != 2) {
+      printf ("test7.c: Invalid number of stop bits %x\n", stop);
+      return 1;
+    }
+
     //Parity - none|odd|even
     long parity;
 
     if (strncmp(argv[5], "none", strlen("none")) == 0)
-      parity = 0;
+      parity = -1;
     else if (strncmp(argv[5], "odd", strlen("odd")) == 0)
-      parity = 0x08;
+      parity = 1;
     else if (strncmp(argv[5], "even", strlen("even")) == 0)
-      parity = 0x18;
+      parity = 0;
     else
     {
       printf("test7.c: invalid parity argument\n");
@@ -121,6 +131,12 @@ static int proc_args(int argc, char *argv[]) {
 
     if( (rate = parse_ulong(argv[6], 10)) == ULONG_MAX )
       return 1;
+
+    if (rate == 0)
+    {
+      printf("test7.c: invalid rate argument\n");
+      return 1;
+    }
 
 
     ser_test_set(address, bits, stop, parity, rate);
@@ -137,7 +153,7 @@ static int proc_args(int argc, char *argv[]) {
       return 1;
     }
 
-    if( (address = parse_ulong(argv[2], 16)) > 2 )
+    if( (address = parse_ulong(argv[2], 16)) > 2  || address == 0)
     {
       printf("test7.c: invalid address of serial port\n");
       return 1;
@@ -161,33 +177,48 @@ static int proc_args(int argc, char *argv[]) {
     if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
       return 1;
 
+    if (bits != 5 && bits != 6 && bits != 7 && bits != 8) {
+      printf ("test7.c: Invalid number of stop bits %x\n", bits);
+      return 1;
+    }
+
     //Stop
     unsigned long stop;
 
     if( (stop = parse_ulong(argv[5], 10)) == ULONG_MAX )
       return 1;
 
+    if (stop != 1 && stop != 2) {
+      printf ("test7.c: Invalid number of stop bits %x\n", stop);
+      return 1;
+    }
+
     //Parity - none|odd|even
     long parity;
 
     if (strncmp(argv[6], "none", strlen("none")) == 0)
-      parity = 0;
+      parity = -1;
     else if (strncmp(argv[6], "odd", strlen("odd")) == 0)
-      parity = 0x08;
+      parity = 1;
     else if (strncmp(argv[6], "even", strlen("even")) == 0)
-      parity = 0x18;
+      parity = 0;
     else
     {
       printf("test7.c: invalid parity argument\n");
       return 1;
     }
-    printf("par: %x\n",parity);
 
     //Rate
     unsigned long rate;
 
     if( (rate = parse_ulong(argv[7], 10)) == ULONG_MAX )
       return 1;
+
+    if (rate == 0)
+    {
+      printf("test7.c: invalid rate argument\n");
+      return 1;
+    }
 
     // string
     char* strings [argc - 8];
