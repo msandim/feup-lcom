@@ -41,12 +41,59 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
 		return 1;
 	}
 
-	unsigned long new_lcr;
+	unsigned long new_lcr = 0;
 
+	new_lcr |= (lcr_config & UART_LCR_SET_BREAK);
+	new_lcr |= (lcr_config & UART_LCR_DLAB);
+
+	//BITS
+
+	if (bits == 5) {
+		new_lcr |= UART_LCR_WORD_LENGTH_5;
+	} else if (bits == 6) {
+		new_lcr |= UART_LCR_WORD_LENGTH_6;
+	} else if (bits == 7) {
+		new_lcr |= UART_LCR_WORD_LENGTH_7;
+	} else if (bits == 8) {
+		new_lcr |= UART_LCR_WORD_LENGTH_8;
+	} else {
+		printf ("Invalid number of bits %x\n", bits);
+		return 1;
+	}
+
+	//STOP
+
+	if (stop == 1) {
+		new_lcr |= UART_LCR_STOP_BIT_1;
+	} else if (stop == 2) {
+		new_lcr |= UART_LCR_STOP_BIT_2;
+	} else {
+		printf ("Invalid number of stop bits %x\n", stop);
+		return 1;
+	}
+
+	//PARITY
+
+	if (parity == -1) {
+		new_lcr |= UART_LCR_NO_PARITY;
+	} else if (parity == 0) {
+		new_lcr |= UART_LCR_EVEN_PARITY;
+	} else if (parity == 1) {
+		new_lcr |= UART_LCR_ODD_PARITY;
+	} else {
+		printf ("Invalid parity %x\n", parity);
+		return 1;
+	}
 
 	ser_set_bit_rate(base_addr, rate);
 
+	if (ser_set_reg(base_addr,UART_LCR,new_lcr))
+		return 1;
+
+
 	printf("BASE_ADDR: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u",base_addr,bits,stop,parity,rate);
+
+	return 0;
 }
 
 int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits, 
