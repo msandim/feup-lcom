@@ -33,6 +33,17 @@ int ser_test_conf(unsigned short base_addr) {
 int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long stop, 
 		long parity, unsigned long rate) {
 
+	unsigned long lcr_config;
+
+	if(ser_get_reg(base_addr,UART_LCR,&lcr_config))
+	{
+		printf("Error reading config\n\n");
+		return 1;
+	}
+
+	unsigned long new_lcr;
+
+
 	ser_set_bit_rate(base_addr, rate);
 
 	printf("BASE_ADDR: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u",base_addr,bits,stop,parity,rate);

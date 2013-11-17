@@ -70,8 +70,8 @@ int ser_set_bit_rate(unsigned short base_addr,unsigned long bit_rate)
 
 	// set DLL and DLM
 	unsigned long div = BITRATE_CONSTANT/bit_rate;
-	unsigned long dll = div;
-	unsigned long dlm = (div >> 8);
+	unsigned long dll = div &(0x0F);
+	unsigned long dlm = ((div &(0xF0)) >> 8);
 
 	if (ser_set_reg(base_addr,UART_DLL,dll) || ser_set_reg(base_addr,UART_DLM,dlm))
 		return 1;
