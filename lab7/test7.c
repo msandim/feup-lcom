@@ -47,7 +47,6 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
   new_lcr |= (lcr_config & UART_LCR_DLAB);
 
   //BITS
-
   if (bits == 5) {
     new_lcr |= UART_LCR_WORD_LENGTH_5;
   } else if (bits == 6) {
@@ -62,7 +61,6 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
   }
 
   //STOP
-
   if (stop == 1) {
     new_lcr |= UART_LCR_STOP_BIT_1;
   } else if (stop == 2) {
@@ -73,7 +71,6 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
   }
 
   //PARITY
-
   if (parity == -1) {
     new_lcr |= UART_LCR_NO_PARITY;
   } else if (parity == 0) {
@@ -99,7 +96,12 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
 int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits, 
     unsigned long stop, long parity, unsigned long rate,int stringc, char *strings[])
 {
-  //ser_test_set(base_addr,bits,stop,parity,rate);
+  // save current lcr and rate
+  unsigned long lcr_backup, rate_backup;
+  ser_get_reg(base_addr,UART_LCR,&lcr_backup);
+  ser_get_bit_rate(base_addr,&rate_backup);
+
+  ser_test_set(base_addr,bits,stop,parity,rate);
 
   //printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u",stringc,base_addr,tx,bits,stop,parity,rate);
   //printf("NUMBER OF STRS: %u, STRINGS: %s,%s",stringc,strings[0],strings[1]);
@@ -118,6 +120,11 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
   }
   else // if receiver
     ser_receive_string_poll(base_addr);
+
+  // reset lcr and rate previously saved
+  ser_set_reg(base_addr,UART_LCR,lcr_backup);
+  ser_set_bit_rate(base_addr,rate_backup);
+
 }
 
 int ser_test_int(/* details to be provided */) { 

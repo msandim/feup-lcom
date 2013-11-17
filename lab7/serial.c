@@ -178,7 +178,7 @@ void ser_send_char_poll(unsigned short base_addr,unsigned char char_send)
 
   unsigned int wait_times = 0;
 
-  while( !(lsr & UART_LSR_THR_EMPTY) || wait_times == 100) // repeat the cycle while THR is not empty or timeout!!!
+  while( !(lsr & UART_LSR_THR_EMPTY) && wait_times < 100) // repeat the cycle while THR is not empty or timeout!!!
   {
     tickdelay(micros_to_ticks(DELAY_POLL)); // lets wait till we check again
     ser_get_reg(base_addr,UART_LSR,&lsr); // get the reg again and then analyze it
