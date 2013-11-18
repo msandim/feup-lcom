@@ -112,12 +112,20 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
 
   unsigned int str_count;
 
-  if (tx) /* if transmiter */
+  if (tx) /* if transmiter */ {
 
     // send each string!
     for (str_count=0; str_count < stringc; str_count++)
+    {
       ser_send_string_poll(base_addr,strings[str_count]);
 
+      if (str_count != stringc-1) // if not the last string, send space to separate
+        ser_send_char_poll(base_addr,' ');
+    }
+
+    ser_send_char_poll(base_addr,'.'); // send a space to separate strings
+
+  }
   else // if receiver
     ser_receive_string_poll(base_addr);
 
