@@ -103,9 +103,15 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
 
   ser_test_set(base_addr,bits,stop,parity,rate);
 
-  // test (maybe deactivate ALL interrupts before it ?!) ********************
-  unsigned long ier = 0;
+  // deactivate ALL interrupts before sending something
+  unsigned long ier_config = 0xF0;
+  unsigned long ier;
+  ser_get_reg(base_addr,UART_IER,&ier);
+  ier = ier & ier_config; // put all interrupts to 0
   ser_set_reg(base_addr,UART_IER,ier);
+
+  if (ser_set_reg(base_addr,UART_IER,ier))
+    return 1;
 
   //printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u\n",stringc,base_addr,tx,bits,stop,parity,rate);
   //printf("NUMBER OF STRS: %u, STRINGS: %s,%s,%s,%s\n",stringc,strings[0],strings[1],strings[2],strings[3]);
@@ -130,9 +136,11 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
     ser_receive_string_poll(base_addr);
 
   // reset lcr and rate previously saved
-  ser_set_reg(base_addr,UART_LCR,lcr_backup);
-  ser_set_bit_rate(base_addr,rate_backup);
+  if (ser_set_reg(base_addr,UART_LCR,lcr_backup))
+    return 1;
 
+  if (ser_set_bit_rate(base_addr,rate_backup))
+    return 1;
 }
 
 int ser_test_int(/* details to be provided */) { 

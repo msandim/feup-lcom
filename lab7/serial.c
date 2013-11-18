@@ -9,7 +9,10 @@
 int ser_get_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long* result)
 {
   if (sys_inb(base_addr + relative_addr, result) != OK)
+  {
+    printf("serial.c: Error getting register in 0x%x",base_addr+relative_addr);
     return 1;
+  }
   else
     return 0;
 }
@@ -17,7 +20,10 @@ int ser_get_reg(unsigned short base_addr, unsigned char relative_addr, unsigned 
 int ser_set_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long value)
 {
   if (sys_outb(base_addr + relative_addr, value) != OK)
+  {
+    printf("serial.c: Error writting in register in 0x%x",base_addr+relative_addr);
     return 1;
+  }
   else
     return 0;
 }
