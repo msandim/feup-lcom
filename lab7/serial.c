@@ -172,6 +172,8 @@ int ser_send_string_poll(unsigned short base_addr, char string[])
     ser_send_char_poll(base_addr,string[char_count]);
     char_count++;
   }
+
+  ser_send_char_poll(base_addr,string[char_count]); // send "\0"
   return 0;
 
 }
