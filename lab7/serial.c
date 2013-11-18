@@ -167,6 +167,8 @@ int ser_send_string_poll(unsigned short base_addr, char string[])
     char_count++;
   }
 
+  ser_send_char_poll(base_addr,'.'); // send the terminator char!
+
   return 0;
 
 }
