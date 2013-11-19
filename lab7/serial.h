@@ -1,7 +1,12 @@
 #ifndef _LCOM_SERIAL_H_
 #define _LCOM_SERIAL_H_
 
+#define BIT(n) (0x01<<(n))
+
 #define BITRATE_CONSTANT 115200
+
+#define SER_COM1_IRQ 0x4
+#define SER_COM2_IRQ 0x3
 
 /* REGISTER ADDRESSES */
 #define SER_PORT_COM1 0x3F8
@@ -56,9 +61,19 @@
 #define UART_LSR_THR_EMPTY (1<<5)
 
 /* BITMASKS FOR IER */
-#define UART_IER_RD_INT 0x1
-#define UART_IER_TE_INT 0x2
-#define UART_IER_RLS_INT 0x3
+#define UART_IER_ENABLE_RD 0x1
+#define UART_IER_ENABLE_TE 0x2
+#define UART_IER_ENABLE_RLS 0x3
+
+/* BITMASKS FOR IIR */
+#define UART_INT_PEND 0x1
+#define UART_INT_SEQUENCE 0xE
+
+// sequences for interrupts
+#define UART_INT_TE 0x2
+#define UART_INT_TIMEOUT 0x8
+#define UART_INT_RD 0x4
+#define UART_INT_LS 0x6
 
 /* ************************* POLLING *****************************/
 #define DELAY_POLL 5000 // 5ms
@@ -85,6 +100,17 @@ void ser_send_char_poll(unsigned short base_addr,unsigned char char_send);
 
 int ser_receive_string_poll(unsigned short base_addr);
 
-void ser_receive_char_poll (unsigned short base_addr, unsigned char* char_receive);
+int ser_receive_char_poll(unsigned short base_addr, unsigned char* char_receive);
+
+/* FOR INTERRUPTS */
+int ser_send_string_int(unsigned short base_addr, char string[]);
+
+int ser_receive_string_int(unsigned short base_addr);
+
+int ser_ih(unsigned short base_addr, unsigned char* char_send_receive);
+
+int ser_subscribe_int(unsigned short base_addr);
+
+int ser_unsubscribe_int();
 
 #endif

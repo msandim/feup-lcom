@@ -86,7 +86,8 @@ int ser_test_set(unsigned short base_addr, unsigned long bits, unsigned long sto
   if (ser_set_reg(base_addr,UART_LCR,new_lcr))
     return 1;
 
-  ser_set_bit_rate(base_addr, rate);
+  if (ser_set_bit_rate(base_addr, rate))
+    return 1;
 
   //printf("BASE_ADDR: %x, BITS: %x,STOP: %x,PARITY: %d, RATE: %u",base_addr,bits,stop,parity,rate);
 
@@ -98,42 +99,93 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
 {
   // save current lcr and rate
   unsigned long lcr_backup, rate_backup;
-  ser_get_reg(base_addr,UART_LCR,&lcr_backup);
-  ser_get_bit_rate(base_addr,&rate_backup);
+  if (ser_get_reg(base_addr,UART_LCR,&lcr_backup))
+    return 1;
+  if (ser_get_bit_rate(base_addr,&rate_backup))
+    return 1;
 
-  ser_test_set(base_addr,bits,stop,parity,rate);
+  if (ser_test_set(base_addr,bits,stop,parity,rate))
+    return 1;
 
   // deactivate ALL interrupts before sending something
   unsigned long ier_config = 0xF0;
   unsigned long ier;
-  ser_get_reg(base_addr,UART_IER,&ier);
+
+  if (ser_get_reg(base_addr,UART_IER,&ier))
+    return 1;
   ier = ier & ier_config; // put all interrupts to 0
-  ser_set_reg(base_addr,UART_IER,ier);
+  if (ser_set_reg(base_addr,UART_IER,ier))
+    return 1;
 
   if (ser_set_reg(base_addr,UART_IER,ier))
     return 1;
 
-  printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u\n",stringc,base_addr,tx,bits,stop,parity,rate);
+  //printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u\n",stringc,base_addr,tx,bits,stop,parity,rate);
   //printf("NUMBER OF STRS: %u, STRINGS: %s,%s,%s,%s\n",stringc,strings[0],strings[1],strings[2],strings[3]);
 
   unsigned int str_count;
 
-  if (tx) /* if transmiter */ {
-
+  if (tx)
+  {
+    printf("Sending chars:\n");
     // send each string!
     for (str_count=0; str_count < stringc; str_count++)
     {
       ser_send_string_poll(base_addr,strings[str_count]);
 
       if (str_count != stringc-1) // if not the last string, send space to separate
+      {
+        ser_send_char_poll(base_addr,' '); printf(" ");
+      }
+    }
+
+    ser_send_char_poll(base_addr,'.'); // send a space to separate strings
+    printf(".\n");
+  }
+  else // if receiver
+  {
+    printf("Receiving chars:\n");
+    ser_receive_string_poll(base_addr);
+    printf("\n");
+  }
+
+  // reset lcr and rate previously saved
+  if (ser_set_reg(base_addr,UART_LCR,lcr_backup))
+    return 1;
+  if (ser_set_bit_rate(base_addr,rate_backup))
+    return 1;
+
+  return 0;
+}
+
+int ser_test_int(unsigned short base_addr, unsigned char tx, unsigned long bits,
+    unsigned long stop, long parity, unsigned long rate, int stringc, char *strings[]) {
+
+  // save current lcr and rate
+  unsigned long lcr_backup, rate_backup;
+  ser_get_reg(base_addr,UART_LCR,&lcr_backup);
+  ser_get_bit_rate(base_addr,&rate_backup);
+
+  ser_test_set(base_addr,bits,stop,parity,rate);
+
+  unsigned int str_count;
+
+  if (tx)
+  {
+    // send each string!
+    for (str_count=0; str_count < stringc; str_count++)
+    {
+      ser_send_string_int(base_addr,strings[str_count]);
+
+      if (str_count != stringc-1) // if not the last string, send space to separate
         ser_send_char_poll(base_addr,' ');
     }
 
     ser_send_char_poll(base_addr,'.'); // send a space to separate strings
-
   }
-  else // if receiver
-    ser_receive_string_poll(base_addr);
+  else
+    ser_receive_string_int(base_addr);
+
 
   // reset lcr and rate previously saved
   if (ser_set_reg(base_addr,UART_LCR,lcr_backup))
@@ -141,10 +193,8 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
 
   if (ser_set_bit_rate(base_addr,rate_backup))
     return 1;
-}
 
-int ser_test_int(/* details to be provided */) { 
-  /* To be completed */
+  return 0;
 }
 
 int ser_test_fifo(/* details to be provided */) {
