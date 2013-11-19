@@ -113,7 +113,7 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
   if (ser_set_reg(base_addr,UART_IER,ier))
     return 1;
 
-  //printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u\n",stringc,base_addr,tx,bits,stop,parity,rate);
+  printf("STRINGC: %u, BASE_ADDR: %x,TX: %x, BITS: %x,STOP: %x,PARITY: %x, RATE: %u\n",stringc,base_addr,tx,bits,stop,parity,rate);
   //printf("NUMBER OF STRS: %u, STRINGS: %s,%s,%s,%s\n",stringc,strings[0],strings[1],strings[2],strings[3]);
 
   unsigned int str_count;
