@@ -85,4 +85,6 @@ void ser_send_char_poll(unsigned short base_addr,unsigned char char_send);
 
 int ser_receive_string_poll(unsigned short base_addr);
 
+void ser_receive_char_poll (unsigned short base_addr, unsigned char* char_receive);
+
 #endif

@@ -206,8 +206,8 @@ int ser_receive_string_poll(unsigned short base_addr)
 	do {
 
 		ser_receive_char_poll (base_addr, & current_char);
-		printf("%c",current_char);
-	} while (current_char != '\0');
+		printf(" Caracter recebido: %c",current_char);
+	} while (current_char != '.');
 }
 
 void ser_receive_char_poll (unsigned short base_addr, unsigned char* char_receive) {
@@ -215,19 +215,16 @@ void ser_receive_char_poll (unsigned short base_addr, unsigned char* char_receiv
 	unsigned long lsr;
 	ser_get_reg(base_addr,UART_LSR,&lsr);
 
-	unsigned int wait_times = 0;
-
-	while( !(lsr & UART_LSR_RBR_READY) && wait_times < 100) // repeat the cycle while THR is not empty or timeout!!!
+	while( !(lsr & UART_LSR_RBR_READY)) // repeat the cycle while THR is not empty
 	{
 		tickdelay(micros_to_ticks(DELAY_POLL)); // lets wait till we check again
 		ser_get_reg(base_addr,UART_LSR,&lsr); // get the reg again and then analyze it
-		wait_times++;
 	}
 
-	long unsigned int RBR;
-	ser_get_reg(base_addr,UART_RBR, &RBR);
+	unsigned long RBR_content;
+	ser_get_reg(base_addr,UART_RBR, &RBR_content);
+	*char_receive = RBR_content;
 
-	printf ("RBR\n\n%X\n", RBR);
-	//printf("CHAR %c FOI RECEBIDO!\n",char_receive);
-
+	printf ("RBR: %X\n", RBR_content);
+	printf("CHAR %c FOI RECEBIDO!\n",*char_receive);
 }
