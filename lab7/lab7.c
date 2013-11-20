@@ -34,8 +34,10 @@ static void print_usage(char *argv[]) {
       "-   service run %s -args \"set_config 1|2 <number of bits> <number of stop bits> <parity (none|even|odd)> <rate>\" \n"
       "    . Tests setting the configuration of the serial Port\n"
       "-   service run %s -args \"poll 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <strings>\" \n"
-      "    . Tests polling communication through serial Port\n",
-      argv[0], argv[0], argv[0]);
+      "    . Tests polling communication through serial Port\n"
+      "-   service run %s -args \"int 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <strings>\" \n"
+      "    . Tests interrupt communication through serial Port\n",
+      argv[0], argv[0], argv[0],argv[0]);
 }
 
 // this function treats the args
@@ -142,11 +144,14 @@ static int proc_args(int argc, char *argv[]) {
     printf("\ntest7.c::set_config()\n\n");
     return 0;
 
-    // ***************************** POLLING
+    // ***************************** POLLING && INTERRUPT
 
-  } else if (strncmp(argv[1], "poll", strlen("poll")) == 0) {
+  } else if ((strncmp(argv[1], "poll", strlen("poll")) == 0) || (strncmp(argv[1], "int", strlen("int")) == 0)) {
 
+    int selected_mode=0; // 0 -> poll / 1 -> int / 2 -> fifo
 
+    if (strncmp(argv[1], "int", strlen("int")) == 0)
+      selected_mode = 1;
 
     if( (address = parse_ulong(argv[2], 16)) > 2  || address == 0)
     {
@@ -239,9 +244,16 @@ static int proc_args(int argc, char *argv[]) {
       i++;
     }
 
-    ser_test_poll(address, tx, bits, stop, parity, rate, stringc, strings);
+    if (selected_mode == 1)
+      ser_test_int(address, tx, bits, stop, parity, rate, stringc, strings);
+    else
+      ser_test_poll(address, tx, bits, stop, parity, rate, stringc, strings);
 
-    printf("test7.c:: poll()\n\n");
+    if (selected_mode == 1)
+      printf("test7.c::int()\n\n");
+    else
+      printf("test7.c::poll()\n\n");
+
     return 0;
 
   } else {

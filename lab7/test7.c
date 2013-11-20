@@ -27,6 +27,27 @@ int ser_test_conf(unsigned short base_addr) {
 
   printf("Bite rate: %d bps\n", bit_rate);
 
+  // TESTE
+  unsigned long iir_cenax;
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+  ser_get_reg(base_addr,UART_IIR,&iir_cenax);
+  printf("O REGISTO IIR: 0x%x\n",iir_cenax);
+
   return 0;
 }
 
@@ -159,32 +180,44 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
 }
 
 int ser_test_int(unsigned short base_addr, unsigned char tx, unsigned long bits,
-    unsigned long stop, long parity, unsigned long rate, int stringc, char *strings[]) {
-
+    unsigned long stop, long parity, unsigned long rate, int stringc, char *strings[])
+{
   // save current lcr and rate
   unsigned long lcr_backup, rate_backup;
-  ser_get_reg(base_addr,UART_LCR,&lcr_backup);
-  ser_get_bit_rate(base_addr,&rate_backup);
 
-  ser_test_set(base_addr,bits,stop,parity,rate);
+  if (ser_get_reg(base_addr,UART_LCR,&lcr_backup))
+    return 1;
+  if (ser_get_bit_rate(base_addr,&rate_backup))
+    return 1;
+
+  if (ser_test_set(base_addr,bits,stop,parity,rate))
+    return 1;
 
   unsigned int str_count;
 
   if (tx)
   {
+    printf("Sending chars:\n");
     // send each string!
     for (str_count=0; str_count < stringc; str_count++)
     {
       ser_send_string_int(base_addr,strings[str_count]);
 
       if (str_count != stringc-1) // if not the last string, send space to separate
-        ser_send_char_poll(base_addr,' ');
+      {
+        ser_send_char_poll(base_addr,' '); printf(" ");
+      }
     }
 
     ser_send_char_poll(base_addr,'.'); // send a space to separate strings
+    printf(".\n");
   }
   else
+  {
+    printf("Receiving chars:\n");
     ser_receive_string_int(base_addr);
+    printf("\n");
+  }
 
 
   // reset lcr and rate previously saved

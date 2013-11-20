@@ -211,8 +211,8 @@ int ser_receive_string_poll(unsigned short base_addr)
   return 0;
 }
 
-int ser_receive_char_poll (unsigned short base_addr, unsigned char* char_receive) {
-
+int ser_receive_char_poll(unsigned short base_addr, unsigned char* char_receive)
+{
   unsigned long lsr;
   ser_get_reg(base_addr,UART_LSR,&lsr);
 
@@ -264,23 +264,27 @@ int ser_send_string_int(unsigned short base_addr, char string[])
   int ipc_status;
   message msg;
 
-  ser_send_char_poll(base_addr,string[0]); // send first char by polling
-
   // turn on the interrupts (only empty transmiter int)
   unsigned long ier_config, ier_config_backup;
   ser_get_reg(base_addr,UART_IER,&ier_config);
   ier_config_backup = ier_config;
-  ier_config &= UART_IER_ENABLE_TE;
+  ier_config |= UART_IER_ENABLE_TE;
   ser_set_reg(base_addr,UART_IER,ier_config);
 
+  // teste
+  printf("IER_CONFIG: 0x%X\nIER_ANTIGO: 0x%X\n",ier_config,ier_config_backup);
 
   // subscribe the serial interrupts
   int irq_set = ser_subscribe_int(base_addr);
 
+  ser_send_char_poll(base_addr,string[0]); // send first char by polling
+  printf("%c",string[0]);
+
   unsigned int i=1;
 
-  while( string[i] != '\0' ) // do while we dont find the dot (terminator)
+  while( string[i] != '\0' ) // do while we dont find the null terminator
   {
+    printf("driver receive ups\n");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
       continue;
@@ -290,14 +294,9 @@ int ser_send_string_int(unsigned short base_addr, char string[])
       case HARDWARE: /* hardware interrupt notification */
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          unsigned char ex;
-          int status = ser_ih(base_addr,&ex);
+          ser_ih(base_addr,&string[i]);
 
-          if (status == 1)
-          {
-            printf("An error occurred during the reception of the strings");
-            return 1;
-          }
+          printf("char %c",string[i]);
 
           i++; // advance to the next char
 
@@ -328,14 +327,19 @@ int ser_receive_string_int(unsigned short base_addr)
   unsigned long ier_config, ier_config_backup;
   ser_get_reg(base_addr,UART_IER,&ier_config);
   ier_config_backup = ier_config;
-  ier_config &= (UART_IER_ENABLE_RD | UART_IER_ENABLE_RLS);
+  ier_config |= UART_IER_ENABLE_RD;
+  ier_config |= UART_IER_ENABLE_RLS;
   ser_set_reg(base_addr,UART_IER,ier_config);
+
+  // teste
+  printf("IER_CONFIG: 0x%X\nIER_ANTIGO: 0x%X\n",ier_config,ier_config_backup);
 
   // subscribe the serial interrupts
   int irq_set = ser_subscribe_int(base_addr);
 
-  while( char_received != '.' ) // do while we dont find the dot (terminator)
+  while(char_received != '.') // do while we dont find the dot (terminator)
   {
+    printf("driver receive ups\n");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
       continue;
@@ -356,6 +360,8 @@ int ser_receive_string_int(unsigned short base_addr)
 
           if (status == 0)
             printf("Char received: %c\n",char_received);
+
+          printf("entrou!");
         }
         break;
       default:
@@ -379,11 +385,13 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive)
   unsigned long IIR_content;
   ser_get_reg(base_addr,UART_IIR,&IIR_content);
 
-  if(IIR_content & UART_INT_PEND) // int is pending?
+  printf("IIR_CONTENT: 0x%X\n",IIR_content);
+
+  if(!(IIR_content & UART_INT_PEND)) // int is pending?
   {
     switch(IIR_content & UART_INT_SEQUENCE) // check sequence
     {
-    case UART_INT_TE: // transmiter empty
+    case UART_INT_TE: // transmitter empty
       printf("Transmiter Empty\n");
       ser_set_reg(base_addr,UART_THR,(unsigned long) *char_send_receive); // send char
       return 0;
@@ -401,11 +409,11 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive)
       break;
 
     default:
-      printf("Non-relevant interruption occurred.\n"); return 2; break;
+      printf("Non-relevant interrupt occurred.\n"); return 2; break;
     }
   }
 
-  printf("Not an int occurred!\n"); return 2;
+  printf("An interrupt outside the UART occured wtv.\n"); return 2;
 }
 
 int ser_subscribe_int(unsigned short base_addr)
