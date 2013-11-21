@@ -275,7 +275,7 @@ int ser_send_string_int(unsigned short base_addr, char string[])
   ser_set_reg(base_addr,UART_IER,ier_config);
 
   // teste
-  printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
+  //printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
 
   // subscribe the serial interrupts
   int irq_set = ser_subscribe_int(base_addr);
@@ -287,7 +287,7 @@ int ser_send_string_int(unsigned short base_addr, char string[])
 
   while( string[i] != '\0' ) // do while we dont find the null terminator
   {
-    printf("driver receive ups");
+    //printf("driver receive ups");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
       continue;
@@ -297,9 +297,9 @@ int ser_send_string_int(unsigned short base_addr, char string[])
       case HARDWARE: /* hardware interrupt notification */
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          ser_ih(base_addr,&string[i]);
+          ser_ih(base_addr,&string[i],0,0);
 
-          printf("char %c",string[i]);
+          printf("%c",string[i]);
 
           i++; // advance to the next char
 
@@ -357,7 +357,7 @@ int ser_receive_string_int(unsigned short base_addr)
       case HARDWARE: /* hardware interrupt notification */
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          int status = ser_ih(base_addr,&char_received);
+          int status = ser_ih(base_addr,&char_received,0,0);
 
           if (status == 1)
           {
@@ -386,13 +386,173 @@ int ser_receive_string_int(unsigned short base_addr)
   return 0;
 }
 
-int ser_ih(unsigned short base_addr, unsigned char* char_send_receive)
+
+int ser_send_string_int_fifo(unsigned short base_addr,char string[])
+{
+  int ipc_status;
+  message msg;
+
+  // turn on fifo & clear transmit
+  unsigned long fcr_config=0;
+  fcr_config |= (UART_ENABLE_FIFO || UART_CLEAR_TFIFO);
+  ser_set_reg(base_addr,UART_FCR,fcr_config);
+
+  // turn on the interrupts (only empty transmiter int)
+  unsigned long ier_config, ier_config_backup;
+  ser_get_reg(base_addr,UART_IER,&ier_config);
+  ier_config_backup = ier_config;
+  ier_config = 0; // reset all interrupts
+  ier_config |= UART_IER_ENABLE_TE;
+  ser_set_reg(base_addr,UART_IER,ier_config);
+
+  // create array of chars to transmit
+  char queue[16];
+  int queue_counter = 0; // array index (number of elements on the array)
+
+  // teste
+  printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
+
+  // subscribe the serial interrupts
+  int irq_set = ser_subscribe_int(base_addr);
+
+  ser_send_char_poll(base_addr,string[0]); // send first char by polling
+  printf("%c",string[0]);
+
+  unsigned int i=1;
+
+  while( string[i] != '\0' ) // do while we dont find the null terminator
+  {
+    printf("driver receive ups");
+    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+      printf("driver_receive failed\n");
+      continue;
+    }
+    if (is_ipc_notify(ipc_status)) {
+      switch (_ENDPOINT_P(msg.m_source)) {
+      case HARDWARE:
+        if (msg.NOTIFY_ARG & irq_set) {
+
+          while(queue_counter < 16 && string[i] != '\0')
+          {
+            queue[queue_counter] = string[i];
+            printf("%c",string[i]);
+            i++; // advance to next char
+            queue_counter++; // advance to next queue position
+          }
+
+          ser_ih(base_addr,queue,1,queue_counter);
+
+          queue_counter = 0; // initialize queue size
+
+        }
+        break;
+      default:
+        break;
+      }
+    } else {
+
+    }
+  }
+
+  ser_unsubscribe_int();
+
+  // desactivate fifo and clear transmit
+  fcr_config=0;
+  fcr_config |= UART_CLEAR_TFIFO;
+  ser_set_reg(base_addr,UART_FCR,fcr_config);
+
+  ser_set_reg(base_addr,UART_IER,ier_config_backup); // old ier values
+
+  return 0;
+}
+
+/*int ser_receive_string_int_fifo(unsigned short base_addr,unsigned long trigger)
+{
+  int ipc_status;
+  message msg;
+
+  // turn on fifo & clear transmit
+  unsigned long fcr_config=0;
+  fcr_config |= (UART_ENABLE_FIFO || UART_CLEAR_RFIFO);
+  ser_set_reg(base_addr,UART_FCR,fcr_config);
+
+  // turn on the interrupts (only empty transmiter int)
+  unsigned long ier_config, ier_config_backup;
+  ser_get_reg(base_addr,UART_IER,&ier_config);
+  ier_config_backup = ier_config;
+  ier_config = 0; // reset all interrupts
+  ier_config |= UART_IER_ENABLE_TE;
+  ser_set_reg(base_addr,UART_IER,ier_config);
+
+  // create array of chars to transmit
+  char queue[16];
+  int queue_counter = 0; // array index (number of elements on the array)
+
+  // teste
+  printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
+
+  // subscribe the serial interrupts
+  int irq_set = ser_subscribe_int(base_addr);
+
+  ser_send_char_poll(base_addr,string[0]); // send first char by polling
+  printf("%c",string[0]);
+
+  unsigned int i=1;
+
+  while( string[i] != '\0' ) // do while we dont find the null terminator
+  {
+    //printf("driver receive ups");
+    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+      printf("driver_receive failed\n");
+      continue;
+    }
+    if (is_ipc_notify(ipc_status)) {
+      switch (_ENDPOINT_P(msg.m_source)) {
+      case HARDWARE:
+        if (msg.NOTIFY_ARG & irq_set) {
+
+          while(queue_counter < 16 && string[i] != '\0')
+          {
+            queue[queue_counter] = string[i];
+            printf("%c",string[i]);
+            i++; // advance to next char
+            queue_counter++; // advance to next queue position
+          }
+
+          ser_ih(base_addr,queue,1,queue_counter);
+
+          queue_counter = 0; // initialize queue size
+
+        }
+        break;
+      default:
+        break;
+      }
+    } else {
+
+    }
+  }
+
+  ser_unsubscribe_int();
+
+  // desactivate fifo and clear transmit
+  fcr_config=0;
+  fcr_config |= UART_CLEAR_RFIFO;
+  ser_set_reg(base_addr,UART_FCR,fcr_config);
+
+  ser_set_reg(base_addr,UART_IER,ier_config_backup); // old ier values
+
+  return 0;
+}*/
+
+
+int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo, int size_fifo)
 {
   // get IIR and analyze it
   unsigned long IIR_content;
   ser_get_reg(base_addr,UART_IIR,&IIR_content);
 
-  printf("IIR_CONTENT_IH: 0x%X\n",IIR_content);
+  //printf("IIR_CONTENT_IH: 0x%X\n",IIR_content);
 
   if(!(IIR_content & UART_INT_PEND)) // int is pending?
   {
@@ -400,13 +560,32 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive)
     {
     case UART_INT_TE: // transmitter empty
       printf("Transmiter Empty\n");
-      ser_set_reg(base_addr,UART_THR,(unsigned long) *char_send_receive); // send char
+      if (fifo)
+      {
+        while(size_fifo--)
+        {
+          ser_set_reg(base_addr,UART_THR,(unsigned long) *char_send_receive); // send char
+          char_send_receive++;
+        }
+      }
+      else
+        ser_set_reg(base_addr,UART_THR,(unsigned long) *char_send_receive); // send char
       return 0;
       break;
 
     case UART_INT_RD: // received data available
       printf("Received Data Available\n");
-      ser_get_reg(base_addr,UART_RBR,(unsigned long*) char_send_receive); // receive char
+      if (fifo)
+      {
+        int counter_till_trigger = 0;
+        while(counter_till_trigger != size_fifo)
+
+          ser_get_reg(base_addr,UART_RBR,(unsigned long*) char_send_receive); // receive char
+        counter_till_trigger++;
+        char_send_receive++;
+      }
+      else
+        ser_get_reg(base_addr,UART_RBR,(unsigned long*) char_send_receive); // receive char
       return 0;
       break;
 
