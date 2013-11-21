@@ -78,7 +78,7 @@ int ser_set_bit_rate(unsigned short base_addr,unsigned long bit_rate)
 
   // set DLL and DLM
   unsigned long div = BITRATE_CONSTANT/bit_rate;
-  unsigned long dll = div & (0x0F);
+  unsigned long dll = div & (0x00FF);
   unsigned long dlm = (div >> 8);
 
   if (ser_set_reg(base_addr,UART_DLL,dll) || ser_set_reg(base_addr,UART_DLM,dlm))
@@ -224,6 +224,7 @@ int ser_receive_char_poll(unsigned short base_addr, unsigned char* char_receive)
   else if (lsr & UART_LSR_PARITY_ERROR)
   {
     printf("Parity Error in serial port data receiving\n");
+    return 1;
   }
   else if (lsr & UART_LSR_FRAMING_ERROR)
   {
@@ -244,6 +245,7 @@ int ser_receive_char_poll(unsigned short base_addr, unsigned char* char_receive)
     else if (lsr & UART_LSR_PARITY_ERROR)
     {
       printf("Parity Error in serial port data receiving\n");
+      return 1;
     }
     else if (lsr & UART_LSR_FRAMING_ERROR)
     {
@@ -268,11 +270,12 @@ int ser_send_string_int(unsigned short base_addr, char string[])
   unsigned long ier_config, ier_config_backup;
   ser_get_reg(base_addr,UART_IER,&ier_config);
   ier_config_backup = ier_config;
+  ier_config = 0; // reset all interrupts
   ier_config |= UART_IER_ENABLE_TE;
   ser_set_reg(base_addr,UART_IER,ier_config);
 
   // teste
-  printf("IER_CONFIG: 0x%X\nIER_ANTIGO: 0x%X\n",ier_config,ier_config_backup);
+  printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
 
   // subscribe the serial interrupts
   int irq_set = ser_subscribe_int(base_addr);
@@ -284,7 +287,7 @@ int ser_send_string_int(unsigned short base_addr, char string[])
 
   while( string[i] != '\0' ) // do while we dont find the null terminator
   {
-    printf("driver receive ups\n");
+    printf("driver receive ups");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
       continue;
@@ -327,18 +330,23 @@ int ser_receive_string_int(unsigned short base_addr)
   unsigned long ier_config, ier_config_backup;
   ser_get_reg(base_addr,UART_IER,&ier_config);
   ier_config_backup = ier_config;
+  ier_config = 0; // reset interrupts
   ier_config |= UART_IER_ENABLE_RD;
   ier_config |= UART_IER_ENABLE_RLS;
   ser_set_reg(base_addr,UART_IER,ier_config);
 
   // teste
-  printf("IER_CONFIG: 0x%X\nIER_ANTIGO: 0x%X\n",ier_config,ier_config_backup);
+  printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
 
   // subscribe the serial interrupts
   int irq_set = ser_subscribe_int(base_addr);
 
   while(char_received != '.') // do while we dont find the dot (terminator)
   {
+    unsigned long IIR_content;
+    ser_get_reg(base_addr,UART_IIR,&IIR_content);
+
+    printf("IIR_CONTENT: 0x%X",IIR_content);
     printf("driver receive ups\n");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
@@ -361,7 +369,6 @@ int ser_receive_string_int(unsigned short base_addr)
           if (status == 0)
             printf("Char received: %c\n",char_received);
 
-          printf("entrou!");
         }
         break;
       default:
@@ -385,7 +392,7 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive)
   unsigned long IIR_content;
   ser_get_reg(base_addr,UART_IIR,&IIR_content);
 
-  printf("IIR_CONTENT: 0x%X\n",IIR_content);
+  printf("IIR_CONTENT_IH: 0x%X\n",IIR_content);
 
   if(!(IIR_content & UART_INT_PEND)) // int is pending?
   {
