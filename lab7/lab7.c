@@ -34,10 +34,8 @@ static void print_usage(char *argv[]) {
       "-   service run %s -args \"set_config 1|2 <number of bits> <number of stop bits> <parity (none|even|odd)> <rate>\" \n"
       "    . Tests setting the configuration of the serial Port\n"
       "-   service run %s -args \"poll 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <strings>\" \n"
-      "    . Tests polling communication through serial Port\n"
-      "-   service run %s -args \"int 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <strings>\" \n"
-      "    . Tests interrupt communication through serial Port\n",
-      argv[0], argv[0], argv[0],argv[0]);
+      "    . Tests polling communication through serial Port\n",
+      argv[0], argv[0], argv[0]);
 }
 
 // this function treats the args
@@ -144,14 +142,9 @@ static int proc_args(int argc, char *argv[]) {
     printf("\ntest7.c::set_config()\n\n");
     return 0;
 
-    // ***************************** POLLING && INTERRUPT
+    // ***************************** POLLING
 
-  } else if ((strncmp(argv[1], "poll", strlen("poll")) == 0) || (strncmp(argv[1], "int", strlen("int")) == 0)) {
-
-    int selected_mode=0; // 0 -> poll / 1 -> int / 2 -> fifo
-
-    if (strncmp(argv[1], "int", strlen("int")) == 0)
-      selected_mode = 1;
+  } else if (strncmp(argv[1], "poll", strlen("poll")) == 0) {
 
     if( (address = parse_ulong(argv[2], 16)) > 2  || address == 0)
     {
@@ -244,19 +237,110 @@ static int proc_args(int argc, char *argv[]) {
       i++;
     }
 
-    if (selected_mode == 1)
-      ser_test_int(address, tx, bits, stop, parity, rate, stringc, strings);
-    else
-      ser_test_poll(address, tx, bits, stop, parity, rate, stringc, strings);
+    ser_test_poll(address, tx, bits, stop, parity, rate, stringc, strings);
 
-    if (selected_mode == 1)
-      printf("test7.c::int()\n\n");
-    else
-      printf("test7.c::poll()\n\n");
-
+    printf("test7.c:: poll()\n\n");
     return 0;
 
-  } else {
+  } else if (strncmp(argv[1], "fifo", strlen("fifo")) == 0) {
+
+	    if( (address = parse_ulong(argv[2], 16)) > 2  || address == 0)
+	    {
+	      printf("test7.c: invalid address of serial port\n");
+	      return 1;
+	    }
+
+	    if (address == 1)
+	      address = 0x3F8;
+	    else
+	      address = 0x2F8;
+
+	    //TX
+	    unsigned char tx;
+
+	    if( (tx = parse_ulong(argv[3], 16)) == ULONG_MAX )
+	      return 1;
+
+	    if (tx) {
+	      if( argc < 9 ) {
+	        printf("test7.c: wrong no of arguments for test of fifo \n");
+	        return 1;
+	      }
+	    } else {
+	      if( argc < 8 ) {
+	        printf("test7.c: wrong no of arguments for test of fifo \n");
+	        return 1;
+	      }
+	    }
+
+	    //Bits
+	    unsigned long bits;
+
+	    if( (bits = parse_ulong(argv[4], 10)) == ULONG_MAX )
+	      return 1;
+
+	    if (bits != 5 && bits != 6 && bits != 7 && bits != 8) {
+	      printf ("test7.c: Invalid number of stop bits %x\n", bits);
+	      return 1;
+	    }
+
+	    //Stop
+	    unsigned long stop;
+
+	    if( (stop = parse_ulong(argv[5], 10)) == ULONG_MAX )
+	      return 1;
+
+	    if (stop != 1 && stop != 2) {
+	      printf ("test7.c: Invalid number of stop bits %x\n", stop);
+	      return 1;
+	    }
+
+	    //Parity - none|odd|even
+	    long parity;
+
+	    if (strncmp(argv[6], "none", strlen("none")) == 0)
+	      parity = -1;
+	    else if (strncmp(argv[6], "odd", strlen("odd")) == 0)
+	      parity = 1;
+	    else if (strncmp(argv[6], "even", strlen("even")) == 0)
+	      parity = 0;
+	    else
+	    {
+	      printf("test7.c: invalid parity argument\n");
+	      return 1;
+	    }
+
+	    //Rate
+	    unsigned long rate;
+
+	    if( (rate = parse_ulong(argv[7], 10)) == ULONG_MAX )
+	      return 1;
+
+	    if (rate == 0)
+	    {
+	      printf("test7.c: invalid rate argument\n");
+	      return 1;
+	    }
+
+	    // string
+	    char* strings [argc - 8];
+	    unsigned long stringc = argc - 8;
+
+	    int i = 8;
+
+	    while (i < argc ){
+	      unsigned long argument;
+
+	      strings [i-8] = argv[i];
+	      i++;
+	    }
+
+	    ser_test_fifo(address, tx, bits, stop, parity, rate, stringc, strings);
+
+	    printf("test7.c:: poll()\n\n");
+	    return 0;
+
+	  } else {
     printf("test7.c: non valid function \"%s\" to test\n", argv[1]);
     return 1;
   }
