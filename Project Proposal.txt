@@ -1,0 +1,34 @@
+Ferramenta de desenho;
+
+Funcionalidades:
+Permite desenhar formas básicas utilizando o rato:
+	linhas
+	circulos
+	rectangulos
+	...
+Trabalho cooperativo (em 2 computadores simultaneamente);
+Barra de ferramentas lateral
+Para desenhar:
+	Com o rato
+
+Enviar ecrã
+(Gravar ficheiro)
+(Enviar ficheiro)
+
+Dispositivos:
+Placa de video em modo gráfico			Visualiza o desenho
+						Visualiza a barra de ferramentas
+
+Rato						Desenha objectos
+						Selecciona cor
+
+Teclado						Seleccionar opções no menu
+						Seleccionar opções na barra de ferramentas
+
+Timer						Tempo de trabalho
+
+RTC						Mostrar hora
+
+Serial						Enviar/Receber ecrã
+
+Jogo dos tanques;
