@@ -75,6 +75,10 @@
 #define UART_INT_RD 0x4
 #define UART_INT_LS 0x6
 
+/* BITMASKS FOR FCR */
+#define UART_FCR_CLEAR_BUFFERS 0x6
+#define UART_ENABLE_FIFO 0x1
+
 /* ************************* POLLING *****************************/
 #define DELAY_POLL 5000 // 5ms
 
