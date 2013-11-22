@@ -92,41 +92,64 @@
 
 /* FUNCTIONS DECLARATIONS */
 
+// gets the value of a reg with relative addr/ returns 1 in success, 0 in non-success
 int ser_get_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long* result);
 
+// sets the value of a reg with relative addr/ returns 1 in success, 0 in non-success
 int ser_set_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long value);
 
+// gets the value of bite rate/ returns 1 in success, 0 in non-success
 int ser_get_bit_rate(unsigned short base_addr,unsigned long* bit_rate);
 
+// sets the value of bite rate/ returns 1 in success, 0 in non-success
 int ser_set_bit_rate(unsigned short base_addr,unsigned long bit_rate);
 
+// shows lcr in a human friendly way
 void ser_show_lcr(unsigned long lcr);
 
+// shows ier in a human friendly way
 void ser_show_ier(unsigned long ier);
 
 /* FOR POLLING */
 
+// sends an array of bytes in polling mode/ returns 1 in success, 0 in non-success
 int ser_send_string_poll(unsigned short base_addr, char string[]);
 
+// sends a byte in polling mode
 void ser_send_char_poll(unsigned short base_addr,unsigned char char_send);
 
+// receives an array of bytes in polling mode/ returns 1 in success, 0 in non-success
 int ser_receive_string_poll(unsigned short base_addr);
 
+// receives a byte in polling mode/ returns 1 in success, 0 in non-success
 int ser_receive_char_poll(unsigned short base_addr, unsigned char* char_receive);
 
 /* FOR INTERRUPTS */
+
+// sends a string by interrupt mode/ returns 1 in success, 0 in non-success
 int ser_send_string_int(unsigned short base_addr, char string[]);
 
+// receives a string by interrupt mode/ returns 1 in success, 0 in non-success
 int ser_receive_string_int(unsigned short base_addr);
 
 /* FOR FIFOS */
+
+// sends a string by interrupt mode with fifos/returns 1 in success, 0 in non-success
 int ser_send_string_int_fifo(unsigned short base_addr,char string[]);
 
+// receive a string by interrupt mode with fifos/ returns 1 in success, 0 in non-success
 int ser_receive_string_int_fifo(unsigned short base_addr,unsigned long trigger);
 
+// send a string by polling mode with fifos/ returns 1 in success, 0 in non-success
 int ser_send_string_poll_fifo(unsigned short base_addr, char string[], unsigned long delay);
 
+/* OTHERS */
 
+// Interrupt Handler: handles serial port interrupts
+// Returns: 0 if receives or returns a byte or an array of bytes (if using fifos)
+//          1 if receives an error
+//          2 if a timeout interrupt occurs
+//          3 if a interrupt outside the serial port happens
 int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo, int size_fifo);
 
 int ser_subscribe_int(unsigned short base_addr);
