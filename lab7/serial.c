@@ -475,7 +475,7 @@ int ser_receive_string_int_fifo(unsigned short base_addr,unsigned long trigger)
   // turn on fifo & clear transmit
   unsigned long fcr_config=0;
   fcr_config |= UART_ENABLE_FIFO;
-  //fcr_config |= UART_CLEAR_RFIFO;
+  fcr_config |= UART_CLEAR_RFIFO;
   fcr_config |= 0x80;
   ser_set_reg(base_addr,UART_FCR,fcr_config);
 
