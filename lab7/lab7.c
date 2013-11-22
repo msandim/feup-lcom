@@ -37,7 +37,7 @@ static void print_usage(char *argv[]) {
       "    . Tests polling communication through serial Port\n"
       "-   service run %s -args \"int 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <strings>\" \n"
       "    . Tests interrupt communication through serial Port\n"
-      "-   service run %s -args \"fifo 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <trigger> <strings>\" \n"
+      "-   service run %s -args \"fifo 1|2 <0(receive)/1(transmit)> <number of bits> <number of stop bits> <parity (none|even|odd)> <rate> <delay> <strings>\" \n"
       "    . Tests interrupt/polling communication through serial Port using FIFOs\n",
       argv[0], argv[0], argv[0],argv[0],argv[0]);
 }
@@ -339,13 +339,13 @@ static int proc_args(int argc, char *argv[]) {
       return 1;
     }
 
-    // trigger
-    unsigned long trigger;
-    if ( (trigger = parse_ulong(argv[8], 10)) == ULONG_MAX )
+    // delay
+    unsigned long delay;
+    if ( (delay = parse_ulong(argv[8], 10)) == ULONG_MAX )
       return 1;
 
-    if (trigger != 1 && trigger != 4 && trigger != 8 && trigger != 14) {
-      printf ("test7.c: Invalid number of trigger bytes %x\n", trigger);
+    if (delay == 0) {
+      printf ("test7.c: Invalid delay %x\n",delay);
       return 1;
     }
 
@@ -363,7 +363,7 @@ static int proc_args(int argc, char *argv[]) {
       i++;
     }
 
-    ser_test_fifo(address, tx, bits, stop, parity, rate, stringc, strings, trigger);
+    ser_test_fifo(address, tx, bits, stop, parity, rate, stringc, strings, delay);
 
     printf("test7.c:: fifo()\n\n");
     return 0;

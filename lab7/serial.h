@@ -81,6 +81,11 @@
 #define UART_CLEAR_RFIFO 0x2
 #define UART_CLEAR_TFIFO 0x3
 
+#define UART_TRIGGER_LVL_1 0x00
+#define UART_TRIGGER_LVL_4 0x40
+#define UART_TRIGGER_LVL_8 0x80
+#define UART_TRIGGER_LVL_14 0xC0
+
 
 /* ************************* POLLING *****************************/
 #define DELAY_POLL 5000 // 5ms
@@ -118,6 +123,8 @@ int ser_receive_string_int(unsigned short base_addr);
 int ser_send_string_int_fifo(unsigned short base_addr,char string[]);
 
 int ser_receive_string_int_fifo(unsigned short base_addr,unsigned long trigger);
+
+int ser_send_string_poll_fifo(unsigned short base_addr, char string[], unsigned long delay);
 
 
 int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo, int size_fifo);

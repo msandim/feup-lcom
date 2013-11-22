@@ -567,6 +567,51 @@ int ser_receive_string_int_fifo(unsigned short base_addr,unsigned long trigger)
   return 0;
 }
 
+int ser_send_string_poll_fifo(unsigned short base_addr, char string[], unsigned long delay)
+{
+  int scount = 0, fifo_counter = 0, end_string = 0;
+  // turn on fifo & clear transmit
+  unsigned long fcr_config=0;
+  fcr_config |= UART_ENABLE_FIFO;
+  fcr_config |= UART_CLEAR_TFIFO;
+  ser_set_reg(base_addr,UART_FCR,fcr_config);
+
+  do
+  {
+    // get lsr
+    unsigned long lsr;
+    ser_get_reg(base_addr,UART_LSR,&lsr);
+
+    if (lsr & UART_LSR_THR_EMPTY) // if THR empty, lets send 16 bytes, because we are sure that the FIFO is empty
+    {
+      while (fifo_counter < 16 && string[scount] != '\0')
+      {
+        ser_set_reg(base_addr,UART_THR,(unsigned long) string[scount]); // send char
+        printf("%c",string[scount]);
+
+        fifo_counter++;
+        scount++;
+      }
+
+      if (string[scount] == '\0') // end send
+        end_string = 1;
+      else
+        fifo_counter = 0;
+
+    } else
+      printf("Nao esta vazio\n");
+
+    tickdelay(micros_to_ticks(delay));
+
+
+  } while (!end_string);
+
+  // desactivate fifo and clear transmit
+  fcr_config=0;
+  fcr_config |= UART_CLEAR_TFIFO;
+  ser_set_reg(base_addr,UART_FCR,fcr_config);
+}
+
 
 int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo, int size_fifo)
 {

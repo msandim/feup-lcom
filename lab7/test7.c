@@ -207,7 +207,7 @@ int ser_test_int(unsigned short base_addr, unsigned char tx, unsigned long bits,
 }
 
 int ser_test_fifo(unsigned short base_addr, unsigned char tx, unsigned long bits, unsigned long stop,
-    long parity, unsigned long rate, int stringc, char *strings[], unsigned long trigger) {
+    long parity, unsigned long rate, int stringc, char *strings[], unsigned long delay) {
 
   // save current lcr and rate
   unsigned long lcr_backup, rate_backup;
@@ -228,7 +228,8 @@ int ser_test_fifo(unsigned short base_addr, unsigned char tx, unsigned long bits
     // send each string!
     for (str_count=0; str_count < stringc; str_count++)
     {
-      ser_send_string_int_fifo(base_addr,strings[str_count]);
+      //ser_send_string_int_fifo(base_addr,strings[str_count]);
+      ser_send_string_poll_fifo(base_addr,strings[str_count],delay);
 
       if (str_count != stringc-1) // if not the last string, send space to separate
       {
@@ -241,9 +242,10 @@ int ser_test_fifo(unsigned short base_addr, unsigned char tx, unsigned long bits
   }
   else
   {
-    printf("Receiving chars:\n");
+    /*printf("Receiving chars:\n");
     ser_receive_string_int_fifo(base_addr,8);
-    printf("\n");
+    printf("\n");*/
+    printf("Nao faz nada\n");
   }
 
 
