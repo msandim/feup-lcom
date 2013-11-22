@@ -242,7 +242,7 @@ int ser_test_fifo(unsigned short base_addr, unsigned char tx, unsigned long bits
   else
   {
     printf("Receiving chars:\n");
-    //ser_receive_string_int_fifo(base_addr,trigger);
+    ser_receive_string_int_fifo(base_addr,8);
     printf("\n");
   }
 

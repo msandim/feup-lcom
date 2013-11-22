@@ -71,7 +71,7 @@
 
 // sequences for interrupts
 #define UART_INT_TE 0x2
-#define UART_INT_TIMEOUT 0x8
+#define UART_INT_TIMEOUT 0xC
 #define UART_INT_RD 0x4
 #define UART_INT_LS 0x6
 
