@@ -336,7 +336,7 @@ int ser_receive_string_int(unsigned short base_addr)
   ser_set_reg(base_addr,UART_IER,ier_config);
 
   // teste
-  printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
+  //printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
 
   // subscribe the serial interrupts
   int irq_set = ser_subscribe_int(base_addr);
@@ -346,8 +346,8 @@ int ser_receive_string_int(unsigned short base_addr)
     unsigned long IIR_content;
     ser_get_reg(base_addr,UART_IIR,&IIR_content);
 
-    printf("IIR_CONTENT: 0x%X",IIR_content);
-    printf("driver receive ups\n");
+    //printf("IIR_CONTENT: 0x%X",IIR_content);
+    //printf("driver receive ups\n");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
       continue;
@@ -368,7 +368,7 @@ int ser_receive_string_int(unsigned short base_addr)
           }
 
           if (status == 0)
-            printf("Char received: %c\n",char_received);
+            printf("%c",char_received);
 
         }
         break;
@@ -423,7 +423,7 @@ int ser_send_string_int_fifo(unsigned short base_addr,char string[])
 
   while( string[i] != '\0' ) // do while we dont find the null terminator
   {
-    printf("driver receive ups");
+    //printf("driver receive ups");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
       continue;
@@ -495,14 +495,14 @@ int ser_receive_string_int_fifo(unsigned short base_addr,unsigned long trigger)
   int terminator_not_found = 1;
 
   // teste
-  printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
+  //printf("IER_CONFIG: 0x%X IER_ANTIGO: 0x%X",ier_config,ier_config_backup);
 
   // subscribe the serial interrupts
   int irq_set = ser_subscribe_int(base_addr);
 
   while( terminator_not_found ) // do while we dont find the null terminator
   {
-    printf("driver receive ups");
+    //printf("driver receive ups");
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
       printf("driver_receive failed\n");
       continue;
@@ -603,7 +603,6 @@ int ser_send_string_poll_fifo(unsigned short base_addr, char string[], unsigned 
 
     tickdelay(micros_to_ticks(delay));
 
-
   } while (!end_string);
 
   // desactivate fifo and clear transmit
@@ -619,14 +618,14 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo,
   unsigned long IIR_content;
   ser_get_reg(base_addr,UART_IIR,&IIR_content);
 
-  printf("IIR_CONTENT_IH: 0x%X\n",IIR_content);
+  //printf("IIR_CONTENT_IH: 0x%X\n",IIR_content);
 
   if(!(IIR_content & UART_INT_PEND)) // int is pending?
   {
     switch(IIR_content & UART_INT_SEQUENCE) // check sequence
     {
     case UART_INT_TE: // transmitter empty
-      printf("Transmiter Empty\n");
+      //printf("Transmiter Empty\n");
       if (fifo)
       {
         while(size_fifo--)
@@ -641,14 +640,15 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo,
       break;
 
     case UART_INT_RD: // received data available
-      printf("Received Data Available\n");
+    {
+      //printf("Received Data Available\n");
       if (fifo)
       {
         int counter_till_trigger = 0;
         while(counter_till_trigger < size_fifo)
         {
           ser_get_reg(base_addr,UART_RBR,(unsigned long*) char_send_receive); // receive char
-          printf("RECEBI %c\n",*char_send_receive);
+          //printf("RECEBI %c\n",*char_send_receive);
           counter_till_trigger++;
           char_send_receive++;
         }
@@ -657,14 +657,16 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo,
         ser_get_reg(base_addr,UART_RBR,(unsigned long*) char_send_receive); // receive char
       return 0;
       break;
+    }
 
     case UART_INT_LS: // line status (error)
-      printf("Error during reception occurred\n");
+      //printf("Error during reception occurred\n");
       return 1;
       break;
 
     case UART_INT_TIMEOUT: // timeout (trigger)
-      printf("Timeout interrupt\n");
+    {
+      //printf("Timeout interrupt\n");
       unsigned long lsr_contents; // To see the receiver data flag and transfer while we can to the fifo
       ser_get_reg(base_addr,UART_LSR,&lsr_contents);
 
@@ -675,13 +677,15 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo,
         char_send_receive++;
       }
       return 2;
+      break;
+    }
 
     default:
       printf("Non-relevant interrupt occurred.\n"); return 3; break;
     }
   }
 
-  printf("An interrupt outside the UART occured wtv.\n"); return 3;
+  printf("An interrupt outside the UART occured.\n"); return 3;
 }
 
 int ser_subscribe_int(unsigned short base_addr)

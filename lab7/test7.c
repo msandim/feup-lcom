@@ -190,9 +190,10 @@ int ser_test_int(unsigned short base_addr, unsigned char tx, unsigned long bits,
   }
   else
   {
-    printf("Receiving chars:\n");
+    /*printf("Receiving chars:\n");
     ser_receive_string_int(base_addr);
-    printf("\n");
+    printf("\n");*/
+    printf("Nao faz nada\n");
   }
 
 
