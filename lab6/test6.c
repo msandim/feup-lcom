@@ -6,6 +6,7 @@
 
 #include "test6.h"
 #include "rtc.h"
+#include "rtc_constants.h"
 
 
 int rtc_test_conf(void) {

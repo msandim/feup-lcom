@@ -5,6 +5,12 @@
 #include <minix/sysutil.h>
 
 #include "rtc.h"
+#include "rtc_constants.h"
+
+// Funcoes de Assembly:
+char rtc_interrupt_handler();
+void clear_interrupts();
+void set_interrupts();
 
 static int hook_id;
 

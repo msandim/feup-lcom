@@ -2,7 +2,7 @@
 #include <minix/drivers.h>
 #include <minix/com.h>
 
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "test6.h"
 
