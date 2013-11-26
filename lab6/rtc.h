@@ -17,6 +17,11 @@ int rtc_get_data(unsigned long data[]);
 // shows the data-info in the array "data" acording to the register order
 void rtc_show_data(unsigned long data[]);
 
+// 3 ways of getting the time!
+void rtc_get_time_UIP(unsigned long data[]);
+void rtc_get_time_UIE_int(unsigned long data[]);
+void rtc_get_time_periodic_int(unsigned long data[]);
+
 // sets the alarm with the values given in the array "data", acordint to the register
 // order
 int rtc_set_alarm(unsigned long data[]);

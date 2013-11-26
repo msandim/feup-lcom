@@ -8,7 +8,7 @@
 #include "rtc_constants.h"
 
 // Funcoes de Assembly:
-char rtc_interrupt_handler();
+unsigned long rtc_interrupt_handler();
 void clear_interrupts();
 void set_interrupts();
 
@@ -91,6 +91,150 @@ void rtc_show_data(unsigned long data[])
   printf("Week day: %x\n",data[3]);
 }
 
+void rtc_get_time_UIP(unsigned long data[])
+{
+  unsigned long UIP;
+
+  // get regA UIP
+  rtc_load_info(RTC_REG_A,&UIP);
+
+  UIP = (UIP & UIP_mask) >> 7;
+
+  // if the flag is on, wait 244 us
+  if (UIP)
+  {
+    //printf("UIP IS ON, LETS WAIT\n");
+    tickdelay(micros_to_ticks(DELAY_244));
+  }
+
+  rtc_get_data(data);
+}
+
+void rtc_get_time_UIE_int(unsigned long data[])
+{
+  unsigned long status, info;
+
+  int ipc_status;
+  message msg;
+
+  //Subscribe interrupts
+  int irq_set = rtc_subscribe_int();
+
+  //Enable Update ended interrupts in register B
+  rtc_load_info(RTC_REG_B, &info);
+  info |= UIE_mask;
+  rtc_save_info(RTC_REG_B, info);
+
+  int exit_flag = 0;
+
+  while( exit_flag == 0 ) {
+
+    /* Get a request message. */
+    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+      printf("driver_receive failed\n");
+      continue;
+    }
+
+    if (is_ipc_notify(ipc_status)) { /* received notification */
+      switch (_ENDPOINT_P(msg.m_source)) {
+      case HARDWARE: /* hardware interrupt notification */
+        if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+
+          status = rtc_interrupt_handler();
+          if (status == 1) // if its a UIE interrupt!
+          {
+            // get data
+            // data has time in this format: seconds, minutes, hours
+            // weekday, monthday,month,year
+            rtc_get_data(data);
+            exit_flag = 1;
+          }
+        }
+        break;
+      default:
+        break; /* no other notifications expected: do nothing */
+      }
+    } else { /* received a standard message, not a notification */
+      /* no standard messages expected: do nothing */
+    }
+  }
+
+  //Disable UIE interrupts in register B
+  rtc_load_info(RTC_REG_B, &info);
+  info ^= UIE_mask;
+  rtc_save_info(RTC_REG_B, info);
+
+  rtc_unsubscribe_int();
+}
+
+void rtc_get_time_periodic_int(unsigned long data[])
+{
+  unsigned long status,info,reg_A_backup;
+
+  int ipc_status;
+  message msg;
+
+  //Subscribe interrupts
+  int irq_set = rtc_subscribe_int();
+
+  // set MAX period for periodic interrupts
+  rtc_load_info(RTC_REG_A, &info);
+  reg_A_backup = info; // BACKUP OF REG A
+  info |= RATE_MAX_mask;
+  rtc_save_info(RTC_REG_A, info);
+
+  //Enable Periodic interrupts in register B
+  rtc_load_info(RTC_REG_B, &info);
+  info |= PIE_mask;
+  rtc_save_info(RTC_REG_B, info);
+
+  int exit_flag = 0;
+
+  while( exit_flag == 0 ) {
+
+    /* Get a request message. */
+    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+      printf("driver_receive failed\n");
+      continue;
+    }
+
+    if (is_ipc_notify(ipc_status)) { /* received notification */
+      switch (_ENDPOINT_P(msg.m_source)) {
+      case HARDWARE: /* hardware interrupt notification */
+        if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
+
+          status = rtc_interrupt_handler();
+          if (status == 2) // if its a periodic interrupt
+          {
+            // get data
+            // data has time in this format: seconds, minutes, hours
+            // weekday, monthday,month,year
+            rtc_get_data(data);
+            exit_flag = 1;
+          }
+
+        }
+        break;
+      default:
+        break; /* no other notifications expected: do nothing */
+      }
+    } else { /* received a standard message, not a notification */
+      /* no standard messages expected: do nothing */
+    }
+  }
+
+  //Disable periodic interrupts in register B
+  rtc_load_info(RTC_REG_B, &info);
+  //info &= ~PIE_mask;
+  info ^= PIE_mask;
+  rtc_save_info(RTC_REG_B, info);
+
+  // backup of reg A because of rate
+  rtc_save_info(reg_A_backup, info);
+
+  rtc_unsubscribe_int();
+}
+
 
 int rtc_set_alarm(unsigned long data[])
 {
@@ -126,6 +270,24 @@ int rtc_save_info(unsigned long addr, unsigned long info_to_send)
     return 1;
 
   return 0;
+}
+
+unsigned long binary_to_BCD(unsigned long valuebin)
+{
+  unsigned long left = valuebin >> 4;
+  unsigned long right = valuebin&right_mask;
+
+  return right + left * 10;
+}
+
+unsigned long BCD_to_binary(unsigned long valuebcd)
+{
+  unsigned long right = valuebcd % 10;
+  unsigned long left = valuebcd /10;
+
+  return ((left<<4) | right);
+
+  return right + left * 10;
 }
 
 int rtc_subscribe_int()

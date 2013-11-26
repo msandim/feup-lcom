@@ -25,69 +25,15 @@ int rtc_test_conf(void) {
 
 int rtc_test_date(void) {
 
-  unsigned long UIP, info;
   unsigned long data[7]; // array with the data info
 
-  int ipc_status;
-  message msg;
+  //rtc_get_time_UIP(data);
+  //rtc_get_time_UIE_int(data);
+  rtc_get_time_periodic_int(data);
 
-  //Subscribe interrupts
-  int irq_set = rtc_subscribe_int();
+  rtc_show_data(data);
 
-  // set MAX period for periodic interrupts
-  rtc_load_info(RTC_REG_A, &info);
-  info |= RATE_MAX_mask;
-  rtc_save_info(RTC_REG_A, info);
-
-  //Enable Periodic interrupts in register B
-  rtc_load_info(RTC_REG_B, &info);
-  info |= PIE_mask;
-  rtc_save_info(RTC_REG_B, info);
-
-  int exit_flag = 0;
-
-  while( exit_flag == 0 ) {
-
-
-    /* Get a request message. */
-    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-      printf("driver_receive failed\n");
-      continue;
-    }
-
-    if (is_ipc_notify(ipc_status)) { /* received notification */
-      switch (_ENDPOINT_P(msg.m_source)) {
-      case HARDWARE: /* hardware interrupt notification */
-        if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
-
-          // read register C
-          rtc_load_info(RTC_REG_C, &info);
-
-          // read register C
-          rtc_load_info(RTC_REG_C, &info);
-
-          // get data
-          rtc_get_data(data);
-          rtc_show_data(data);
-
-          exit_flag = 1;
-        }
-        break;
-      default:
-        break; /* no other notifications expected: do nothing */
-      }
-    } else { /* received a standard message, not a notification */
-      /* no standard messages expected: do nothing */
-    }
-  }
-
-  //Disable periodic interrupts in register B
-  rtc_load_info(RTC_REG_B, &info);
-  //info &= ~PIE_mask;
-  info ^= PIE_mask;
-  rtc_save_info(RTC_REG_B, info);
-
-  rtc_unsubscribe_int();
+  return 0;
 
 }
 
@@ -96,35 +42,28 @@ int rtc_test_int(unsigned long delta) {
 
   unsigned long data[7], info;
 
-  unsigned long left, right, final_s, final_m, final_h;
+  unsigned long final_s, final_m, final_h;
 
-  //Reads date and adds delta
+  //Reads date and adds delta -> data has time in this format: seconds, minutes, hours
+  // weekday, monthday,month,year
   rtc_get_data(data);
 
   printf("DATA NOW: \n");
   rtc_show_data(data);
 
   // transforms the h-m-s from BCD into binary
-  left = data[0];
-  left = left >> 4;
-  right = data[0]&right_mask;
-  final_s = right + left * 10;
-
-  left = data[1];
-  left = left >> 4;
-  right = data[1]&right_mask;
-  final_m = right + left * 10;
-
-  left = data[2];
-  left = left >> 4;
-  right = data[2]&right_mask;
-  final_h = right + left * 10;
+  // seconds
+  final_s = binary_to_BCD(data[0]);
+  // minutes
+  final_m = binary_to_BCD(data[1]);
+  // hours
+  final_h = binary_to_BCD(data[2]);
 
   // adds the delta to the seconds
   final_s += delta;
 
   // distributes the seconds that are too much to the minutes
-  while (final_s > 59){
+  while (final_s > 59) {
     final_s -= 60;
     final_m ++;
   }
@@ -139,21 +78,9 @@ int rtc_test_int(unsigned long delta) {
   }
 
   // now .. transform the binary in BCD again and save in "data"
-  right = final_s % 10;
-  left = final_s /10;
-
-  data[0] = ((left<<4) | right);
-
-  right = final_m % 10;
-  left = final_m /10;
-
-  data[1] = ((left<<4) | right);
-
-  right = final_h % 10;
-  left = final_h /10;
-
-  data[2] = ((left<<4) | right);
-
+  data[0] = BCD_to_binary(final_s);
+  data[1] = BCD_to_binary(final_m);
+  data[2] = BCD_to_binary(final_h);
 
   printf("\nTHE ALARM WILL BE SET ON AT:\n");
   rtc_show_data(data);
@@ -170,7 +97,7 @@ int rtc_test_int(unsigned long delta) {
   info |= AIE_mask;
   rtc_save_info(RTC_REG_B, info);
 
-  char result;
+  unsigned long status;
 
   int exit_flag = 0;
 
@@ -187,12 +114,12 @@ int rtc_test_int(unsigned long delta) {
       case HARDWARE: /* hardware interrupt notification */
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          result = rtc_interrupt_handler();
-          if (result){
+          status = rtc_interrupt_handler();
+          if (status == 3){ // if its an alarm interrupt
             exit_flag = 1;
+            printf("\n\ntest_int: Alarm raised after %us \n\n", delta);
           }
 
-          printf("\n\ntest_int: Alarm raised after %us \n\n", delta);
         }
         break;
       default:
@@ -209,4 +136,6 @@ int rtc_test_int(unsigned long delta) {
   rtc_save_info(RTC_REG_B, info);
 
   rtc_unsubscribe_int();
+
+  return 0;
 }
