@@ -97,7 +97,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		vg_fill(color);
 
-		sleep(3);
+		sleep(2);
 
 		vg_exit();
 
@@ -144,7 +144,7 @@ static int proc_args(int argc, char *argv[]) {
 
 		vg_exit();
 
-		printf("Pixel with color code: 0x%lu\n\n", colorPixel);
+		printf("Pixel with color code: 0x%X\n\n", colorPixel);
 
 		printf("video_gr:: vg_get_pixel(%lu, %lu)\n",
 				x1, y1);
