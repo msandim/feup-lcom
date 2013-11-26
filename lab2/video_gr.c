@@ -112,7 +112,7 @@ int vg_fill(unsigned long color) {
 int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
   char* ptrVRAM = video_mem;
 
-  ptrVRAM += ((y*H_RES) + x);
+  ptrVRAM += ((y*h_res) + x);
   *ptrVRAM = color;
 
   return 0;
@@ -121,7 +121,7 @@ int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
 long vg_get_pixel(unsigned long x, unsigned long y) {
   char* ptrVRAM = video_mem;
 
-  ptrVRAM += ((y*H_RES) + x);
+  ptrVRAM += ((y*h_res) + x);
 
   return *ptrVRAM;
 }
