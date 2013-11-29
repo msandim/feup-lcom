@@ -17,10 +17,10 @@
  * Better run my version of lab2 as follows:
  *     service run `pwd`/lab2 -args "mode 0x105"
  */
-#define VRAM_PHYS_ADDR	0xF0000000
+/*#define VRAM_PHYS_ADDR	0xF0000000
 #define H_RES             1024
 #define V_RES		  768
-#define BITS_PER_PIXEL	  8
+#define BITS_PER_PIXEL	  8*/
 
 /* Stuff to make the VBE call */
 #define LINEAR_MODEL_BIT 14
@@ -28,7 +28,7 @@
 
 /* Private global variables */
 
-static char *video_mem;		/* Process address to which VRAM is mapped */
+static short *video_mem;		/* Process address to which VRAM is mapped */
 
 static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
@@ -96,13 +96,21 @@ int vg_fill(unsigned long color) {
   unsigned int i;
 
 
-  char* ptrVRAM = video_mem;
+  short* ptrVRAM = video_mem;
 
-  // fill all the pixels
-  for (i=0; i < h_res * v_res; i++)
+  short j;
+
+  for (j=0; j < 31; j++)
   {
-    *ptrVRAM = color;
-    ptrVRAM++;
+    // fill all the pixels
+    for (i=0; i < h_res * v_res; i++)
+    {
+      //*ptrVRAM = color;
+      *ptrVRAM = j;
+      ptrVRAM++;
+    }
+    ptrVRAM = video_mem;
+    tickdelay(micros_to_ticks(100000));
   }
 
 
@@ -110,7 +118,7 @@ int vg_fill(unsigned long color) {
 }
 
 int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
-  char* ptrVRAM = video_mem;
+  short* ptrVRAM = video_mem;
 
   ptrVRAM += ((y*h_res) + x);
   *ptrVRAM = color;
@@ -119,7 +127,7 @@ int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
 }
 
 long vg_get_pixel(unsigned long x, unsigned long y) {
-  char* ptrVRAM = video_mem;
+  short* ptrVRAM = video_mem;
 
   ptrVRAM += ((y*h_res) + x);
 
@@ -253,8 +261,6 @@ int vg_draw_line(unsigned long xi, unsigned long yi,
       y += slope;
     }
   }
-
-
 
   return 0;
 }
