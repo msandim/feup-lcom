@@ -93,7 +93,8 @@ static int proc_args(int argc, char *argv[]) {
 		if( (color = parse_ulong(argv[2], 16)) == ULONG_MAX )
 			return 1;
 
-		vg_init(0x105);
+		//vg_init(0x105);
+		vg_init(0x117);
 
 		vg_fill(color);
 
@@ -116,7 +117,8 @@ static int proc_args(int argc, char *argv[]) {
 		if( (color = parse_ulong(argv[4], 16)) == ULONG_MAX )
 			return 1;
 
-		vg_init(0x105);
+    //vg_init(0x105);
+    vg_init(0x107);
 
 		vg_set_pixel(x1,y1,color);
 
@@ -138,7 +140,8 @@ static int proc_args(int argc, char *argv[]) {
 		if( (y1 = parse_ulong(argv[3], 10)) == ULONG_MAX )
 			return 1;
 
-		vg_init(0x105);
+    //vg_init(0x105);
+    vg_init(0x107);
 
 		colorPixel = (unsigned) vg_get_pixel(x1,y1);
 
@@ -165,7 +168,8 @@ static int proc_args(int argc, char *argv[]) {
         if( (color = parse_ulong(argv[6], 16)) == ULONG_MAX )
                 return 1;
 
-        vg_init(0x105);
+        //vg_init(0x105);
+        vg_init(0x107);
 
         vg_draw_line(x1,y1,x2,y2,color);
 

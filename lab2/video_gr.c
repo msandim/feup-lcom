@@ -100,7 +100,7 @@ int vg_fill(unsigned long color) {
 
   short j;
 
-  for (j=0; j < 31; j++)
+  for (j=0; j < 1000; j++)
   {
     // fill all the pixels
     for (i=0; i < h_res * v_res; i++)
@@ -110,7 +110,7 @@ int vg_fill(unsigned long color) {
       ptrVRAM++;
     }
     ptrVRAM = video_mem;
-    tickdelay(micros_to_ticks(100000));
+    tickdelay(micros_to_ticks(20000));
   }
 
 
