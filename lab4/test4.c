@@ -11,11 +11,10 @@ int test_scan() {
 
   int ipc_status;
   message msg;
+  unsigned char makebreakcode=0;
 
   // know what ints are we interested in
   int irq_set = keyboard_subscribe_int();
-
-  unsigned char makebreakcode = 0;
 
   // two_byte_scan_code verifies if the current scan code is 2 byte long
   int two_byte_scan_code = 0;
@@ -37,14 +36,16 @@ int test_scan() {
       case HARDWARE: /* hardware interrupt notification */
         if (msg.NOTIFY_ARG & irq_set) { /* subscribed interrupt */
 
-          // receive the breakcode
-          if (keyboard_receive_data_kbc(&makebreakcode))
+          // receive
+          int status = keyboard_interrupt_handler(&makebreakcode);
+
+          // if error
+          if (status == -1)
             return 1;
 
           // check if it's break, make or E0
-          codeType = keyboard_make_or_break(makebreakcode);
 
-          if (codeType == 0)
+          if (status == 0)
           {
             printf("Makecode: ");
 
@@ -54,7 +55,7 @@ int test_scan() {
               two_byte_scan_code = 0;
             }
           }
-          else if (codeType == 1)
+          else if (status == 1)
           {
             printf("Breakcode: ");
 
@@ -67,7 +68,7 @@ int test_scan() {
 
           else two_byte_scan_code = 1;
 
-          if (codeType != 2)
+          if (status != 2)
             printf("0x%X\n\n",makebreakcode);
         }
         break;

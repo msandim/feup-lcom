@@ -130,6 +130,17 @@ int keyboard_receive_data_kbd(unsigned char *data)
   return 1;
 }
 
+int keyboard_interrupt_handler(unsigned char *makebreakcode)
+{
+  if (keyboard_receive_data_kbc(makebreakcode))
+  {
+    printf("Error in make/break codes\n");
+    return -1;
+  }
+
+  return keyboard_make_or_break(*makebreakcode);
+}
+
 
 int keyboard_make_or_break(unsigned char code)
 {

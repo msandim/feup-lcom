@@ -57,6 +57,8 @@ int keyboard_receive_data_kbc(unsigned char *data);
 // returns 0 in success, 1 in non-sucess
 int keyboard_receive_data_kbd(unsigned char *data);
 
+int keyboard_interrupt_handler(unsigned char *makebreakcode);
+
 // checks if a code is make or break
 // returns 2 if it's a 0xE0 byte from the scan code
 // returns 1 if it's a break code

@@ -120,6 +120,13 @@ int vg_fill(unsigned long color) {
 int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
   short* ptrVRAM = video_mem;
 
+  if (y > v_res || x > h_res)
+  {
+    printf("vg_set_pixel::Invalid X/Y\n");
+    printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,v_res,h_res);
+    return 1;
+  }
+
   ptrVRAM += ((y*h_res) + x);
   *ptrVRAM = color;
 
@@ -128,6 +135,13 @@ int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
 
 long vg_get_pixel(unsigned long x, unsigned long y) {
   short* ptrVRAM = video_mem;
+
+  if (y > v_res || x > h_res)
+  {
+    printf("vg_get_pixel::Invalid X/Y\n");
+    printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,v_res,h_res);
+    return 1;
+  }
 
   ptrVRAM += ((y*h_res) + x);
 
@@ -227,6 +241,12 @@ int vg_draw_line(unsigned long xi, unsigned long yi,
 	}
 
    */
+
+  if (yi > v_res || yf > v_res || xi > h_res || xf > h_res)
+  {
+    printf("vg_set_pixel::Invalid X/Y\n");
+    return 1;
+  }
 
   int slope;
   int dx, dy, incE, incNE, d, x, y;
