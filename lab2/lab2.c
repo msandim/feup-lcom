@@ -21,14 +21,6 @@ int main(int argc, char **argv) {
 	/* For future use of lm_malloc */
 	lm_init();
 
-	/*video_mem = vg_init(0x105);
-
-	vg_fill(0x34);
-
-	sleep(4);
-
-	vg_exit();*/
-
 	if ( argc == 1 ) {
 		print_usage(argv);
 		return 0;
@@ -75,7 +67,7 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 
 		// do init, shows address and exits
-		char* video_mem = vg_init(0x105);
+		char* video_mem = vg_init(0x117);
 
 		vg_exit();
 
@@ -118,7 +110,7 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 
     //vg_init(0x105);
-    vg_init(0x107);
+    vg_init(0x117);
 
 		vg_set_pixel(x1,y1,color);
 
@@ -141,7 +133,7 @@ static int proc_args(int argc, char *argv[]) {
 			return 1;
 
     //vg_init(0x105);
-    vg_init(0x107);
+    vg_init(0x117);
 
 		colorPixel = (unsigned) vg_get_pixel(x1,y1);
 
@@ -169,7 +161,7 @@ static int proc_args(int argc, char *argv[]) {
                 return 1;
 
         //vg_init(0x105);
-        vg_init(0x107);
+        vg_init(0x117);
 
         vg_draw_line(x1,y1,x2,y2,color);
 

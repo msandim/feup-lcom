@@ -2,9 +2,7 @@
 #include <minix/drivers.h>
 #include <minix/com.h>
 
-//#include <stdio.h>
-
-#include "test6.h"
+#include "central_module.h"
 
 static int proc_args(int argc, char *argv[]);
 static void print_usage(char *argv[]);
@@ -17,20 +15,22 @@ int main(int argc, char **argv) {
   char name[256];
   int priv_f;
 
-  /* Initialize service */
+  // Initialize service
   sef_startup();
 
   // Fetch our endpoint
   sys_whoami(&ep, name, 256, &priv_f);
-  //Enable IO-sensitive operations for ourselves */
+
+  //Enable IO-sensitive operations for ourselves
   sys_enable_iop(ep);
 
-  if ( argc == 1 ) {
-    print_usage(argv);
-    return 0;
-  } else {
-    proc_args(argc, argv);
-  }
+  // For future use of lm_malloc
+  lm_init();
+
+  menuInit();
+
+  printf("Acabou o projeto\n");
+
   return 0;
 }
 
