@@ -5,6 +5,7 @@
 #include <minix/sysutil.h>
 
 #include "mouse.h"
+#include "video_gr.h"
 
 static int hook_id;
 
@@ -174,8 +175,8 @@ void mouse_interrupt_handler()
       y_position = 767;
 
     //mouse_print_packet(); // prints packet
-    printf("XPOSITION: %d, YPOSITION: %d, RB:%u,MB:%u,LB:%u\n",
-        x_position,y_position,RB_pressed,MB_pressed,LB_pressed);
+    //printf("XPOSITION: %d, YPOSITION: %d, RB:%u,MB:%u,LB:%u\n",
+        //x_position,y_position,RB_pressed,MB_pressed,LB_pressed);
   }
 }
 

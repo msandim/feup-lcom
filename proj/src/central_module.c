@@ -21,8 +21,8 @@ void menuInit()
     // experiencia: iniciar drawMode() e depois sair
 
     drawMode();
-    vg_fill(80);
-    sleep(2);
+    //vg_fill(80);
+    //sleep(2);
     exitFlag = 1;
   }
 
@@ -36,7 +36,6 @@ void drawMode()
 
   // mouse_interrupts
   int irq_set_mouse = mouse_subscribe_int();
-
   mouse_send_cmd(ENABLE_PACKETS);
 
   int exit_flag = 0;
@@ -44,7 +43,7 @@ void drawMode()
   while(!exit_flag)
   {
     // draw the tool bars, draw the screen where we draw
-    set_drawMode(10,10);
+    set_drawMode(0,0);
 
     /* Get a request message. */
     if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
@@ -76,8 +75,8 @@ void drawMode()
     }
   }
 
-  mouse_unsubscribe_int();
-
   // disable stream mode
   mouse_send_cmd(DISABLE_STREAM_MODE);
+
+  mouse_unsubscribe_int();
 }

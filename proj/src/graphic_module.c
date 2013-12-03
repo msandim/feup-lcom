@@ -14,6 +14,7 @@ void screenExit()
 
 int set_drawMode(unsigned int mouse_x, unsigned int mouse_y)
 {
+  // desenhar fundo
   // draw toolboxes
   // draw o desenho
 

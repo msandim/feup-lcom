@@ -7,6 +7,7 @@
 #include <minix/sysutil.h>
 
 #include "vbe.h"
+#include "video_gr.h"
 
 /* Constants for VBE 0x105 mode */
 
@@ -30,9 +31,9 @@
 
 static short *video_mem;		/* Process address to which VRAM is mapped */
 
-static unsigned h_res;		/* Horizontal screen resolution in pixels */
-static unsigned v_res;		/* Vertical screen resolution in pixels */
-static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
+unsigned h_res;		/* Horizontal screen resolution in pixels */
+unsigned v_res;		/* Vertical screen resolution in pixels */
+unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 
 void * vg_init(unsigned short mode) {
 
