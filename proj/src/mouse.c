@@ -166,13 +166,13 @@ void mouse_interrupt_handler()
 
     if (x_position < 0) // correct if x/y positions pass limits
       x_position = 0;
-    else if (x_position > 1023) // GET CONSTANTS!!!!!
-      x_position = 1023;
+    else if (x_position > vg_get_h_res()-1)
+      x_position = vg_get_h_res()-1;
 
     if (y_position < 0)
       y_position = 0;
-    else if (y_position > 767) // GET CONSTANTS!!!!
-      y_position = 767;
+    else if (y_position > vg_get_v_res()-1)
+      y_position = vg_get_v_res()-1;
 
     //mouse_print_packet(); // prints packet
     //printf("XPOSITION: %d, YPOSITION: %d, RB:%u,MB:%u,LB:%u\n",

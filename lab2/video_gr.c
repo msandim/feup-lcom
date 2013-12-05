@@ -31,9 +31,15 @@
 
 static short *video_mem;		/* Process address to which VRAM is mapped */
 
-unsigned h_res;		/* Horizontal screen resolution in pixels */
-unsigned v_res;		/* Vertical screen resolution in pixels */
-unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
+static unsigned h_res;		/* Horizontal screen resolution in pixels */
+static unsigned v_res;		/* Vertical screen resolution in pixels */
+static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
+
+unsigned int vg_get_h_res() { return h_res;}
+unsigned int vg_get_v_res() { return v_res;}
+unsigned int vg_get_bits_per_pixel() { return bits_per_pixel;}
+
+void vg_set_buffer(short* buf) {video_mem = buf;}
 
 void * vg_init(unsigned short mode) {
 
@@ -118,6 +124,7 @@ int vg_fill(unsigned long color) {
 }
 
 int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
+
   short* ptrVRAM = video_mem;
 
   if (y >= v_res || x >= h_res)
@@ -134,6 +141,7 @@ int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
 }
 
 long vg_get_pixel(unsigned long x, unsigned long y) {
+
   short* ptrVRAM = video_mem;
 
   if (y >= v_res || x >= h_res)
