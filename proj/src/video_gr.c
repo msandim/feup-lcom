@@ -50,6 +50,23 @@ unsigned int vg_get_bits_per_pixel()
   return (unsigned int) bits_per_pixel;
 }
 
+int vg_copy_buffer(short* buffer)
+{
+  unsigned int i;
+
+  short* ptrVRAM = video_mem;
+
+  // copy all the pixels
+  for (i=0; i < h_res * v_res; i++)
+  {
+    *ptrVRAM = *buffer;
+
+    ptrVRAM++;
+    buffer++;
+  }
+  return 0;
+}
+
 void * vg_init(unsigned short mode) {
 
   // VERSION WITH GET MODE INFO
@@ -132,9 +149,30 @@ int vg_fill(unsigned long color) {
   return 0;
 }
 
-int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
+int vg_fill_buffer(unsigned long color, short* buffer) {
 
-  short* ptrVRAM = video_mem;
+  unsigned int i;
+
+  //short j;
+
+  //for (j=0; j < 1000; j++)
+  //{
+  // fill all the pixels
+  for (i=0; i < h_res * v_res; i++)
+  {
+    *buffer = color;
+    //*ptrVRAM = j;
+    buffer++;
+  }
+  //ptrVRAM = video_mem;
+  //tickdelay(micros_to_ticks(20000));
+  //}
+
+
+  return 0;
+}
+
+int vg_set_pixel_buffer(unsigned long x, unsigned long y, unsigned long color, short* buffer) {
 
   if (y >= v_res || x >= h_res)
   {
@@ -143,8 +181,8 @@ int vg_set_pixel(unsigned long x, unsigned long y, unsigned long color) {
     return 1;
   }
 
-  ptrVRAM += ((y*h_res) + x);
-  *ptrVRAM = color;
+  buffer += ((y*h_res) + x); // VER ISTO DEPOIS
+  *buffer = color;
 
   return 0;
 }
@@ -165,8 +203,8 @@ long vg_get_pixel(unsigned long x, unsigned long y) {
   return *ptrVRAM;
 }
 
-int vg_draw_line(unsigned long xi, unsigned long yi,
-    unsigned long xf, unsigned long yf, unsigned long color) {
+int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
+    unsigned long xf, unsigned long yf, unsigned long color, short* buffer) {
 
   /*
 	int a,b,p,x,y,dx,dy;
@@ -269,7 +307,7 @@ int vg_draw_line(unsigned long xi, unsigned long yi,
   int dx, dy, incE, incNE, d, x, y;
   // Onde inverte a linha x1 > x2
   if (xi > xf){
-    vg_draw_line(xf, yf, xi, yi, color);
+    vg_draw_line_buffer(xf, yf, xi, yi, color, buffer);
     return;
   }
   dx = xf - xi;
@@ -289,7 +327,7 @@ int vg_draw_line(unsigned long xi, unsigned long yi,
   d = 2 * dy - dx;
   y = yi;
   for (x = xi; x <= xf; x++){
-    vg_set_pixel(x,y,color);
+    vg_set_pixel_buffer(x,y,color,buffer);
     if (d <= 0){
       d += incE;
     }

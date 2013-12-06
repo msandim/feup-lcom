@@ -14,7 +14,11 @@ void menuInit()
   int exitFlag = 0;
   unsigned char user_input;
 
-  screenInit();
+  if (screenInit())
+  {
+    printf("Error starting graphic mode\n");
+    return;
+  }
 
   while (!exitFlag)
   {
@@ -52,7 +56,7 @@ void drawMode()
   int exit_flag = 0;
 
   // draw the tool bars, draw the screen where we draw
-  set_drawMode();
+  set_graphicsDrawMode();
 
   while(!exit_flag)
   {
@@ -81,7 +85,7 @@ void drawMode()
           if (timer_count%2 == 0){
             //printf("timer_count: %u\n",timer_count);
 
-            set_drawMode();
+            set_graphicsDrawMode();
           }
         }
 
