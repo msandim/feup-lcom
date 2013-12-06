@@ -12,7 +12,7 @@ unsigned int vg_get_h_res();
 unsigned int vg_get_v_res();
 unsigned int vg_get_bits_per_pixel();
 
-void vg_set_buffer(short* buf);
+//void vg_set_buffer(short* buf);
 
 /**
  * @brief Initializes the video module in graphics mode
@@ -25,7 +25,7 @@ void vg_set_buffer(short* buf);
  * @param mode 16-bit VBE mode to set
  * @return Virtual address VRAM was mapped to. NULL, upon failure.
  */
-int vg_fill(unsigned long color);
+void * vg_init(unsigned short mode);
 
 /**
  * @brief Fills the screen with the input color

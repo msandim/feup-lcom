@@ -5,6 +5,7 @@
 
 #include "graphic_module.h"
 #include "video_gr.h"
+#include "mouse.h"
 #include <stdlib.h>
 
 //short* vg_temp_buf;
@@ -26,7 +27,7 @@ void screenExit()
   //free(vg_temp_buf);
 }
 
-int set_drawMode(unsigned int mouse_x, unsigned int mouse_y)
+int set_drawMode()
 {
   // desenhar fundo
   vg_fill(65535);
@@ -34,7 +35,7 @@ int set_drawMode(unsigned int mouse_x, unsigned int mouse_y)
   // draw o desenho
 
   // draw o rato
-  draw_mouse(mouse_x, mouse_y);
+  draw_mouse(mouse_getxposition(),mouse_getyposition());
 
   //vg_set_buffer(vg_temp_buf);
 

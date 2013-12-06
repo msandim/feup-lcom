@@ -190,10 +190,10 @@ int mouse_ended_packet()
   return ((count == 0) && mouse_valid_packet()); // count is 0 (last packed ended) and its valid
 }
 
-unsigned int mouse_x_position()
+unsigned int mouse_getxposition()
 { return (unsigned int) x_position; }
 
-unsigned int mouse_y_position()
+unsigned int mouse_getyposition()
 { return (unsigned int) y_position; }
 
 int mouse_left_button()

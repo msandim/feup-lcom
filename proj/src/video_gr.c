@@ -35,11 +35,20 @@ static unsigned h_res;		/* Horizontal screen resolution in pixels */
 static unsigned v_res;		/* Vertical screen resolution in pixels */
 static unsigned bits_per_pixel; /* Number of VRAM bits per pixel */
 
-unsigned int vg_get_h_res() { return h_res;}
-unsigned int vg_get_v_res() { return v_res;}
-unsigned int vg_get_bits_per_pixel() { return bits_per_pixel;}
+unsigned int vg_get_h_res()
+{
+  return (unsigned int) h_res;
+}
 
-void vg_set_buffer(short* buf) {video_mem = buf;}
+unsigned int vg_get_v_res()
+{
+  return (unsigned int) v_res;
+}
+
+unsigned int vg_get_bits_per_pixel()
+{
+  return (unsigned int) bits_per_pixel;
+}
 
 void * vg_init(unsigned short mode) {
 

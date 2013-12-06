@@ -40,18 +40,19 @@ void drawMode()
   int ipc_status;
   message msg;
 
-  // mouse_interrupts
+  // *** ENABLE MOUSE
   int irq_set_mouse = mouse_subscribe_int();
   mouse_send_cmd(ENABLE_PACKETS);
 
-  // timer interrupts
+  // *** ENABLE TIMER FOR FRAME CONTROL
   int irq_set_timer = timer_subscribe_int();
-  int timer_count=0;
+
+  int timer_count=0; // count the timer interrupts
 
   int exit_flag = 0;
 
   // draw the tool bars, draw the screen where we draw
-  set_drawMode(0,0);
+  set_drawMode();
 
   while(!exit_flag)
   {
@@ -80,8 +81,7 @@ void drawMode()
           if (timer_count%2 == 0){
             //printf("timer_count: %u\n",timer_count);
 
-            //draw_mouse(mouse_x_position(),mouse_y_position());
-            set_drawMode(mouse_x_position(),mouse_y_position());
+            set_drawMode();
           }
         }
 

@@ -87,10 +87,10 @@ int mouse_valid_packet();
 int mouse_ended_packet();
 
 // Returns the x_position of the mouse
-unsigned int mouse_x_position();
+unsigned int mouse_getxposition();
 
 // Returns the y_position of the mouse
-unsigned int mouse_y_position();
+unsigned int mouse_getyposition();
 
 // Returns 1 if left button is on
 int mouse_left_button();

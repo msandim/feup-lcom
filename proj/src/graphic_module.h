@@ -5,7 +5,7 @@ void screenInit();
 
 void screenExit();
 
-int set_drawMode(unsigned int mouse_x, unsigned int mouse_y);
+int set_drawMode();
 
 int draw_mouse(unsigned int mouse_x, unsigned int mouse_y);
 
