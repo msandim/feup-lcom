@@ -5,7 +5,7 @@
 
 #include "graphic_module.h"
 #include "video_gr.h"
-#include "mouse.h"
+#include "user_interaction.h"
 #include <stdlib.h>
 
 static short* double_buf; // temp buffer for graphic use
@@ -42,7 +42,7 @@ int set_graphicsDrawMode()
   // draw o desenho
 
   // draw o rato
-  draw_mouse(mouse_getxposition(),mouse_getyposition());
+  draw_mouse(getxMousePosition(),getyMouseposition());
 
   vg_copy_buffer(double_buf);
 

@@ -5,6 +5,7 @@
 #include <sys/types.h>
 
 #include <minix/sysutil.h>
+#include <string.h>
 
 #include "vbe.h"
 #include "video_gr.h"
@@ -56,14 +57,16 @@ int vg_copy_buffer(short* buffer)
 
   short* ptrVRAM = video_mem;
 
-  // copy all the pixels
+  /* copy all the pixels
   for (i=0; i < h_res * v_res; i++)
   {
     *ptrVRAM = *buffer;
 
     ptrVRAM++;
     buffer++;
-  }
+  }*/
+
+  memcpy(ptrVRAM,buffer,h_res*v_res*2); // *2 because we are copying bytes!
   return 0;
 }
 

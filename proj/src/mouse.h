@@ -86,20 +86,8 @@ int mouse_valid_packet();
 // Checks if a valid packet ended
 int mouse_ended_packet();
 
-// Returns the x_position of the mouse
-unsigned int mouse_getxposition();
-
-// Returns the y_position of the mouse
-unsigned int mouse_getyposition();
-
-// Returns 1 if left button is on
-int mouse_left_button();
-
-// Returns 1 if the middle button is on
-int mouse_middle_button();
-
-// Returns 1 if the right button is on
-int mouse_right_button();
+// Returns a pointer to the first element of the array
+unsigned char * mouse_get_packet();
 
 // Gets the 3 config bytes from the status, changes the arguments
 // Returns 0 in success, 1 in non-success

@@ -9,11 +9,9 @@
 
 static int hook_id;
 
-static int x_position=0, y_position=0, RB_pressed=0, MB_pressed=0, LB_pressed=0;
+static unsigned char packet[3] = {0,0,0};
 
-unsigned char packet[3] = {0,0,0};
-
-unsigned short count=0;
+static unsigned short count=0;
 
 typedef enum {stateInit, stateLeft, stateRight} state_mouse;
 
@@ -121,8 +119,6 @@ void mouse_interrupt_handler()
 {
   unsigned char code;
 
-  int delta_X=0, delta_Y=0,XSIGN,YSIGN;
-
   if (mouse_receive_data_outbuf(&code))
   {
     printf("Didnt receive data from mouse yet. Try to move the mouse\n\n");
@@ -144,36 +140,6 @@ void mouse_interrupt_handler()
     packet[count] = code;
     count = 0; // initializes
 
-    // updates buttons state
-    LB_pressed = (packet[0] & LB_mask);
-    MB_pressed = (packet[0] & MB_mask) >> 2;
-    RB_pressed = (packet[0] & RB_mask) >> 1;
-
-    // updates x and y coordinates
-    XSIGN = (packet[0] & XSIGN_mask) >> 4; // get signs
-    YSIGN = (packet[0] & YSIGN_mask) >> 5;
-
-    if (XSIGN)
-      delta_X = -1;
-    if (YSIGN)
-      delta_Y = -1;
-
-    delta_X = (delta_X << 8) | packet[1]; // get deltas
-    delta_Y = (delta_Y << 8) | packet[2];
-    delta_Y = -delta_Y; // if we consider Y grows if we go down because of video_mem way
-
-    x_position += delta_X; y_position += delta_Y; // update positions
-
-    if (x_position < 0) // correct if x/y positions pass limits
-      x_position = 0;
-    else if (x_position > vg_get_h_res()-1)
-      x_position = vg_get_h_res()-1;
-
-    if (y_position < 0)
-      y_position = 0;
-    else if (y_position > vg_get_v_res()-1)
-      y_position = vg_get_v_res()-1;
-
     //mouse_print_packet(); // prints packet
     //printf("XPOSITION: %d, YPOSITION: %d, RB:%u,MB:%u,LB:%u\n",
         //x_position,y_position,RB_pressed,MB_pressed,LB_pressed);
@@ -190,20 +156,8 @@ int mouse_ended_packet()
   return ((count == 0) && mouse_valid_packet()); // count is 0 (last packed ended) and its valid
 }
 
-unsigned int mouse_getxposition()
-{ return (unsigned int) x_position; }
-
-unsigned int mouse_getyposition()
-{ return (unsigned int) y_position; }
-
-int mouse_left_button()
-{ return LB_pressed; }
-
-int mouse_middle_button()
-{ return MB_pressed; }
-
-int mouse_right_button()
-{ return RB_pressed; }
+unsigned char * mouse_get_packet()
+{ return &(packet[0]); }
 
 int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *byte3)
 {

@@ -72,10 +72,11 @@ void drawMode()
 
         if (msg.NOTIFY_ARG & irq_set_mouse) { /* subscribed interrupt */
 
-          mouse_interrupt_handler(); // update mouse status
-
-          if (mouse_ended_packet() && mouse_left_button()) // if we a new valid update on the mouse and we press left button, exit
+          if(updateMouseStatus()) // update mouse status
+          {
+            if(getMouseLBstate())
               exit_flag = 1;
+          }
         }
 
         if (msg.NOTIFY_ARG & irq_set_timer) {
@@ -83,7 +84,6 @@ void drawMode()
           timer_count++;
 
           if (timer_count%2 == 0){
-            //printf("timer_count: %u\n",timer_count);
 
             set_graphicsDrawMode();
           }
