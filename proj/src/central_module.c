@@ -1,79 +1,88 @@
-#include <minix/syslib.h>
-#include <minix/drivers.h>
-#include <minix/com.h>
-#include <minix/sysutil.h>
-
-#include <string.h>
-
 #include "central_module.h"
 #include "mouse.h"
 #include "user_interaction.h"
 #include "graphic_module.h"
-#include "draw_module.h"
-#include "timer.h"
 
 void menuInit()
 {
-  int exitFlag = 0;
-  unsigned char user_input;
+	int exitFlag = 0;
+	unsigned char user_input;
 
-  if (screenInit())
-  {
-    printf("Error starting graphic mode\n");
-    return;
-  }
+	screenInit();
 
-  while (!exitFlag)
-  {
-    // DRAW THESE PRINTFS
-    printf("Welcome to paint - minix style\n");
-    printf("Please choose option:\n1. Draw\n2. Library\nEsc. Exit");
+	while (!exitFlag)
+	{
+		// DRAW THESE PRINTFS
+		printf("Welcome to paint - minix style");
+		printf("Please choose option:\n1. Draw\n2. Library\nEsc. Exit\n");
+		vg_fill(0);
 
-    // fazer switch da variavel input, se for ESC sai do ecrã
+		// fazer switch da variavel input, se for ESC sai do ecrã
 
-    // experiencia: iniciar drawMode() e depois sair
 
-    drawModeInit();
-    vg_fill(3603);
-    sleep(2);
-    exitFlag = 1;
-  }
+		drawMode();
+		//vg_fill(80);
+		//sleep(2);
+		exitFlag = 1;
+	}
 
-  screenExit();
+	screenExit();
 }
 
-void drawModeInit()
+
+
+void drawMode()
 {
-  // *** ENABLE MOUSE & TIMER
-  int irq_set_mouse = mouse_subscribe_int();
-  mouse_send_cmd(ENABLE_PACKETS);
-  int irq_set_timer = timer_subscribe_int();
+	//carregar botoes
+	BTN* btn_array = (BTN*) malloc (11* sizeof(BTN));
+	loadToolBar(btn_array);
 
-  // draw the tool bars, draw the screen where we draw
-  set_graphicsDrawMode();
+	int ipc_status;
+	message msg;
 
-  // Draw Screen (reserve space)
-  short* draw_scr = (short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(short));
+	// mouse_interrupts
+	int irq_set_mouse = mouse_subscribe_int();
+	mouse_send_cmd(ENABLE_PACKETS);
 
-  if (draw_scr == NULL)
-  {
-    printf("Could not allocate array draw_scr\n");
-    return;
-  }
+	int exit_flag = 0;
 
-  // start as white
-  memset(draw_scr,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
+	while(!exit_flag)
+	{
+		// draw the tool bars, draw the screen where we draw
+		set_drawMode(0,0,btn_array);
 
-  // migrate into draw mode
-  drawMode(irq_set_mouse,irq_set_timer,draw_scr);
+		/* Get a request message. */
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("driver_receive failed\n");
+			continue;
+		}
 
-  // Draw Screen (free memory)
-  free(draw_scr);
+		if (is_ipc_notify(ipc_status)) { /* received notification */
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE: /* hardware interrupt notification */
+				if (msg.NOTIFY_ARG & irq_set_mouse) { /* subscribed interrupt */
 
-  // ** DISABLE MOUSE & TIMER
-  mouse_send_cmd(DISABLE_STREAM_MODE);
-  mouse_unsubscribe_int();
-  timer_unsubscribe_int();
+					mouse_interrupt_handler(); // update mouse status
+
+					if (mouse_ended_packet()) // if we a new valid update on the mouse
+					{
+						set_drawMode(mouse_x_position(),mouse_y_position(), btn_array);
+
+						if (mouse_left_button()) // if we press left button, exit
+							exit_flag = 1;
+					}
+				}
+				break;
+			default:
+				break; /* no other notifications expected: do nothing */
+			}
+		} else { /* received a standard message, not a notification */
+			/* no standard messages expected: do nothing */
+		}
+	}
+
+	// disable stream mode
+	mouse_send_cmd(DISABLE_STREAM_MODE);
+
+	mouse_unsubscribe_int();
 }
-
-

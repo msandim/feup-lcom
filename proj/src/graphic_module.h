@@ -1,12 +1,48 @@
 #ifndef _GRAPHIC_MODULE_H_
 #define _GRAPHIC_MODULE_H_
 
-int screenInit();
+typedef struct {
+	unsigned short int type;                 /* Magic identifier            */
+	unsigned int size;                       /* File size in bytes          */
+	unsigned short int reserved1, reserved2;
+	unsigned int offset;                     /* Offset to image data, bytes */
+} HEADER;
+
+typedef struct {
+   unsigned int size;               /* Header size in bytes      */
+   int width,height;                /* Width and height of image */
+   unsigned short int planes;       /* Number of colour planes   */
+   unsigned short int bits;         /* Bits per pixel            */
+   unsigned int compression;        /* Compression type          */
+   unsigned int imagesize;          /* Image size in bytes       */
+   int xresolution,yresolution;     /* Pixels per meter          */
+   unsigned int ncolours;           /* Number of colours         */
+   unsigned int importantcolours;   /* Important colours         */
+} INFOHEADER;
+
+typedef struct {
+	short* pixels;
+	int width, height;
+} SPRITE;
+
+typedef struct {
+	SPRITE sprite_off;
+	SPRITE sprite_on;
+	int press_state;
+} BTN;
+
+void screenInit();
 
 void screenExit();
 
-int set_graphicsDrawMode();
+int set_drawMode(unsigned int mouse_x, unsigned int mouse_y, BTN* btn_array);
 
-int draw_mouse();
+int draw_mouse(unsigned int mouse_x, unsigned int mouse_y);
+
+unsigned short* loadBMP (char const* filename, unsigned int * width, unsigned int * height);
+
+void loadToolBar(BTN* btnArray);
+
+void drawToolBar(BTN* btnArray);
 
 #endif

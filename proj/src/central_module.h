@@ -3,6 +3,6 @@
 
 void menuInit();
 
-void drawModeInit();
+void drawMode();
 
 #endif
