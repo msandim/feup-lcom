@@ -6,7 +6,7 @@ CC=gcc
 
 PROG=	proj
 SRCS=	main.c video_gr.c vbe.c mouse.c timer.c
-SRCS+= graphic_module.c central_module.c user_interaction.c
+SRCS+= central_module.c graphic_module.c draw_module.c user_interaction.c
 
 CCFLAGS= -Wall
 

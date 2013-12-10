@@ -8,7 +8,7 @@ int updateMouseStatus();
 unsigned int getxMousePosition();
 
 // Returns the y_position of the mouse
-unsigned int getyMouseposition();
+unsigned int getyMousePosition();
 
 // Returns 1 if left button of the mouse is on
 int getMouseLBstate();
