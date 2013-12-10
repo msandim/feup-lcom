@@ -7,6 +7,6 @@ void screenExit();
 
 int set_graphicsDrawMode();
 
-int draw_mouse(unsigned int mouse_x, unsigned int mouse_y);
+int draw_mouse();
 
 #endif

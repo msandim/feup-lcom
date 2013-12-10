@@ -42,7 +42,7 @@ int set_graphicsDrawMode()
   // draw o desenho
 
   // draw o rato
-  draw_mouse(getxMousePosition(),getyMouseposition());
+  draw_mouse();
 
   vg_copy_buffer(double_buf);
 
@@ -51,11 +51,12 @@ int set_graphicsDrawMode()
 
 // ... draw toolbox, draw desenho
 
-int draw_mouse(unsigned int mouse_x, unsigned int mouse_y)
+int draw_mouse()
 {
   // desenhar quadrado de lado 3, centrado em X,Y
   // estes parametros podem ser acedidos pelo rato AQUI!
 
+  unsigned int mouse_x = getxMousePosition(), mouse_y = getyMouseposition();
   unsigned x_draw = mouse_x, y_draw = mouse_y;
 
   vg_set_pixel_buffer(x_draw,y_draw,0,double_buf);
