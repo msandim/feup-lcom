@@ -28,6 +28,7 @@ void menuInit()
     // DRAW THESE PRINTFS
     printf("Welcome to paint - minix style\n");
     printf("Please choose option:\n1. Draw\n2. Library\nEsc. Exit");
+    printf("\nteste\n");
 
     // fazer switch da variavel input, se for ESC sai do ecrã
 
@@ -50,10 +51,10 @@ void drawModeInit()
   int irq_set_timer = timer_subscribe_int();
 
   // draw the tool bars, draw the screen where we draw
-  set_graphicsDrawMode();
+  //set_graphicsDrawMode();
 
   // Draw Screen (reserve space)
-  short* draw_scr = (short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(short));
+  short* draw_scr = (short*) malloc(400 * 400 * sizeof(short));
 
   if (draw_scr == NULL)
   {
@@ -62,7 +63,7 @@ void drawModeInit()
   }
 
   // start as white
-  memset(draw_scr,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
+  memset(draw_scr,20,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
 
   // migrate into draw mode
   drawMode(irq_set_mouse,irq_set_timer,draw_scr);

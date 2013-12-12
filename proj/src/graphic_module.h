@@ -5,7 +5,11 @@ int screenInit();
 
 void screenExit();
 
-int set_graphicsDrawMode();
+void drawBufferInVRAM();
+
+int drawAreaInDoubleBuffer(short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v);
+
+int set_graphicsDrawMode(short* tela);
 
 int draw_mouse();
 

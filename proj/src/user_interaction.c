@@ -56,7 +56,7 @@ int updateMouseStatus()
 unsigned int getxMousePosition()
 { return (unsigned int) x_position; }
 
-unsigned int getyMouseposition()
+unsigned int getyMousePosition()
 { return (unsigned int) y_position; }
 
 int getMouseLBstate()

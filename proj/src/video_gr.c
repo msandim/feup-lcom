@@ -60,7 +60,7 @@ int vg_copy_buffer(short* buffer)
   /* copy all the pixels
   for (i=0; i < h_res * v_res; i++)
   {
-    *ptrVRAM = *buffer;
+   *ptrVRAM = *buffer;
 
     ptrVRAM++;
     buffer++;
@@ -152,7 +152,7 @@ int vg_fill(unsigned long color) {
   return 0;
 }
 
-int vg_fill_buffer(unsigned long color, short* buffer) {
+int vg_fill_buffer(unsigned long color, short* buffer, unsigned long dim_h, unsigned long dim_v) {
 
   unsigned int i;
 
@@ -161,7 +161,7 @@ int vg_fill_buffer(unsigned long color, short* buffer) {
   //for (j=0; j < 1000; j++)
   //{
   // fill all the pixels
-  for (i=0; i < h_res * v_res; i++)
+  for (i=0; i < dim_h * dim_v; i++)
   {
     *buffer = color;
     //*ptrVRAM = j;
@@ -175,17 +175,28 @@ int vg_fill_buffer(unsigned long color, short* buffer) {
   return 0;
 }
 
-int vg_set_pixel_buffer(unsigned long x, unsigned long y, unsigned long color, short* buffer) {
+int vg_set_pixel_buffer(unsigned long x, unsigned long y, unsigned long color, short* buffer, unsigned long dim_h, unsigned long dim_v) {
 
-  if (y >= v_res || x >= h_res)
+  if (x >= dim_h || y >= dim_v)
   {
     printf("vg_set_pixel::Invalid X/Y\n");
-    printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,v_res,h_res);
+    printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,dim_h,dim_v);
     return 1;
   }
 
-  buffer += ((y*h_res) + x); // VER ISTO DEPOIS
+  //if (y == 50 && color == 0)
+    //printf("Endereco inicial do buffer: %p\n",buffer);
+  buffer += ((y*dim_h) + x);
+  //if (y == 50 && color == 0)
+    //printf("Endereco final do buffer: %p\n",buffer);
+
+  //if (y == 50 && color == 0)
+    //printf("buffer1: %x\n",*buffer);
+
   *buffer = color;
+
+  //if (y == 50 && color == 0)
+    //printf("buffer2: %x\n",*buffer);
 
   return 0;
 }
@@ -207,7 +218,8 @@ long vg_get_pixel(unsigned long x, unsigned long y) {
 }
 
 int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
-    unsigned long xf, unsigned long yf, unsigned long color, short* buffer) {
+    unsigned long xf, unsigned long yf, unsigned long color, short* buffer,
+    unsigned long dim_h, unsigned long dim_v) {
 
   /*
 	int a,b,p,x,y,dx,dy;
@@ -300,7 +312,7 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
 
    */
 
-  if (yi >= v_res || yf >= v_res || xi >= h_res || xf >= h_res)
+  if (yi >= dim_v || yf >= dim_v || xi >= dim_h || xf >= dim_h)
   {
     printf("vg_set_pixel::Invalid X/Y\n");
     return 1;
@@ -310,7 +322,7 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
   int dx, dy, incE, incNE, d, x, y;
   // Onde inverte a linha x1 > x2
   if (xi > xf){
-    vg_draw_line_buffer(xf, yf, xi, yi, color, buffer);
+    vg_draw_line_buffer(xf, yf, xi, yi, color, buffer,dim_h,dim_v);
     return;
   }
   dx = xf - xi;
@@ -330,7 +342,7 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
   d = 2 * dy - dx;
   y = yi;
   for (x = xi; x <= xf; x++){
-    vg_set_pixel_buffer(x,y,color,buffer);
+    vg_set_pixel_buffer(x,y,color,buffer,dim_h,dim_v);
     if (d <= 0){
       d += incE;
     }
