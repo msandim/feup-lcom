@@ -77,4 +77,3 @@ void drawModeInit()
   timer_unsubscribe_int();
 }
 
-

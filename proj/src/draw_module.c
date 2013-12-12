@@ -21,68 +21,75 @@ void (*tool_handlers[1]) (void) = {brush_handler} ; // 2 ferramentas por agora (
 
 void drawMode(int irq_set_mouse, int irq_set_timer, short* draw_scr)
 {
-  draw_screen = draw_scr;
+	//carregar botoes
+	BTN* btn_array = (BTN*) malloc (11* sizeof(BTN));
+	loadToolBar(btn_array);
 
-  int ipc_status;
-  message msg;
+	SPRITE color_bar;
+	loadColorBar(&color_bar);
 
-  int timer_count=0; // count the timer interrupts
+	draw_screen = draw_scr;
 
-  int exit_flag = 0;
+	int ipc_status;
+	message msg;
 
-  while(!exit_flag)
-  {
-    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-      printf("driver_receive failed\n");
-      continue;
-    }
+	int timer_count=0; // count the timer interrupts
 
-    if (is_ipc_notify(ipc_status)) {
-      switch (_ENDPOINT_P(msg.m_source)) {
-      case HARDWARE:
+	int exit_flag = 0;
 
-        if (msg.NOTIFY_ARG & irq_set_mouse) {
+	while(!exit_flag)
+	{
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("driver_receive failed\n");
+			continue;
+		}
 
-          if(updateMouseStatus()) // update mouse status, if packet ended
-          {
-            if (getMouseLBstate())
-              mouseClickDrawEvent();
+		if (is_ipc_notify(ipc_status)) {
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE:
 
-            if(getMouseMBstate())
-              exit_flag = 1;
-          }
-        }
+				if (msg.NOTIFY_ARG & irq_set_mouse) {
 
-        if (msg.NOTIFY_ARG & irq_set_timer) {
+					if(updateMouseStatus()) // update mouse status, if packet ended
+					{
+						if (getMouseLBstate())
+							mouseClickDrawEvent();
 
-          timer_count++;
+						if(getMouseMBstate())
+							exit_flag = 1;
+					}
+				}
 
-          if (timer_count%2 == 0){
+				if (msg.NOTIFY_ARG & irq_set_timer) {
 
-            set_graphicsDrawMode(draw_screen); // desenhar tudo
+					timer_count++;
 
-            // desenhar tela
-          }
-        }
+					if (timer_count%2 == 0){
 
-        break;
-      default:
-        break;
-      }
-    } else {
+						set_graphicsDrawMode(draw_screen,btn_array,color_bar); // desenhar tudo
 
-    }
-  }
+						// desenhar tela
+					}
+				}
+
+				break;
+			default:
+				break;
+			}
+		} else {
+
+		}
+	}
 }
 
 void mouseClickDrawEvent()
 {
-  // if the click was on the draw_screen
-  if (getxMousePosition() > 500 && getxMousePosition() < 700 &&
-      getyMousePosition() > 200 && getyMousePosition() < 400)
-    (tool_handlers[tool_selected])();
+	// if the click was on the draw_screen
+	if (getxMousePosition() > 500 && getxMousePosition() < 700 &&
+			getyMousePosition() > 200 && getyMousePosition() < 400)
+		(tool_handlers[tool_selected])();
 
-  /* Se o click foi na tabela das cores */
+	/* Se o click foi na tabela das cores */
 
 
 
@@ -90,8 +97,8 @@ void mouseClickDrawEvent()
 
 void keyboardDrawEvent()
 {
-  // se mudar de ferramenta:
-  //tool_current_state = st0;
+	// se mudar de ferramenta:
+	//tool_current_state = st0;
 }
 
 void null_handler()
@@ -99,70 +106,70 @@ void null_handler()
 
 void brush_handler()
 {
-  static unsigned int last_x, last_y;
+	static unsigned int last_x, last_y;
 
-  //printf("ENTROU");
+	//printf("ENTROU");
 
-  switch(tool_current_state)
-  {
-  case st0:
-    if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
-    {
-      last_x = getxMousePosition();
-      last_y = getyMousePosition();
-      tool_current_state = st1;
-    }
-    break;
+	switch(tool_current_state)
+	{
+	case st0:
+		if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+		{
+			last_x = getxMousePosition();
+			last_y = getyMousePosition();
+			tool_current_state = st1;
+		}
+		break;
 
-  case st1:
-  {
-    // calculate relative position of x and y
-    unsigned long pos1_x = last_x - DRAW_SCREENX_UL_CORNER;
-    unsigned long pos1_y = last_y - DRAW_SCREENY_UL_CORNER;
-    unsigned long pos2_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-    unsigned long pos2_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+	case st1:
+	{
+		// calculate relative position of x and y
+		unsigned long pos1_x = last_x - DRAW_SCREENX_UL_CORNER;
+		unsigned long pos1_y = last_y - DRAW_SCREENY_UL_CORNER;
+		unsigned long pos2_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+		unsigned long pos2_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
-    // desenhar linha no buffer
-    vg_fill_buffer(7237, draw_screen,DRAW_SCREEN_H, DRAW_SCREEN_V); // DESENHA VERDE PARA TESTAR
+		// desenhar linha no buffer
+		vg_fill_buffer(7237, draw_screen,DRAW_SCREEN_H, DRAW_SCREEN_V); // DESENHA VERDE PARA TESTAR
 
-    vg_draw_line_buffer(pos1_x, pos1_y, pos2_x, pos2_y,
-        0xFFFF, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-    vg_draw_line_buffer(0,0,100,150,0,draw_screen,200,200);
+		vg_draw_line_buffer(pos1_x, pos1_y, pos2_x, pos2_y,
+				0xFFFF, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+		vg_draw_line_buffer(0,0,100,150,0,draw_screen,200,200);
 
-    vg_set_pixel_buffer(0, 50, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(0, 51, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(1, 50, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(2, 51, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(3, 50, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(3, 51, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(4, 50, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(4, 51, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(5, 50, 0, draw_screen, 200,200);
-    vg_set_pixel_buffer(5, 51, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(0, 50, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(0, 51, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(1, 50, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(2, 51, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(3, 50, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(3, 51, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(4, 50, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(4, 51, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(5, 50, 0, draw_screen, 200,200);
+		vg_set_pixel_buffer(5, 51, 0, draw_screen, 200,200);
 
-    // actualizar tela no double buf
-    drawAreaInDoubleBuffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V,
-        DRAW_SCREENX_UL_CORNER, DRAW_SCREENY_UL_CORNER);
+		// actualizar tela no double buf
+		drawAreaInDoubleBuffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V,
+				DRAW_SCREENX_UL_CORNER, DRAW_SCREENY_UL_CORNER);
 
-    // colocar novas coordenadas
-    last_x = getxMousePosition();
-    last_y = getyMousePosition();
+		// colocar novas coordenadas
+		last_x = getxMousePosition();
+		last_y = getyMousePosition();
 
-    if (!getMouseLBstate()) // if the LB is not pressed, return to state 0
-      tool_current_state = st0;
+		if (!getMouseLBstate()) // if the LB is not pressed, return to state 0
+			tool_current_state = st0;
 
-    break;
-  }
-  }
+		break;
+	}
+	}
 }
 
 void rect_line_handler()
 {
-  static unsigned int last_x, last_y;
+	static unsigned int last_x, last_y;
 
-  switch(tool_current_state)
-  {
-  case st0:
-    break;
-  }
+	switch(tool_current_state)
+	{
+	case st0:
+		break;
+	}
 }

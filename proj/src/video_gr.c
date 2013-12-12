@@ -221,96 +221,6 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
     unsigned long xf, unsigned long yf, unsigned long color, short* buffer,
     unsigned long dim_h, unsigned long dim_v) {
 
-  /*
-	int a,b,p,x,y,dx,dy;
-
-	if (xf<xi){
-		vg_draw_line(xf,yf,xi,yi,color);
-	} else {
-
-		dx = xf-xi;
-		dy = yf-yi;
-
-
-		if (abs(dy)>abs(dx)){
-			//Calculate the A,B and initial P value
-			a=2*(xf-xi);
-			b=a-2*(yf-yi);
-			p=a-(yf-yi);
-
-			//Paint first pixel
-			vg_set_pixel(xi,yi,color);
-
-			//Set x as xi
-			x=xi;
-
-
-			if (dx <= 0){
-				for (y=yi+1; y<yf; y++){
-					if (p<0){
-						vg_set_pixel(x,y,color);
-						p=a+p;
-					} else {
-						x--;
-						vg_set_pixel(x,y,color);
-						p=b+p;
-					}
-				}
-			} else {
-				for (y=yi+1; y<yf; y++){
-					if (p<0){
-						vg_set_pixel(x,y,color);
-						p=a+p;
-					} else {
-						x++;
-						vg_set_pixel(x,y,color);
-						p=b+p;
-					}
-				}
-			}
-
-		}
-		else{
-			//Calculate the A,B and initial P value
-			a=2*(yf-yi);
-			b=a-2*(xf-xi);
-			p=a-(xf-xi);
-
-			//Paint first pixel
-			vg_set_pixel(xi,yi,color);
-
-			//Set y as yi
-			y=yi;
-
-			if (dy <= 0){
-				for (x=xi+1; x<xf; x++){
-					if (p<0){
-						y--;
-						vg_set_pixel(x,y,color);
-						p=a+p;
-					} else {
-						vg_set_pixel(x,y,color);
-						p=b+p;
-					}
-				}
-			} else {
-				for (x=xi+1; x<xf; x++){
-					if (p<0){
-						y++;
-						vg_set_pixel(x,y,color);
-						p=a+p;
-					} else {
-
-						vg_set_pixel(x,y,color);
-						p=b+p;
-					}
-				}
-			}
-
-		}
-	}
-
-   */
 
   if (yi >= dim_v || yf >= dim_v || xi >= dim_h || xf >= dim_h)
   {
@@ -353,6 +263,26 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
   }
 
   return 0;
+}
+
+void vg_draw_object_buffer(short* object, int w, int h, int x, int y, short* buffer, unsigned long dim_h, unsigned long dim_v) {
+
+	int i, j, k;
+/*
+	printf ("H: %u\n", h);
+	printf ("W: %u\n", w);
+	printf ("X: %u\n", x);
+	printf ("Y: %u\n", y);
+*/
+	for (i = 0; i < h; i++) {
+		k = 0;
+		for (j = w; j > 0; j--) {
+			vg_set_pixel_buffer(x+j, y+i, object[(w*h) - (i*w+k)],buffer, dim_h, dim_v);
+			k++;
+		}
+
+
+	}
 }
 
 int vg_exit() {

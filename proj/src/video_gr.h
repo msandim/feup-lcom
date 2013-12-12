@@ -82,6 +82,12 @@ long vg_get_pixel(unsigned long x, unsigned long y);
 int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
     unsigned long xf, unsigned long yf, unsigned long color, short* buffer,
     unsigned long dim_h, unsigned long dim_v);
+/**
+ * @brief Draw object
+ *
+ * Draws a object
+ */
+void vg_draw_object(short* object, int w, int h, int x, int y, short* buffer, unsigned long dim_h, unsigned long dim_v);
 
  /**
  * @brief Returns to default Minix 3 text mode (0x03: 25 x 80, 16 colors)
