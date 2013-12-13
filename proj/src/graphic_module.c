@@ -43,7 +43,7 @@ void drawBufferInVRAM()
 int set_graphicsDrawMode(short* tela, BTN* btn_array, SPRITE color_bar)
 {
   // desenhar fundo
-  vg_fill_buffer(0,double_buf,vg_get_h_res(),vg_get_v_res());
+  vg_fill_buffer(/*0x596B*/0,double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw toolboxes
   drawToolBar(btn_array,double_buf);
@@ -52,7 +52,7 @@ int set_graphicsDrawMode(short* tela, BTN* btn_array, SPRITE color_bar)
   vg_draw_object_buffer(color_bar.pixels,color_bar.width,color_bar.height, 122, 700,double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw draw_screen
-  drawAreaInDoubleBuffer(tela, 500, 200, 200, 200);
+  drawAreaInDoubleBuffer(tela, 122, 30, 880, 650);
 
   // draw mouse
   draw_mouse();

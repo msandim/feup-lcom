@@ -85,8 +85,8 @@ void drawMode(int irq_set_mouse, int irq_set_timer, short* draw_scr)
 void mouseClickDrawEvent()
 {
   // if the click was on the draw_screen
-  if (getxMousePosition() >= 500 && getxMousePosition() < 700 &&
-      getyMousePosition() >= 200 && getyMousePosition() < 400)
+  if (getxMousePosition() >= 122 && getxMousePosition() <= 1001 &&
+      getyMousePosition() >= 30 && getyMousePosition() <= 680)
     (tool_handlers[tool_selected])();
 
   /* Se o click foi na tabela das cores */
