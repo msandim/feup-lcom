@@ -277,12 +277,21 @@ void vg_draw_object_buffer(short* object, int w, int h, int x, int y, short* buf
 	for (i = 0; i < h; i++) {
 		k = 0;
 		for (j = w; j > 0; j--) {
-			vg_set_pixel_buffer(x+j, y+i, object[(w*h) - (i*w+k)],buffer, dim_h, dim_v);
+			vg_set_pixel_buffer(x+j, y+i, object[(w*h) - (i*w+k)], buffer, dim_h, dim_v);
 			k++;
 		}
 
 
 	}
+}
+
+void vg_draw_rectangle_buffer(int x, int y, int w, int h, unsigned long color, short* buffer, unsigned long dim_h, unsigned long dim_v) {
+	unsigned int i;
+
+	for (i = 0; i < h; i++) {
+		vg_draw_line_buffer(x,y+i,x+w,y+i,color,buffer,dim_h,dim_v);
+	}
+
 }
 
 int vg_exit() {

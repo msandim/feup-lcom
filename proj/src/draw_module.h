@@ -25,4 +25,6 @@ void keyboardDrawEvent();
 
 void brush_handler();
 
+void rectagle_handler();
+
 #endif
