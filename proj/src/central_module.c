@@ -54,7 +54,7 @@ void drawModeInit()
   //set_graphicsDrawMode();
 
   // Draw Screen (reserve space)
-  short* draw_scr = (short*) malloc(400 * 400 * sizeof(short));
+  short* draw_scr = (short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(short));
 
   if (draw_scr == NULL)
   {
@@ -63,7 +63,7 @@ void drawModeInit()
   }
 
   // start as white
-  memset(draw_scr,20,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
+  memset(draw_scr,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
 
   // migrate into draw mode
   drawMode(irq_set_mouse,irq_set_timer,draw_scr);

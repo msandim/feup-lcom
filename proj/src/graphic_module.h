@@ -35,7 +35,11 @@ int screenInit();
 
 void screenExit();
 
+void drawBufferInVRAM();
+
 int set_graphicsDrawMode(short* tela, BTN* btn_array, SPRITE color_bar);
+
+int drawAreaInDoubleBuffer(short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v);
 
 int draw_mouse();
 
