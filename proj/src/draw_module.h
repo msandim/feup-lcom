@@ -1,6 +1,8 @@
 #ifndef _DRAW_MODULE_H_
 #define _DRAW_MODULE_H_
 
+#include "graphic_module.h"
+
 //#define DRAW_SCREEN_H 880
 //#define DRAW_SCREEN_V 650
 
@@ -17,14 +19,17 @@ typedef struct
   unsigned int x_ul_corner, y_ul_corner;
 } draw_screen_area;
 
-void drawMode(int irq_set_mouse, int irq_set_timer, short* draw_scr);
+void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, short* draw_scr,
+    BTN* btn_array, SPRITE color_bar);
 
 void mouseClickDrawEvent();
 
 void keyboardDrawEvent();
 
+void blank_handler();
+
 void brush_handler();
 
-void rectagle_handler();
+void rectangle_handler();
 
 #endif

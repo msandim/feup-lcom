@@ -53,7 +53,7 @@ int mouse_send_cmd(unsigned long cmd)
 
   unsigned long timeoutcounter = 0;
 
-  while(timeoutcounter < DELAY_US*10 ) {
+  while(timeoutcounter < DELAY_MOUSE*10 ) {
 
     if (sys_inb(STAT_REG, &stat) != OK)
       return 1;
@@ -74,16 +74,16 @@ int mouse_send_cmd(unsigned long cmd)
       if (info == ACK)
       {
         // SUCCESS
-        tickdelay(micros_to_ticks(DELAY_US));
+        tickdelay(micros_to_ticks(DELAY_MOUSE));
         return 0;
       }
     }
 
     // if the input buffer is not empty, lets check again
     // Or .. if non-ACK
-    tickdelay(micros_to_ticks(DELAY_US));
+    tickdelay(micros_to_ticks(DELAY_MOUSE));
 
-    timeoutcounter += DELAY_US;
+    timeoutcounter += DELAY_MOUSE;
   }
 
   return 1;
@@ -95,7 +95,7 @@ int mouse_receive_data_outbuf(unsigned char *data)
 
   unsigned long timeoutcounter = 0;
 
-  while( timeoutcounter < DELAY_US*10 ) {
+  while( timeoutcounter < DELAY_MOUSE*10 ) {
 
     if (sys_inb(STAT_REG, &stat) != OK)
       return 1;
@@ -109,8 +109,8 @@ int mouse_receive_data_outbuf(unsigned char *data)
       return 0;
     }
 
-    tickdelay(micros_to_ticks(DELAY_US));
-    timeoutcounter += DELAY_US;
+    tickdelay(micros_to_ticks(DELAY_MOUSE));
+    timeoutcounter += DELAY_MOUSE;
   }
   return 1;
 }

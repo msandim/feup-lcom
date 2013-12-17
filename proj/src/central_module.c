@@ -45,15 +45,14 @@ void menuInit()
 
 void drawModeInit()
 {
-  // *** ENABLE MOUSE & TIMER
+  // *** ENABLE MOUSE, KEYBOARD & TIMER
   int irq_set_mouse = mouse_subscribe_int();
   mouse_send_cmd(ENABLE_PACKETS);
   int irq_set_timer = timer_subscribe_int();
+  int irq_set_kbd = keyboard_subscribe_int();
 
-  // draw the tool bars, draw the screen where we draw
-  //set_graphicsDrawMode();
-
-  // Draw Screen (reserve space)
+  // DRAW SCREEN PREPARATION ****************************
+  // ****************************************************
   short* draw_scr = (short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(short));
 
   if (draw_scr == NULL)
@@ -65,15 +64,29 @@ void drawModeInit()
   // start as white
   memset(draw_scr,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
 
+  // INTERFACE LOADING *********************************
+  // ***************************************************
+
+  // Load buttons
+  BTN* btn_array = (BTN*) malloc (11* sizeof(BTN));
+  if (loadToolBar(btn_array))
+    return;
+
+  // Load color bar
+  SPRITE color_bar;
+  if (loadColorBar(&color_bar))
+    return;
+
   // migrate into draw mode
-  drawMode(irq_set_mouse,irq_set_timer,draw_scr);
+  drawMode(irq_set_mouse,irq_set_kbd,irq_set_timer,draw_scr, btn_array, color_bar);
 
   // Draw Screen (free memory)
   free(draw_scr);
 
-  // ** DISABLE MOUSE & TIMER
+  // ** DISABLE MOUSE, MOUSE & TIMER
   mouse_send_cmd(DISABLE_STREAM_MODE);
   mouse_unsubscribe_int();
+  keyboard_unsubscribe_int();
   timer_unsubscribe_int();
 }
 

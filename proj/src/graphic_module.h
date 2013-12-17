@@ -43,12 +43,12 @@ int drawAreaInDoubleBuffer(short* buffer, unsigned int x_upperleft_corner, unsig
 
 int draw_mouse();
 
-unsigned short* loadBMP (char const* filename, unsigned int * width, unsigned int * height);
+short* loadBMP (char const* filename, unsigned int * width, unsigned int * height);
 
-void loadToolBar(BTN* btnArray);
+int loadToolBar(BTN* btnArray);
 
 void drawToolBar(BTN* btnArray, short* buffer);
 
-void loadColorBar(SPRITE* color_bar);
+int loadColorBar(SPRITE* color_bar);
 
 #endif

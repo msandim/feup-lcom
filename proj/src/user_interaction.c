@@ -1,6 +1,77 @@
+#include <minix/syslib.h>
+#include <minix/drivers.h>
+#include <minix/com.h>
+
 #include "user_interaction.h"
 #include "mouse.h"
+#include "keyboard.h"
 #include "video_gr.h"
+
+// KEYBOARD VARIABLES
+static unsigned char last_key_code = 0;
+static int two_byte_flag = 0, press_key_flag = 0;
+
+/* KEYBOARD STATUS FUNCTIONS */
+
+int updateKeyboardStatus()
+{
+  unsigned char key_code;
+
+  static int received_E0_before = 0;
+
+  int keyboard_status = keyboard_interrupt_handler(&key_code);
+
+  if (keyboard_status == -1) // error receiving key
+    return 0;
+
+  else if (keyboard_status == 0) // normal make code
+  {
+    last_key_code = key_code;
+
+    if (!received_E0_before) // check if it's a 2 byte code, or 1 byte code
+      two_byte_flag = 0;
+    else
+      two_byte_flag = 1;
+
+    press_key_flag = 1; // because it's a make code
+    received_E0_before = 0;
+  }
+
+  else if (keyboard_status == 1) // normal break code
+  {
+    if (!received_E0_before) // check if it's a 2 byte code, or 1 byte code
+      two_byte_flag = 0;
+    else
+      two_byte_flag = 1;
+
+    press_key_flag = 0; // because it's a break code
+    received_E0_before = 0;
+  }
+
+  else // special initial char (E0)
+  {
+    received_E0_before = 1;
+    return 0;
+  }
+
+  return 1;
+}
+
+unsigned char getKeyboardLastKey()
+{
+  return last_key_code;
+}
+
+int getKeyboard2ByteCode()
+{
+  return two_byte_flag;
+}
+
+int getKeyboardPressState()
+{
+  return press_key_flag;
+}
+
 
 // MOUSE VARIABLES
 static int x_position=0, y_position=0, RB_pressed=0, MB_pressed=0, LB_pressed=0;

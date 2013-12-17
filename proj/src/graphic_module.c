@@ -113,20 +113,22 @@ int draw_mouse()
   return 0;
 }
 
-unsigned short* loadBMP (char const* filename, unsigned int * width, unsigned int * height) {
+short* loadBMP (char const* filename, unsigned int * width, unsigned int * height) {
 
+  // allocate memory for the file name
   char* path = (char*) malloc ( (strlen(filename) + 24) * sizeof (char));
 
   snprintf (path, (strlen(filename) + 24), "/home/lcom/proj/images/%s", filename);
 
   //printf("FILE:\n%s\n",path);
 
-
+  // Open file
   FILE *bmp;
   char *mode = "rb";
 
-  HEADER* head = (HEADER*) malloc (sizeof(HEADER));
-  INFOHEADER* info = (INFOHEADER*) malloc (sizeof(INFOHEADER));
+  // ver esta questão de mem dinâmica depois ...
+  HEADER head;
+  INFOHEADER info;
 
   bmp = fopen(path,mode);
 
@@ -135,64 +137,82 @@ unsigned short* loadBMP (char const* filename, unsigned int * width, unsigned in
     return NULL;
   }
 
-  fread(&head->type,2,1,bmp);
-  fread(&head->size,4,1,bmp);
-  fread(&head->reserved1,2,1,bmp);
-  fread(&head->reserved2,2,1,bmp);
-  fread(&head->offset,4,1,bmp);
+  fread(&head.type,2,1,bmp);
+  fread(&head.size,4,1,bmp);
+  fread(&head.reserved1,2,1,bmp);
+  fread(&head.reserved2,2,1,bmp);
+  fread(&head.offset,4,1,bmp);
 
-  fread(&info->size,4,1,bmp);
-  fread(&info->width,4,1,bmp);
-  fread(&info->height,4,1,bmp);
-  fread(&info->planes,2,1,bmp);
-  fread(&info->bits,2,1,bmp);
-  fread(&info->compression,4,1,bmp);
-  fread(&info->imagesize,4,1,bmp);
-  fread(&info->xresolution,4,1,bmp);
-  fread(&info->yresolution,4,1,bmp);
-  fread(&info->ncolours,4,1,bmp);
-  fread(&info->importantcolours,4,1,bmp);
+  fread(&info.size,4,1,bmp);
+  fread(&info.width,4,1,bmp);
+  fread(&info.height,4,1,bmp);
+  fread(&info.planes,2,1,bmp);
+  fread(&info.bits,2,1,bmp);
+  fread(&info.compression,4,1,bmp);
+  fread(&info.imagesize,4,1,bmp);
+  fread(&info.xresolution,4,1,bmp);
+  fread(&info.yresolution,4,1,bmp);
+  fread(&info.ncolours,4,1,bmp);
+  fread(&info.importantcolours,4,1,bmp);
 
   /*
-	printf ("TYPE: %c\n", head->type);
-	printf ("SIZE: %u\n", head->size);
-	printf ("RESERVED1: %X\n", head->reserved1);
-	printf ("RESERVED2: %X\n", head->reserved2);
-	printf ("OFFSET: %u\n\n", head->offset);
+	printf ("TYPE: %c\n", head.type);
+	printf ("SIZE: %u\n", head.size);
+	printf ("RESERVED1: %X\n", head.reserved1);
+	printf ("RESERVED2: %X\n", head.reserved2);
+	printf ("OFFSET: %u\n\n", head.offset);
 
-	printf ("SIZE: %u\n", info->size);
-	printf ("WIDTH: %u\n", info->width);
-	printf ("HEIGHT: %u\n", info->height);
-	printf ("PLANES: %u\n", info->planes);
-	printf ("BITS: %u\n", info->bits);
-	printf ("COMPRESSION: %u\n", info->compression);
-	printf ("IMAGESIZE: %u\n", info->imagesize);
-	printf ("XRESOLUTION: %u\n", info->xresolution);
-	printf ("YRESOLUTION: %u\n", info->yresolution);
-	printf ("NUMBER OF COLOURS: %u\n", info->ncolours);
-	printf ("IMPORTANT COLOURS: %u\n\n", info->importantcolours);
+	printf ("SIZE: %u\n", info.size);
+	printf ("WIDTH: %u\n", info.width);
+	printf ("HEIGHT: %u\n", info.height);
+	printf ("PLANES: %u\n", info.planes);
+	printf ("BITS: %u\n", info.bits);
+	printf ("COMPRESSION: %u\n", info.compression);
+	printf ("IMAGESIZE: %u\n", info.imagesize);
+	printf ("XRESOLUTION: %u\n", info.xresolution);
+	printf ("YRESOLUTION: %u\n", info.yresolution);
+	printf ("NUMBER OF COLOURS: %u\n", info.ncolours);
+	printf ("IMPORTANT COLOURS: %u\n\n", info.importantcolours);
    */
-  unsigned short* buffer = (unsigned short*) malloc (info->height * info->width * sizeof(unsigned short));
+
+  // allocate memory for the buffer that has the image colors
+  short* buffer = (short*) malloc (info.height * info.width * sizeof(short));
+
+  if (buffer == NULL)
+  {
+    printf("Error allocating memory for bmp\n");
+    return NULL;
+  }
+
   //printf ("MEMORY ALLOCATED\n");
-  fseek(bmp,head->offset,SEEK_SET);
+  fseek(bmp,head.offset,SEEK_SET);
 
-  fread (buffer,2,info->height*info->width,bmp);
+  fread (buffer,2,info.height * info.width,bmp);
 
+  *width = info.width;
+  *height = info.height;
 
-  *width = info->width;
-  *height = info->height;
+  fclose(bmp);
 
-  fclose (bmp);
+  free(path);
 
   return buffer;
 }
 
-void loadToolBar(BTN* btnArray) {
+int loadToolBar(BTN* btnArray) {
 
   unsigned int x,y,i;
 
   for (i = 1; i < 12; i++) {
-    char* file = (char*) malloc (15*sizeof(char));
+
+    char* file = (char*) malloc (15*sizeof(char)); // malloc for button string
+
+    if (file == NULL)
+    {
+      printf("Could not allocate memory for loading the toolbar\n");
+      return 1;
+    }
+
     snprintf (file, 15, "Button%02d_0.bmp", i);
     btnArray[i-1].sprite_off.pixels = loadBMP (file,&x,&y);
     btnArray[i-1].sprite_off.width = x;
@@ -202,7 +222,17 @@ void loadToolBar(BTN* btnArray) {
     btnArray[i-1].sprite_on.width = x;
     btnArray[i-1].sprite_on.height = y;
     btnArray[i-1].press_state = 0;
+
+    free(file); // free the memory
+
+    if (btnArray[i-1].sprite_off.pixels == NULL || btnArray[i-1].sprite_on.pixels == NULL)
+    {
+      printf("Error in loading sprite in/off from buttons (toolbar)\n");
+      return 1;
+    }
   }
+
+  return 0;
 }
 
 void drawToolBar(BTN* btnArray, short* buffer) {
@@ -238,7 +268,7 @@ void drawToolBar(BTN* btnArray, short* buffer) {
   }
 }
 
-void loadColorBar(SPRITE* color_bar) {
+int loadColorBar(SPRITE* color_bar) {
   int x, y;
   char* file = "ColorBar.bmp";
 
@@ -246,5 +276,12 @@ void loadColorBar(SPRITE* color_bar) {
   color_bar->width = x;
   color_bar->height = y;
 
+  if (color_bar->pixels == NULL)
+  {
+    printf("Error while allocating memory to load the color bar\n");
+    return 1;
+  }
+
   printf ("ColorBar loaded\n");
+  return 0;
 }

@@ -5,7 +5,7 @@
 
 #define BIT(n) (0x01<<(n))
 
-#define DELAY_US 10000
+#define DELAY_MOUSE 10000
 #define WAIT_KBC 20
 
 #define MOUSE_IRQ 12
