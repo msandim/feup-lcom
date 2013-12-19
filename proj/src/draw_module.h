@@ -32,4 +32,6 @@ void brush_handler();
 
 void rectangle_handler();
 
+void flood_fill_handler();
+
 #endif

@@ -6,6 +6,7 @@
 #include "draw_module.h"
 #include "graphic_module.h"
 #include "user_interaction.h"
+#include "stack.h"
 
 typedef enum {st0, st1, st2, st3} tool_state;
 
@@ -40,8 +41,12 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, short* draw
   // start with first option selected
   button_array[tool_selected].press_state = 1;
 
-  int ipc_status;
-  message msg;
+	//TESTE FLOOD FILL
+	vg_draw_rectangle_buffer(50,50,200,200,0x11, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+	//FIM DO TESTE
+
+	int ipc_status;
+	message msg;
 
   int timer_count=0; // count the timer interrupts
 
@@ -257,4 +262,22 @@ void rect_line_handler()
   case st0:
     break;
   }
+}
+
+void flood_fill_handler()
+{
+	static unsigned int x, y;
+
+	if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+	{
+		x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+		y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+		unsigned long old_color = vg_get_pixel_buffer(x,y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+		printf("X: %u\n",x);
+		printf("Y: %u\n",y);
+		printf("COLOR: %X\n",old_color);
+
+		vg_flood_fill_buffer(x,y,old_color,0xFF00,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+	}
 }

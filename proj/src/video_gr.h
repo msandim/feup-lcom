@@ -62,7 +62,7 @@ int vg_set_pixel_buffer(unsigned long x, unsigned long y, unsigned long color, s
  * @param buf buffer where to do the action
  * @return color of the pixel at coordinates (x,y), or -1 if some input argument is not valid
  */
-long vg_get_pixel(unsigned long x, unsigned long y);
+long vg_get_pixel_buffer(unsigned long x, unsigned long y, short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 
 /**
@@ -90,6 +90,8 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
 void vg_draw_object(short* object, int w, int h, int x, int y, short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 void vg_draw_rectangle_buffer(int x, int y, int w, int h, unsigned long color, short* buffer, unsigned long dim_h, unsigned long dim_v);
+
+void vg_flood_fill_buffer(int x, int y, unsigned long target_color, unsigned long replacement_color, short* buffer, unsigned long dim_h, unsigned long dim_v);
 
  /**
  * @brief Returns to default Minix 3 text mode (0x03: 25 x 80, 16 colors)
