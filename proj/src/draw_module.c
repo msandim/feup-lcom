@@ -6,7 +6,6 @@
 #include "draw_module.h"
 #include "graphic_module.h"
 #include "user_interaction.h"
-#include "stack.h"
 
 typedef enum {st0, st1, st2, st3} tool_state;
 
@@ -19,10 +18,14 @@ static tool_state tool_current_state;
 static SPRITE color_bar;
 static short color_selected = 3603;
 
-void (*tool_handlers[3]) (void) = {
+void (*tool_handlers[7]) (void) = {
     blank_handler,
     brush_handler,
-    rectangle_handler
+    flood_fill_handler,
+    color_picker_handler,
+    circle_handler,
+    rectangle_handler,
+    rect_line_handler
 };
 
 
@@ -41,12 +44,12 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, short* draw
   // start with first option selected
   button_array[tool_selected].press_state = 1;
 
-	//TESTE FLOOD FILL
-	vg_draw_rectangle_buffer(50,50,200,200,0x11, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-	//FIM DO TESTE
+  //TESTE FLOOD FILL
+  //vg_draw_rectangle_buffer(50,50,200,200,0x11, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+  //FIM DO TESTE
 
-	int ipc_status;
-	message msg;
+  int ipc_status;
+  message msg;
 
   int timer_count=0; // count the timer interrupts
 
@@ -137,21 +140,6 @@ void keyboardDrawEvent()
       break;
 
     case 0x25: // balde
-      //tool_selected = 2;
-      tool_current_state = st0;
-      break;
-
-    case 0x17: // conta-gotas
-      //tool_selected = 3;
-      tool_current_state = st0;
-      break;
-
-    case 0x2E: // circulo
-      //tool_selected = 4;
-      tool_current_state = st0;
-      break;
-
-    case 0x13: // rectangulo
       button_array[tool_selected].press_state = 0;
       tool_selected = 2;
 
@@ -159,8 +147,35 @@ void keyboardDrawEvent()
       tool_current_state = st0;
       break;
 
+    case 0x17: // color picker
+      button_array[tool_selected].press_state = 0;
+      tool_selected = 3;
+
+      button_array[tool_selected].press_state = 1;
+      tool_current_state = st0;
+      break;
+
+    case 0x2E: // circulo
+      button_array[tool_selected].press_state = 0;
+      tool_selected = 4;
+
+      button_array[tool_selected].press_state = 1;
+      tool_current_state = st0;
+      break;
+
+    case 0x13: // rectangulo
+      button_array[tool_selected].press_state = 0;
+      tool_selected = 5;
+
+      button_array[tool_selected].press_state = 1;
+      tool_current_state = st0;
+      break;
+
     case 0x26: // linha
-      //tool_selected = 6;
+      button_array[tool_selected].press_state = 0;
+      tool_selected = 6;
+
+      button_array[tool_selected].press_state = 1;
       tool_current_state = st0;
       break;
     }
@@ -196,7 +211,7 @@ void brush_handler()
     new_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
     vg_draw_line_buffer(last_x, last_y, new_x, new_y,
-        0, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
     // update draw screen
     drawAreaInDoubleBuffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V,
@@ -212,6 +227,44 @@ void brush_handler()
     break;
   }
   }
+}
+
+
+
+void flood_fill_handler()
+{
+  unsigned int x, y;
+
+  if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+  {
+    x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+    y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+    unsigned long old_color = vg_get_pixel_buffer(x,y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+    //printf("X: %u\n",x);
+    //printf("Y: %u\n",y);
+    //printf("COLOR: %X\n",old_color);
+
+    vg_flood_fill_buffer(x,y,old_color,color_selected,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+  }
+}
+
+void color_picker_handler()
+{
+  unsigned int x,y;
+
+  if (getMouseLBstate())
+  {
+    x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+    y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+
+    color_selected = vg_get_pixel_buffer(x, y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+  }
+}
+
+void circle_handler()
+{
+
 }
 
 void rectangle_handler()
@@ -262,22 +315,4 @@ void rect_line_handler()
   case st0:
     break;
   }
-}
-
-void flood_fill_handler()
-{
-	static unsigned int x, y;
-
-	if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
-	{
-		x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-		y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
-		unsigned long old_color = vg_get_pixel_buffer(x,y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-
-		printf("X: %u\n",x);
-		printf("Y: %u\n",y);
-		printf("COLOR: %X\n",old_color);
-
-		vg_flood_fill_buffer(x,y,old_color,0xFF00,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-	}
 }

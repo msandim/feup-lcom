@@ -177,27 +177,17 @@ int vg_fill_buffer(unsigned long color, short* buffer, unsigned long dim_h, unsi
 }
 
 int vg_set_pixel_buffer(unsigned long x, unsigned long y, unsigned long color, short* buffer, unsigned long dim_h, unsigned long dim_v) {
-	/*
+
   if (x >= dim_h || y >= dim_v)
   {
     printf("vg_set_pixel::Invalid X/Y\n");
     printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,dim_h,dim_v);
     return 1;
   }
-	 */
-	//if (y == 50 && color == 0)
-	//printf("Endereco inicial do buffer: %p\n",buffer);
-	buffer += ((y*dim_h) + x);
-	//if (y == 50 && color == 0)
-	//printf("Endereco final do buffer: %p\n",buffer);
 
-	//if (y == 50 && color == 0)
-	//printf("buffer1: %x\n",*buffer);
+	buffer += ((y*dim_h) + x);
 
 	*buffer = color;
-
-	//if (y == 50 && color == 0)
-	//printf("buffer2: %x\n",*buffer);
 
 	return 0;
 }
@@ -305,15 +295,11 @@ void vg_flood_fill_buffer(int x, int y, unsigned long target_color, unsigned lon
 		return;
 	}
 
-	printf("START!\n");
-
 	push_stack(s, cur_x);
 	push_stack(s, cur_y);
 
 	while(!pop_stack(s,&cur_y) && !pop_stack(s,&cur_x))
 	{
-		printf("X:%u\nY:%u\n",cur_x,cur_y);
-
 		vg_set_pixel_buffer(cur_x, cur_y, replacement_color, buffer, dim_h, dim_v);
 
 		if(cur_x + 1 < dim_h && vg_get_pixel_buffer(cur_x + 1, cur_y, buffer, dim_h, dim_v) == target_color)

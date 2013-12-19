@@ -30,8 +30,14 @@ void blank_handler();
 
 void brush_handler();
 
+void flood_fill_handler();
+
+void color_picker_handler();
+
+void circle_handler();
+
 void rectangle_handler();
 
-void flood_fill_handler();
+void rect_line_handler();
 
 #endif

@@ -35,7 +35,7 @@ int push_stack (stack *s, int obj) {
 	s->top++;
 	s->buf[s->top] = obj;
 
-	printf ("Object %u pushed into stack!\n",obj);
+	//printf ("Object %u pushed into stack!\n",obj);
 
 	return 0;
 }
@@ -49,6 +49,6 @@ int pop_stack (stack *s, int* obj) {
 
 	s->top--;
 
-	printf ("Object %u popped out of stack!\n",*obj);
+	//printf ("Object %u popped out of stack!\n",*obj);
 	return 0;
 }
