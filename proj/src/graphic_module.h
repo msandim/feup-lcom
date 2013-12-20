@@ -21,7 +21,7 @@ typedef struct {
 } INFOHEADER;
 
 typedef struct {
-	short* pixels;
+	unsigned short* pixels;
 	int width, height;
 } SPRITE;
 
@@ -37,17 +37,17 @@ void screenExit();
 
 void drawBufferInVRAM();
 
-int set_graphicsDrawMode(short* tela, BTN* btn_array, SPRITE color_bar);
+int set_graphicsDrawMode(unsigned short* tela, BTN* btn_array, SPRITE color_bar);
 
-int drawAreaInDoubleBuffer(short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v);
+int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v);
 
 int draw_mouse();
 
-short* loadBMP (char const* filename, unsigned int * width, unsigned int * height);
+unsigned short* loadBMP (char const* filename, unsigned int * width, unsigned int * height);
 
 int loadToolBar(BTN* btnArray);
 
-void drawToolBar(BTN* btnArray, short* buffer);
+void drawToolBar(BTN* btnArray, unsigned short* buffer);
 
 int loadColorBar(SPRITE* color_bar);
 

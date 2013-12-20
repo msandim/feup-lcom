@@ -9,14 +9,15 @@
 
 typedef enum {st0, st1, st2, st3} tool_state;
 
-static short* draw_screen;
+static unsigned short* draw_screen;
 
 static BTN* button_array;
 static int tool_selected; // testar com linha continua
 static tool_state tool_current_state;
 
 static SPRITE color_bar;
-static short color_selected = 3603;
+static unsigned short color_selected;
+static unsigned int thickness;
 
 void (*tool_handlers[7]) (void) = {
     blank_handler,
@@ -29,7 +30,7 @@ void (*tool_handlers[7]) (void) = {
 };
 
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, short* draw_scr,
+void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
     BTN* btn_array, SPRITE clr_bar)
 {
   // fill variables
@@ -39,14 +40,12 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, short* draw
 
   // START DRAWING MODE **********
   tool_selected = 0;
+  color_selected = 3603;
+  thickness = 1;
   tool_current_state = st0;
 
   // start with first option selected
   button_array[tool_selected].press_state = 1;
-
-  //TESTE FLOOD FILL
-  //vg_draw_rectangle_buffer(50,50,200,200,0x11, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-  //FIM DO TESTE
 
   int ipc_status;
   message msg;
@@ -70,8 +69,7 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, short* draw
 
           if(updateMouseStatus()) // update mouse status, if packet ended
           {
-            if (getMouseLBstate())
-              mouseClickDrawEvent();
+            mouseClickDrawEvent();
 
             if(getMouseMBstate())
               exit_flag = 1;
@@ -111,13 +109,24 @@ void mouseClickDrawEvent()
       getyMousePosition() >= 30 && getyMousePosition() <= 680)
     (tool_handlers[tool_selected])();
 
-  /* Se o click foi na tabela das cores */
+  // if the click was in the color pallet
+  /*
+  if (getxMousePosition() >= 122 && getxMousePosition() <= 1001 &&
+      getyMousePosition() >= 30 && getyMousePosition() <= 680)
+      color_selected = ....
+
+  else if (getxMousePosition() >= 122 && getxMousePosition() <= 1001 &&
+      getyMousePosition() >= 30 && getyMousePosition() <= 680)
+      color_selected = ....
+   */
+
+
 
 }
 
 void keyboardDrawEvent()
 {
-  if (getKeyboardPressState())
+  if (getKeyboardPressState()) // if a makecode is released and not a breakcode
   {
     switch(getKeyboardLastKey())
     {
@@ -179,6 +188,19 @@ void keyboardDrawEvent()
       tool_current_state = st0;
       break;
     }
+
+    if (getKeyboardLastKey() == 0x4E || getKeyboardLastKey() == 0x1A) // "+" pressed
+    {
+      if (thickness < MAX_THICKNESS)
+        thickness++;
+    }
+
+    else if (getKeyboardLastKey() == 0x4A || getKeyboardLastKey() == 0x35) // "-" pressed
+    {
+      if (thickness > MIN_THICKNESS)
+        thickness--;
+    }
+
   }
 }
 
@@ -204,25 +226,27 @@ void brush_handler()
 
   case st1:
   {
-    unsigned int new_x, new_y;
-
-    // calculate relative position of x and y
-    new_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-    new_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
-
-    vg_draw_line_buffer(last_x, last_y, new_x, new_y,
-        color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-
-    // update draw screen
-    drawAreaInDoubleBuffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V,
-        DRAW_SCREENX_UL_CORNER, DRAW_SCREENY_UL_CORNER);
-
-    // update last coordinates
-    last_x = new_x;
-    last_y = new_y;
-
     if (!getMouseLBstate()) // if the LB is not pressed, return to state 0
       tool_current_state = st0;
+    else
+    {
+      unsigned int new_x, new_y;
+
+      // calculate relative position of x and y
+      new_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+      new_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+
+      vg_draw_line_buffer(last_x, last_y, new_x, new_y,
+          color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+      // update draw screen
+      drawAreaInDoubleBuffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V,
+          DRAW_SCREENX_UL_CORNER, DRAW_SCREENY_UL_CORNER);
+
+      // update last coordinates
+      last_x = new_x;
+      last_y = new_y;
+    }
 
     break;
   }
@@ -245,6 +269,9 @@ void flood_fill_handler()
     //printf("Y: %u\n",y);
     //printf("COLOR: %X\n",old_color);
 
+    //vg_fill_ra(x, y,
+      //  color_selected,
+        //draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
     vg_flood_fill_buffer(x,y,old_color,color_selected,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
   }
 }

@@ -53,7 +53,7 @@ void drawModeInit()
 
   // DRAW SCREEN PREPARATION ****************************
   // ****************************************************
-  short* draw_scr = (short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(short));
+  unsigned short* draw_scr = (unsigned short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(unsigned short));
 
   if (draw_scr == NULL)
   {
@@ -82,6 +82,18 @@ void drawModeInit()
 
   // Draw Screen (free memory)
   free(draw_scr);
+
+  // Color bar (free memory)
+  free(color_bar.pixels);
+
+  // tool bar (free memory)
+  unsigned int i;
+  for (i=1; i < 12; i++)
+  {
+    free(btn_array[i-1].sprite_on.pixels);
+    free(btn_array[i-1].sprite_off.pixels);
+  }
+  free(btn_array);
 
   // ** DISABLE MOUSE, MOUSE & TIMER
   mouse_send_cmd(DISABLE_STREAM_MODE);

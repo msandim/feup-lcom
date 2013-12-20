@@ -12,15 +12,19 @@
 #define DRAW_SCREENX_UL_CORNER 122 // 500 - 122
 #define DRAW_SCREENY_UL_CORNER 30 // 200 - 30
 
+// VARIABLES FOR DRAWING
+#define MAX_THICKNESS 200
+#define MIN_THICKNESS 1
+
 typedef struct
 {
-  short* addr;
+  unsigned short* addr;
   unsigned int h_dim, v_dim;
   unsigned int x_ul_corner, y_ul_corner;
 } draw_screen_area;
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, short* draw_scr,
-    BTN* btn_array, SPRITE color_bar);
+void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
+    BTN* btn_array, SPRITE clr_bar);
 
 void mouseClickDrawEvent();
 

@@ -8,13 +8,13 @@
 #include "user_interaction.h"
 #include <stdlib.h>
 
-static short* double_buf; // temp buffer for graphic use
+static unsigned short* double_buf; // temp buffer for graphic use
 
 int screenInit()
 {
   vg_init(0x117); // init in mode 0x117
 
-  double_buf = (short*) malloc(vg_get_h_res()*vg_get_v_res()*sizeof(short));
+  double_buf = (unsigned short*) malloc(vg_get_h_res()*vg_get_v_res()*sizeof(unsigned short));
 
   if (double_buf == NULL)
   {
@@ -40,10 +40,10 @@ void drawBufferInVRAM()
 }
 
 
-int set_graphicsDrawMode(short* tela, BTN* btn_array, SPRITE color_bar)
+int set_graphicsDrawMode(unsigned short* tela, BTN* btn_array, SPRITE color_bar)
 {
   // desenhar fundo
-  vg_fill_buffer(/*0x596B*/0,double_buf,vg_get_h_res(),vg_get_v_res());
+  vg_fill_buffer(0,double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw toolboxes
   drawToolBar(btn_array,double_buf);
@@ -57,13 +57,13 @@ int set_graphicsDrawMode(short* tela, BTN* btn_array, SPRITE color_bar)
   // draw mouse
   draw_mouse();
 
-  // update buffer in VRAm
+  // update buffer in VRAM
   drawBufferInVRAM();
 
   return 0;
 }
 
-int drawAreaInDoubleBuffer(short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v)
+int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v)
 {
   // check if the area fits in the double buffer
   if (dim_h + x_upperleft_corner >= vg_get_h_res() || dim_v + y_upperleft_corner >= vg_get_v_res())
@@ -113,7 +113,7 @@ int draw_mouse()
   return 0;
 }
 
-short* loadBMP (char const* filename, unsigned int * width, unsigned int * height) {
+unsigned short* loadBMP (char const* filename, unsigned int * width, unsigned int * height) {
 
   // allocate memory for the file name
   char* path = (char*) malloc ( (strlen(filename) + 24) * sizeof (char));
@@ -126,7 +126,6 @@ short* loadBMP (char const* filename, unsigned int * width, unsigned int * heigh
   FILE *bmp;
   char *mode = "rb";
 
-  // ver esta questão de mem dinâmica depois ...
   HEADER head;
   INFOHEADER info;
 
@@ -176,11 +175,12 @@ short* loadBMP (char const* filename, unsigned int * width, unsigned int * heigh
    */
 
   // allocate memory for the buffer that has the image colors
-  short* buffer = (short*) malloc (info.height * info.width * sizeof(short));
+  unsigned short* buffer = (unsigned short*) malloc (info.height * info.width * sizeof(unsigned short));
 
   if (buffer == NULL)
   {
     printf("Error allocating memory for bmp\n");
+    free(path);
     return NULL;
   }
 
@@ -235,7 +235,7 @@ int loadToolBar(BTN* btnArray) {
   return 0;
 }
 
-void drawToolBar(BTN* btnArray, short* buffer) {
+void drawToolBar(BTN* btnArray, unsigned short* buffer) {
   unsigned int i, y = 50;
 
   for (i = 0; i < 8; i++) {
