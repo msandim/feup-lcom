@@ -3,6 +3,7 @@
 #include <minix/com.h>
 #include <minix/sysutil.h>
 
+#include <math.h>
 #include "draw_module.h"
 #include "graphic_module.h"
 #include "user_interaction.h"
@@ -20,97 +21,97 @@ static unsigned short color_selected;
 static unsigned int thickness;
 
 void (*tool_handlers[7]) (void) = {
-    blank_handler,
-    brush_handler,
-    flood_fill_handler,
-    color_picker_handler,
-    circle_handler,
-    rectangle_handler,
-    rect_line_handler
+		blank_handler,
+		brush_handler,
+		flood_fill_handler,
+		color_picker_handler,
+		circle_handler,
+		rectangle_handler,
+		rect_line_handler
 };
 
 
 void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
-    BTN* btn_array, SPRITE clr_bar)
+		BTN* btn_array, SPRITE clr_bar)
 {
-  // fill variables
-  draw_screen = draw_scr;
-  button_array = btn_array;
-  color_bar = clr_bar;
+	// fill variables
+	draw_screen = draw_scr;
+	button_array = btn_array;
+	color_bar = clr_bar;
 
-  // START DRAWING MODE **********
-  tool_selected = 0;
-  color_selected = 3603;
-  thickness = 1;
-  tool_current_state = st0;
+	// START DRAWING MODE **********
+	tool_selected = 0;
+	color_selected = 3603;
+	thickness = 10;
+	tool_current_state = st0;
 
-  // start with first option selected
-  button_array[tool_selected].press_state = 1;
+	// start with first option selected
+	button_array[tool_selected].press_state = 1;
 
-  int ipc_status;
-  message msg;
+	int ipc_status;
+	message msg;
 
-  int timer_count=0; // count the timer interrupts
+	int timer_count=0; // count the timer interrupts
 
-  int exit_flag = 0;
+	int exit_flag = 0;
 
-  while(!exit_flag)
-  {
-    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-      printf("driver_receive failed\n");
-      continue;
-    }
+	while(!exit_flag)
+	{
+		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+			printf("driver_receive failed\n");
+			continue;
+		}
 
-    if (is_ipc_notify(ipc_status)) {
-      switch (_ENDPOINT_P(msg.m_source)) {
-      case HARDWARE:
+		if (is_ipc_notify(ipc_status)) {
+			switch (_ENDPOINT_P(msg.m_source)) {
+			case HARDWARE:
 
-        if (msg.NOTIFY_ARG & irq_set_mouse) {
+				if (msg.NOTIFY_ARG & irq_set_mouse) {
 
-          if(updateMouseStatus()) // update mouse status, if packet ended
-          {
-            mouseClickDrawEvent();
+					if(updateMouseStatus()) // update mouse status, if packet ended
+					{
+						mouseClickDrawEvent();
 
-            if(getMouseMBstate())
-              exit_flag = 1;
-          }
-        }
+						if(getMouseRBstate())
+							exit_flag = 1;
+					}
+				}
 
-        if (msg.NOTIFY_ARG & irq_set_kbd) {
+				if (msg.NOTIFY_ARG & irq_set_kbd) {
 
-          if(updateKeyboardStatus()) // if a valid key is available
-            keyboardDrawEvent();
-        }
+					if(updateKeyboardStatus()) // if a valid key is available
+						keyboardDrawEvent();
+				}
 
-        if (msg.NOTIFY_ARG & irq_set_timer) {
+				if (msg.NOTIFY_ARG & irq_set_timer) {
 
-          timer_count++;
+					timer_count++;
 
-          if (timer_count%2 == 0){
+					if (timer_count%2 == 0){
 
-            set_graphicsDrawMode(draw_screen,button_array,color_bar); // desenhar tudo
-          }
-        }
+						set_graphicsDrawMode(draw_screen,button_array,color_bar); // desenhar tudo
+					}
+				}
 
-        break;
-      default:
-        break;
-      }
-    } else {
+				break;
+			default:
+				break;
+			}
+		} else {
 
-    }
-  }
+		}
+	}
 }
 
 void mouseClickDrawEvent()
 {
-  // if the click was on the draw_screen
-  if (getxMousePosition() >= 122 && getxMousePosition() <= 1001 &&
-      getyMousePosition() >= 30 && getyMousePosition() <= 680)
-    (tool_handlers[tool_selected])();
+	// if the click was on the draw_screen
+	if (getxMousePosition() >= 122 && getxMousePosition() <= 1001 &&
+			getyMousePosition() >= 30 && getyMousePosition() <= 680)
+		(tool_handlers[tool_selected])();
 
-  // if the click was in the color pallet
-  /*
+	// if the click was in the color pallet
+	/*
   if (getxMousePosition() >= 122 && getxMousePosition() <= 1001 &&
       getyMousePosition() >= 30 && getyMousePosition() <= 680)
       color_selected = ....
@@ -118,7 +119,7 @@ void mouseClickDrawEvent()
   else if (getxMousePosition() >= 122 && getxMousePosition() <= 1001 &&
       getyMousePosition() >= 30 && getyMousePosition() <= 680)
       color_selected = ....
-   */
+	 */
 
 
 
@@ -126,220 +127,260 @@ void mouseClickDrawEvent()
 
 void keyboardDrawEvent()
 {
-  if (getKeyboardPressState()) // if a makecode is released and not a breakcode
-  {
-    switch(getKeyboardLastKey())
-    {
-    case 0x21: // blank
-      button_array[tool_selected].press_state = 0;
-      tool_selected = 0;
+	if (getKeyboardPressState()) // if a makecode is released and not a breakcode
+	{
+		switch(getKeyboardLastKey())
+		{
+		case 0x21: // blank
+			button_array[tool_selected].press_state = 0;
+			tool_selected = 0;
 
-      button_array[tool_selected].press_state = 1;
-      tool_current_state = st0;
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
 
-      blank_handler();
-      break;
+			blank_handler();
+			break;
 
-    case 0x30: // pincel
-      button_array[tool_selected].press_state = 0;
-      tool_selected = 1;
+		case 0x30: // pincel
+			button_array[tool_selected].press_state = 0;
+			tool_selected = 1;
 
-      button_array[tool_selected].press_state = 1;
-      tool_current_state = st0;
-      break;
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
+			break;
 
-    case 0x25: // balde
-      button_array[tool_selected].press_state = 0;
-      tool_selected = 2;
+		case 0x25: // balde
+			button_array[tool_selected].press_state = 0;
+			tool_selected = 2;
 
-      button_array[tool_selected].press_state = 1;
-      tool_current_state = st0;
-      break;
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
+			break;
 
-    case 0x17: // color picker
-      button_array[tool_selected].press_state = 0;
-      tool_selected = 3;
+		case 0x17: // color picker
+			button_array[tool_selected].press_state = 0;
+			tool_selected = 3;
 
-      button_array[tool_selected].press_state = 1;
-      tool_current_state = st0;
-      break;
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
+			break;
 
-    case 0x2E: // circulo
-      button_array[tool_selected].press_state = 0;
-      tool_selected = 4;
+		case 0x2E: // circulo
+			button_array[tool_selected].press_state = 0;
+			tool_selected = 4;
 
-      button_array[tool_selected].press_state = 1;
-      tool_current_state = st0;
-      break;
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
+			break;
 
-    case 0x13: // rectangulo
-      button_array[tool_selected].press_state = 0;
-      tool_selected = 5;
+		case 0x13: // rectangulo
+			button_array[tool_selected].press_state = 0;
+			tool_selected = 5;
 
-      button_array[tool_selected].press_state = 1;
-      tool_current_state = st0;
-      break;
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
+			break;
 
-    case 0x26: // linha
-      button_array[tool_selected].press_state = 0;
-      tool_selected = 6;
+		case 0x26: // linha
+			button_array[tool_selected].press_state = 0;
+			tool_selected = 6;
 
-      button_array[tool_selected].press_state = 1;
-      tool_current_state = st0;
-      break;
-    }
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
+			break;
+		}
 
-    if (getKeyboardLastKey() == 0x4E || getKeyboardLastKey() == 0x1A) // "+" pressed
-    {
-      if (thickness < MAX_THICKNESS)
-        thickness++;
-    }
+		if (getKeyboardLastKey() == 0x4E || getKeyboardLastKey() == 0x1A) // "+" pressed
+		{
+			if (thickness < MAX_THICKNESS)
+				thickness++;
+		}
 
-    else if (getKeyboardLastKey() == 0x4A || getKeyboardLastKey() == 0x35) // "-" pressed
-    {
-      if (thickness > MIN_THICKNESS)
-        thickness--;
-    }
+		else if (getKeyboardLastKey() == 0x4A || getKeyboardLastKey() == 0x35) // "-" pressed
+		{
+			if (thickness > MIN_THICKNESS)
+				thickness--;
+		}
 
-  }
+	}
 }
 
 void blank_handler()
 {
-  memset(draw_screen,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
+	memset(draw_screen,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
 }
 
 void brush_handler()
 {
-  static unsigned int last_x, last_y;
+	static unsigned int last_x, last_y;
 
-  switch(tool_current_state)
-  {
-  case st0:
-    if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
-    {
-      last_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-      last_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
-      tool_current_state = st1;
-    }
-    break;
+	switch(tool_current_state)
+	{
+	case st0:
+		if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+		{
+			last_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+			last_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+			tool_current_state = st1;
+		}
+		break;
 
-  case st1:
-  {
-    if (!getMouseLBstate()) // if the LB is not pressed, return to state 0
-      tool_current_state = st0;
-    else
-    {
-      unsigned int new_x, new_y;
+	case st1:
+	{
+		if (!getMouseLBstate()) // if the LB is not pressed, return to state 0
+			tool_current_state = st0;
+		else
+		{
+			unsigned int new_x, new_y;
 
-      // calculate relative position of x and y
-      new_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-      new_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+			// calculate relative position of x and y
+			new_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+			new_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
-      vg_draw_line_buffer(last_x, last_y, new_x, new_y,
-          color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+			vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
+					color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-      // update draw screen
-      drawAreaInDoubleBuffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V,
-          DRAW_SCREENX_UL_CORNER, DRAW_SCREENY_UL_CORNER);
+			// update draw screen
+			drawAreaInDoubleBuffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V,
+					DRAW_SCREENX_UL_CORNER, DRAW_SCREENY_UL_CORNER);
 
-      // update last coordinates
-      last_x = new_x;
-      last_y = new_y;
-    }
+			// update last coordinates
+			last_x = new_x;
+			last_y = new_y;
+		}
 
-    break;
-  }
-  }
+		break;
+	}
+	}
 }
 
 
 
 void flood_fill_handler()
 {
-  unsigned int x, y;
+	unsigned int x, y;
 
-  if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
-  {
-    x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-    y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
-    unsigned long old_color = vg_get_pixel_buffer(x,y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+	if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+	{
+		x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+		y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+		unsigned long old_color = vg_get_pixel_buffer(x,y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-    //printf("X: %u\n",x);
-    //printf("Y: %u\n",y);
-    //printf("COLOR: %X\n",old_color);
+		//printf("X: %u\n",x);
+		//printf("Y: %u\n",y);
+		//printf("COLOR: %X\n",old_color);
 
-    //vg_fill_ra(x, y,
-      //  color_selected,
-        //draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-    vg_flood_fill_buffer(x,y,old_color,color_selected,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-  }
+		//vg_fill_ra(x, y,
+		//  color_selected,
+		//draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+		vg_flood_fill_buffer(x,y,old_color,color_selected,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+	}
 }
 
 void color_picker_handler()
 {
-  unsigned int x,y;
+	unsigned int x,y;
 
-  if (getMouseLBstate())
-  {
-    x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-    y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+	if (getMouseLBstate())
+	{
+		x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+		y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
-    color_selected = vg_get_pixel_buffer(x, y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-  }
+		color_selected = vg_get_pixel_buffer(x, y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+	}
 }
 
 void circle_handler()
 {
+	static unsigned int x_i, y_i, x_f, y_f;
+
+	switch(tool_current_state)
+	{
+	case st0:
+		if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+		{
+			x_i = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+			y_i = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+			tool_current_state = st1;
+		}
+		break;
+	case st1:
+		if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates and draw rectangle
+		{
+			x_f = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+			y_f = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+
+			// assert that xf > xi and yi > yf
+			if (x_f < x_i) {
+				unsigned int tmp = x_i;
+				x_i = x_f;
+				x_f = tmp;
+			}
+
+			if (y_f < y_i) {
+				unsigned int tmp = y_i;
+				y_i = y_f;
+				y_f = tmp;
+			}
+
+			int r = sqrt ( pow ((x_f - x_i), 2) + pow ((y_f - y_i), 2));
+
+			printf ("Xi: %u\nYi: %u\nXf: %u\nYf: %u\nR: %u\n",x_i,y_i,x_f,y_f,r);
+
+			vg_draw_circle_buffer(x_i, y_i, r, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+			tool_current_state = st0;
+		}
+	}
 
 }
 
 void rectangle_handler()
 {
-  static unsigned int x_i, y_i, x_f, y_f;
+	static unsigned int x_i, y_i, x_f, y_f;
 
-  switch(tool_current_state)
-  {
-  case st0:
-    if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
-    {
-      x_i = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-      y_i = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
-      tool_current_state = st1;
-    }
-    break;
-  case st1:
-    if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates and draw rectangle
-    {
-      x_f = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-      y_f = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+	switch(tool_current_state)
+	{
+	case st0:
+		if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+		{
+			x_i = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+			y_i = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+			tool_current_state = st1;
+		}
+		break;
+	case st1:
+		if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates and draw rectangle
+		{
+			x_f = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+			y_f = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
-      // assert that xf > xi and yi > yf
-      if (x_f < x_i) {
-        unsigned int tmp = x_i;
-        x_i = x_f;
-        x_f = tmp;
-      }
+			// assert that xf > xi and yi > yf
+			if (x_f < x_i) {
+				unsigned int tmp = x_i;
+				x_i = x_f;
+				x_f = tmp;
+			}
 
-      if (y_f < y_i) {
-        unsigned int tmp = y_i;
-        y_i = y_f;
-        y_f = tmp;
-      }
+			if (y_f < y_i) {
+				unsigned int tmp = y_i;
+				y_i = y_f;
+				y_f = tmp;
+			}
 
-      vg_draw_rectangle_buffer(x_i,y_i,x_f-x_i,y_f-y_i,0xFF, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-      tool_current_state = st0;
-    }
-  }
+			vg_draw_rectangle_buffer(x_i,y_i,x_f-x_i,y_f-y_i,0xFF, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+			tool_current_state = st0;
+		}
+	}
 }
 
 void rect_line_handler()
 {
-  static unsigned int last_x, last_y;
+	static unsigned int last_x, last_y;
 
-  switch(tool_current_state)
-  {
-  case st0:
-    break;
-  }
+	switch(tool_current_state)
+	{
+	case st0:
+		break;
+	}
 }
