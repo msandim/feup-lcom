@@ -16,6 +16,13 @@
 #define MAX_THICKNESS 200
 #define MIN_THICKNESS 1
 
+typedef struct
+{
+  unsigned short* addr;
+  unsigned int h_dim, v_dim;
+  unsigned int x_ul_corner, y_ul_corner;
+} draw_screen_area;
+
 void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
     BTN* btn_array, SPRITE clr_bar);
 
@@ -36,7 +43,5 @@ void circle_handler();
 void rectangle_handler();
 
 void rect_line_handler();
-
-void selected_area_handler();
 
 #endif

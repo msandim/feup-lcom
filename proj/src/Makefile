@@ -10,7 +10,6 @@ SRCS+= central_module.c graphic_module.c draw_module.c user_interaction.c
 SRCS+= stack.c
 
 CCFLAGS= -Wall
-CXXFLAGS= -O3
 
 DPADD+=	${LIBDRIVER} ${LIBSYS}
 LDADD+=	-llm -ldriver -lsys
