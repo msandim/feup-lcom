@@ -127,10 +127,10 @@ void mouseClickDrawEvent()
   // if the click was in the color pallet
   else if (getxMousePosition() >= 122 && getxMousePosition() <= 122 + 882 - 1 &&
       getyMousePosition() >= 700 && getyMousePosition() <= 700 + 62 - 1 && getMouseLBstate())
-      color_selected = vg_get_pixel_buffer(getxMousePosition() - 122, getyMousePosition() - 700, color_bar, 882, 62);
+      color_selected = vg_get_pixel_buffer(getxMousePosition() - 122, getyMousePosition() - 700, color_bar.pixels, 882, 62);
 
 
-  // se nao foi em nenhum (toolbar e colorbox) ... reeinicia a area selecionada
+  // if the click was not on a relevant place, disable personalized draw area
   else if (!previous_LB_state && getMouseLBstate()) // se foi um clique mesmo
     current_area = default_area;
 
