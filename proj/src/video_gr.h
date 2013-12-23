@@ -64,6 +64,8 @@ int vg_set_pixel_buffer(unsigned long x, unsigned long y, unsigned long color, u
  */
 long vg_get_pixel_buffer(unsigned long x, unsigned long y, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
+long vg_get_pixel(unsigned long x, unsigned long y);
+
 
 /**
  * @brief Draw line segment with specifed end points and color
@@ -89,20 +91,18 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
  */
 void vg_draw_object(unsigned short* object, int w, int h, int x, int y, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
-void vg_draw_rectangle_buffer(int x, int y, int w, int h, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
-
 void vg_draw_circle_buffer(int x, int y, int radius, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
+
+void vg_draw_rectangle_buffer(int x, int y, int w, int h, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 void vg_flood_fill_buffer(int x, int y, unsigned long target_color, unsigned long replacement_color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
-void vg_draw_char(int x, int y,
-		char ch,
-		unsigned short color,
-		unsigned short* buffer,
-		unsigned long dim_h,
-		unsigned long dim_v);
+void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, unsigned int thickness, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 void vg_draw_text_buffer(int x, int y, char* text, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
+
+void vg_draw_char(int x, int y, char ch, unsigned short color, unsigned short* buffer,  unsigned long dim_h, unsigned long dim_v);
+
  /**
  * @brief Returns to default Minix 3 text mode (0x03: 25 x 80, 16 colors)
  * 
