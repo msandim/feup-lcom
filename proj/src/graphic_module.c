@@ -40,19 +40,19 @@ void drawBufferInVRAM()
 }
 
 
-int set_graphicsDrawMode(unsigned short* tela, BTN* btn_array, SPRITE color_bar)
+int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected)
 {
   // desenhar fundo
-  vg_fill_buffer(0,double_buf,vg_get_h_res(),vg_get_v_res());
+  vg_fill_buffer(color_selected,double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw toolboxes
   drawToolBar(btn_array,double_buf);
 
   // draw colorbox
-  vg_draw_object_buffer(color_bar.pixels,color_bar.width,color_bar.height, 122, 700,double_buf,vg_get_h_res(),vg_get_v_res());
+  vg_draw_object_buffer(color_bar.pixels,color_bar.width,color_bar.height, 122, 700, double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw draw_screen
-  drawAreaInDoubleBuffer(tela, 122, 30, 880, 650);
+  drawAreaInDoubleBuffer(draw_screen, draw_area.x_ul_corner, draw_area.y_ul_corner, draw_area.h_dim, draw_area.v_dim);
 
   // draw mouse
   draw_mouse();
@@ -282,6 +282,6 @@ int loadColorBar(SPRITE* color_bar) {
     return 1;
   }
 
-  printf ("ColorBar loaded\n");
+  printf ("ColorBar loaded\n",x,y);
   return 0;
 }
