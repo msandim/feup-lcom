@@ -11,6 +11,7 @@
 #include "graphic_module.h"
 #include "draw_module.h"
 #include "timer.h"
+#include "time_module.h"
 
 void menuInit()
 {
@@ -50,6 +51,8 @@ void drawModeInit()
   mouse_send_cmd(ENABLE_PACKETS);
   int irq_set_timer = timer_subscribe_int();
   int irq_set_kbd = keyboard_subscribe_int();
+  int irq_set_rtc = rtc_subscribe_int();
+  initRTCuieInt();
 
   // DRAW SCREEN PREPARATION ****************************
   // ****************************************************
@@ -78,7 +81,7 @@ void drawModeInit()
     return;
 
   // migrate into draw mode
-  drawMode(irq_set_mouse,irq_set_kbd,irq_set_timer,draw_scr, btn_array, color_bar);
+  drawMode(irq_set_mouse,irq_set_kbd,irq_set_timer,irq_set_rtc,draw_scr, btn_array, color_bar);
 
   // Draw Screen (free memory)
   free(draw_scr);
@@ -100,5 +103,6 @@ void drawModeInit()
   mouse_unsubscribe_int();
   keyboard_unsubscribe_int();
   timer_unsubscribe_int();
+  shutRTCuieInt();
+  rtc_unsubscribe_int();
 }
-

@@ -19,7 +19,7 @@
 #define MAX_THICKNESS 200
 #define MIN_THICKNESS 1
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
+void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
     BTN* btn_array, SPRITE clr_bar);
 
 void mouseClickDrawEvent();
@@ -41,5 +41,7 @@ void rectangle_handler();
 void rect_line_handler();
 
 void selected_area_handler();
+
+void date_draw_handler();
 
 #endif

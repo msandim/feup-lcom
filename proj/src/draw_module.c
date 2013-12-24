@@ -7,6 +7,7 @@
 #include "draw_module.h"
 #include "graphic_module.h"
 #include "user_interaction.h"
+#include "time_module.h"
 
 typedef enum {st0, st1, st2, st3} tool_state;
 
@@ -33,7 +34,7 @@ void (*tool_handlers[8]) (void) = {
 };
 
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
+void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
     BTN* btn_array, SPRITE clr_bar)
 {
   // fill variables
@@ -83,6 +84,9 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned sh
           {
             mouseClickDrawEvent();
 
+            if (getMouseMBstate())
+              date_draw_handler();
+
             if(getMouseRBstate())
               exit_flag = 1;
           }
@@ -92,6 +96,11 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned sh
 
           if(updateKeyboardStatus()) // if a valid key is available
             keyboardDrawEvent();
+        }
+
+        if (msg.NOTIFY_ARG & irq_set_rtc) {
+
+          updateRTCStatus(); // update hour
         }
 
         if (msg.NOTIFY_ARG & irq_set_timer) {
@@ -130,7 +139,7 @@ void mouseClickDrawEvent()
       getyMousePosition() >= COLOR_BARY_UL_CORNER &&
       getyMousePosition() <= COLOR_BARY_UL_CORNER + COLOR_BAR_V_LENGTH - 1 &&
       getMouseLBstate() && !previous_LB_state)
-      color_selected = vg_get_pixel_buffer(getxMousePosition() - 122, getyMousePosition() - 700, color_bar.pixels, 882, 62);
+    color_selected = vg_get_pixel_buffer(getxMousePosition() - 122, getyMousePosition() - 700, color_bar.pixels, 882, 62);
 
 
   // if the click was not on a relevant place, disable personalized draw area
@@ -428,6 +437,28 @@ void rect_line_handler()
   }
 
   break;
+  }
+}
+
+void date_draw_handler()
+{
+  unsigned int x, y;
+
+  if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+  {
+    x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+    y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+
+    // get time (attention, it's in BCD)
+    date_info current_rtc_time = getRTCtime();
+
+    char* string_date[20];
+
+    snprintf (string_date,20,"%xh%xm%x %x/%x/%x",
+        current_rtc_time.hours,current_rtc_time.minutes, current_rtc_time.seconds,
+        current_rtc_time.month_day, current_rtc_time.month, current_rtc_time.year);
+
+    printf("A data e: %s\n",string_date);
   }
 }
 
