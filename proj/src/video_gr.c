@@ -277,14 +277,14 @@ void vg_draw_object_buffer(unsigned short* object, int w, int h, int x, int y, u
 	printf ("W: %u\n", w);
 	printf ("X: %u\n", x);
 	printf ("Y: %u\n", y);
-   */
-  for (i = 0; i < h; i++) {
-    k = 0;
-    for (j = w; j > 0; j--) {
-      vg_set_pixel_buffer(x+j, y+i, object[(w*h) - (i*w+k)], buffer, dim_h, dim_v);
-      k++;
-    }
-  }
+	 */
+	for (i = 0; i < h; i++) {
+		k = 1;
+		for (j = w ; j > 0; j--) {
+			vg_set_pixel_buffer(x+j, y+i, object[(w*h) - (i*w+k)], buffer, dim_h, dim_v);
+			k++;
+		}
+	}
 }
 
 void vg_draw_rectangle_buffer(int x, int y, int w, int h, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
@@ -437,46 +437,18 @@ void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, 
   }
 }
 
-void vg_draw_text_buffer(int x, int y, char* text, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+void vg_draw_char_buffer(unsigned short* object, int w, int h, int x, int y, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
 
-  char* i;
+	int i, j, k;
 
-  for (i=text; *i; i++) {
-
-    printf("%c\n",i);
-    vg_draw_char(x,y,
-        (char) *i,
-        color,
-        buffer,
-        dim_h,
-        dim_v);
-    x+=20;
-  }
-}
-
-void vg_draw_char(int x, int y, char ch, unsigned short color, unsigned short* buffer,  unsigned long dim_h, unsigned long dim_v) {
-
-  int i, j, k, width, height;
-
-  unsigned short* letter = (unsigned short *) loadBMP (ch, width, height);
-
-  if (letter == NULL)
-    return;
-  /*
-    printf ("H: %u\n", h);
-    printf ("W: %u\n", w);
-    printf ("X: %u\n", x);
-    printf ("Y: %u\n", y);
-   */
-  for (i = 0; i < height; i++) {
-    k = 0;
-    for (j = width; j > 0; j--) {
-      if (letter[(width*height) - (i*width+k)] == 0x0) {
-        vg_set_pixel_buffer(x+j, y+i, color, buffer, dim_h, dim_v);
-        k++;
-      }
-    }
-  }
+	for (i = 0; i < h; i++) {
+		k = 1;
+		for (j = w ; j > 0; j--) {
+			if (object[(w*h) - (i*w+k)] != 0xFFFF)
+				vg_set_pixel_buffer(x+j, y+i, color, buffer, dim_h, dim_v);
+			k++;
+		}
+	}
 }
 
 int vg_exit() {

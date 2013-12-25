@@ -20,7 +20,7 @@
 #define MIN_THICKNESS 1
 
 void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
-    BTN* btn_array, SPRITE clr_bar);
+    BTN* btn_array, SPRITE clr_bar, SPRITE* chars);
 
 void mouseClickDrawEvent();
 

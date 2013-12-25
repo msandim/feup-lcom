@@ -34,8 +34,8 @@ void (*tool_handlers[8]) (void) = {
 };
 
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
-    BTN* btn_array, SPRITE clr_bar)
+void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
+		BTN* btn_array, SPRITE clr_bar, SPRITE* chars)
 {
   // fill variables
   default_area.h_dim = DRAW_SCREEN_H;

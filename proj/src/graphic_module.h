@@ -43,7 +43,7 @@ void screenExit();
 
 void drawBufferInVRAM();
 
-int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected);
+int set_graphicsDrawMode(unsigned short* tela, BTN* btn_array, SPRITE color_bar, SPRITE* chars);
 
 int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v);
 
@@ -56,5 +56,7 @@ int loadToolBar(BTN* btnArray);
 void drawToolBar(BTN* btnArray, unsigned short* buffer);
 
 int loadColorBar(SPRITE* color_bar);
+
+void print_text (int x, int y, char* text, unsigned short color, SPRITE* letters, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 #endif
