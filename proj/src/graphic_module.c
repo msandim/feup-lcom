@@ -52,6 +52,9 @@ void screenExit()
 
   free(letters);
 
+  // free memory for the cursor sprite
+  free(cursor.pixels);
+
   vg_exit();
 }
 
