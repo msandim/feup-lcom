@@ -101,7 +101,7 @@ void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, 
 
 void vg_draw_text_buffer(int x, int y, char* text, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
-void vg_draw_char(int x, int y, char ch, unsigned short color, unsigned short* buffer,  unsigned long dim_h, unsigned long dim_v);
+void vg_draw_char_buffer(unsigned short* object, int w, int h, int x, int y, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
  /**
  * @brief Returns to default Minix 3 text mode (0x03: 25 x 80, 16 colors)

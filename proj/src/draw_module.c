@@ -15,7 +15,7 @@ static unsigned short* draw_screen;
 static draw_screen_area default_area, current_area;
 
 static BTN* button_array;
-static int tool_selected; // testar com linha continua
+static int tool_selected;
 static tool_state tool_current_state;
 
 static SPRITE color_bar;
@@ -34,8 +34,8 @@ void (*tool_handlers[8]) (void) = {
 };
 
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, unsigned short* draw_scr,
-		BTN* btn_array, SPRITE clr_bar, SPRITE* chars)
+void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
+    BTN* btn_array, SPRITE clr_bar)
 {
   // fill variables
   default_area.h_dim = DRAW_SCREEN_H;
@@ -452,13 +452,16 @@ void date_draw_handler()
     // get time (attention, it's in BCD)
     date_info current_rtc_time = getRTCtime();
 
-    char* string_date[20];
+    char string_date[25];
 
-    snprintf (string_date,20,"%xh%xm%x %x/%x/%x",
+    snprintf(string_date,25,"%02xh %02xm %02xs %02x-%02x-%02x",
         current_rtc_time.hours,current_rtc_time.minutes, current_rtc_time.seconds,
         current_rtc_time.month_day, current_rtc_time.month, current_rtc_time.year);
 
-    printf("A data e: %s\n",string_date);
+    printf("O tempo eh: %s\n",string_date);
+
+    drawText(x,y,string_date,color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+
   }
 }
 
