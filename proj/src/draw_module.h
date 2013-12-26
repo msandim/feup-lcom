@@ -14,13 +14,12 @@
 #define COLOR_BAR_H_LENGTH 882
 #define COLOR_BAR_V_LENGTH 62
 
-
 // VARIABLES FOR DRAWING
 #define MAX_THICKNESS 200
 #define MIN_THICKNESS 1
 
 void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
-    BTN* btn_array, SPRITE clr_bar, unsigned short* cursor);
+    BTN* btn_array, SPRITE clr_bar);
 
 void mouseClickDrawEvent();
 

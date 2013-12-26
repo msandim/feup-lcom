@@ -35,7 +35,7 @@ void (*tool_handlers[8]) (void) = {
 
 
 void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
-		BTN* btn_array, SPRITE clr_bar, unsigned short* cursor)
+		BTN* btn_array, SPRITE clr_bar)
 {
 	// fill variables
 	default_area.h_dim = DRAW_SCREEN_H;
@@ -109,7 +109,7 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set
 
 					if (timer_count%2 == 0){
 
-						set_graphicsDrawMode(draw_screen,default_area,button_array,color_bar,color_selected,cursor); // desenhar tudo
+						set_graphicsDrawMode(draw_screen,default_area,button_array,color_bar,color_selected); // desenhar tudo
 					}
 				}
 

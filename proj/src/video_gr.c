@@ -168,8 +168,8 @@ long vg_get_pixel_buffer(unsigned long x, unsigned long y, unsigned short* buffe
 
   if (y >= dim_v || x >= dim_h)
   {
-    printf("vg_get_pixel::Invalid X/Y\n");
-    printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,dim_v,dim_h);
+    //printf("vg_get_pixel::Invalid X/Y\n");
+    //printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,dim_v,dim_h);
     return 1;
   }
 

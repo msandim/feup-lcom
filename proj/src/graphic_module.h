@@ -43,11 +43,11 @@ void screenExit();
 
 void drawBufferInVRAM();
 
-int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected, unsigned short* cursor);
+int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected);
 
 int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v);
 
-int drawMouse(unsigned short* cursor);
+int drawMouse();
 
 void drawToolBar(BTN* btnArray, unsigned short* buffer);
 
@@ -58,6 +58,8 @@ unsigned short* loadBMP (char const* filename, unsigned int * width, unsigned in
 int loadToolBar(BTN* btnArray);
 
 int loadColorBar(SPRITE* color_bar);
+
+int loadCursor();
 
 int loadChars();
 
