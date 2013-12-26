@@ -80,8 +80,12 @@ void drawModeInit()
   if (loadColorBar(&color_bar))
     return;
 
+  // Load cursor
+  int x,y;
+  unsigned short* cursor = loadBMP("Cursor.bmp",&x,&y);
+
   // migrate into draw mode
-  drawMode(irq_set_mouse,irq_set_kbd,irq_set_timer,irq_set_rtc,draw_scr, btn_array, color_bar);
+  drawMode(irq_set_mouse,irq_set_kbd,irq_set_timer,irq_set_rtc,draw_scr, btn_array, color_bar, cursor);
 
   // Color bar (free memory)
   free(color_bar.pixels);
