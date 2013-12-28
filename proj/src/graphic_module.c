@@ -6,6 +6,7 @@
 #include "graphic_module.h"
 #include "video_gr.h"
 #include "user_interaction.h"
+
 #include <stdlib.h>
 
 static unsigned short* double_buf; // temp buffer for graphic use

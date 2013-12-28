@@ -3,7 +3,7 @@
 #include <minix/com.h>
 #include <minix/sysutil.h>
 
-#include <string.h>
+ #include <string.h>
 
 #include "central_module.h"
 #include "mouse.h"
@@ -53,6 +53,9 @@ void drawModeInit()
   int irq_set_kbd = keyboard_subscribe_int();
   int irq_set_rtc = rtc_subscribe_int();
   initRTCuieInt();
+
+  if (initSerialPort())
+    printf("ERRO A INICIAR PORTA SERIE\n");
 
   // DRAW SCREEN PREPARATION ****************************
   // ****************************************************
@@ -105,4 +108,7 @@ void drawModeInit()
   timer_unsubscribe_int();
   shutRTCuieInt();
   rtc_unsubscribe_int();
+
+  if (shutSerialPort())
+    printf("ERRO A SAIR DA PORTA SERIE\n");
 }

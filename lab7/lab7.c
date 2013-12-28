@@ -254,7 +254,7 @@ static int proc_args(int argc, char *argv[]) {
     if (selected_mode == 1)
       printf("test7.c::int()\n\n");
     else
-      printf("test7.c::poll()\n\n");
+      printf("test7.c::poll\n\n");
 
     return 0;
 
@@ -365,7 +365,7 @@ static int proc_args(int argc, char *argv[]) {
 
     ser_test_fifo(address, tx, bits, stop, parity, rate, stringc, strings, delay);
 
-    printf("test7.c:: fifo()\n\n");
+    printf("test7.c:: fifinhuh()\n\n");
     return 0;
   }
     else {

@@ -85,7 +85,7 @@ int initSerialPort()
 
   ser_get_bit_rate(SER_PORT_COM1,&big_ratty);
 
-  printf("RATE 96 muheheh com 700 por cada 10 gurl: %u\n",big_ratty);
+  printf("RATE 19 muheheh com 700 por cada 10 gurl: %u\n",big_ratty);
 
   // init fifos
   ser_init_fifo_poll(SER_PORT_COM1);

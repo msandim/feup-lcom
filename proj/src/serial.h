@@ -150,9 +150,9 @@ int ser_init_fifo_poll(unsigned short base_addr);
 int ser_shut_fifo_poll(unsigned short base_addr);
 
 // send a string by polling mode with fifos/ returns 1 in success, 0 in non-success
-int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[]);
+int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[], unsigned int string_size);
 
-int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[]);
+int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[], unsigned int string_size);
 
 /* OTHERS */
 

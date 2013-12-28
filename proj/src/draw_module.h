@@ -14,6 +14,8 @@
 #define COLOR_BAR_H_LENGTH 882
 #define COLOR_BAR_V_LENGTH 62
 
+#define MAX_COMMANDS_PER_UPDATE 50
+
 // VARIABLES FOR DRAWING
 #define MAX_THICKNESS 200
 #define MIN_THICKNESS 1
@@ -24,6 +26,8 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set
 void mouseClickDrawEvent();
 
 void keyboardDrawEvent();
+
+void checkPixelUpdate();
 
 void blank_handler();
 

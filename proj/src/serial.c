@@ -650,7 +650,7 @@ int ser_shut_fifo_poll(unsigned short base_addr)
   return ser_set_reg(base_addr,UART_FCR,fcr_config);
 }
 
-int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[])
+int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[], unsigned int string_size)
 {
   int scount = 0, fifo_counter = 0, end_string = 0;
 
@@ -665,16 +665,16 @@ int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[])
       while (fifo_counter < 16)
       {
         ser_set_reg(base_addr,UART_THR,(unsigned long) string[scount]); // send char
-        printf("%c",string[scount]);
+        //printf("%c",string[scount]);
 
-        if (string[scount] == '\0') // if the '\0' was sent, end everything
+        fifo_counter++;
+        scount++;
+
+        if (scount == string_size) // if we just sent the last char of the string, end function
         {
           end_string = 1;
           break;
         }
-
-        fifo_counter++;
-        scount++;
       }
 
       fifo_counter = 0;
@@ -683,8 +683,8 @@ int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[])
 
     else
     {
-      printf("Nao esta vazio\n");
-      tickdelay(micros_to_ticks(50000));
+      printf("FIFO ocupado...\n");
+      //tickdelay(micros_to_ticks(5000));
     }
 
   } while (!end_string);
@@ -692,13 +692,13 @@ int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[])
   return 0;
 }
 
-int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[])
+int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[], unsigned int string_size)
 {
   int scount = 0, fifo_counter = 0, end_string = 0, started_rx = 0, nothing_rx = 0;
 
   unsigned long rx_content = '1';
 
-  while(rx_content != '\0')
+  while(scount < string_size)
   {
     unsigned long lsr;
     ser_get_reg(base_addr,UART_LSR,&lsr);
@@ -737,10 +737,14 @@ int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[
       if (started_rx) // if we started receiving, wait for more
       {
         printf("esperar pelo q ja comecei a receber\n");
-        tickdelay(micros_to_ticks(50000));
+        //tickdelay(micros_to_ticks(5000));
       }
 
-      else return 1; // se nao ha nada para receber, saio logo
+      else
+      {
+        //printf("nao ha nada para receber...\n");
+        return 1; // se nao ha nada para receber, saio logo
+      }
     }
   }
 

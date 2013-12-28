@@ -104,7 +104,7 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
   if (ser_get_bit_rate(base_addr,&rate_backup))
     return 1;
 
-  if (ser_test_set(base_addr,bits,stop,parity,rate))
+  if (ser_set_config(base_addr,bits,stop,parity,rate))
     return 1;
 
   // deactivate ALL interrupts before sending something
@@ -136,7 +136,7 @@ int ser_test_poll(unsigned short base_addr, unsigned char tx, unsigned long bits
       }
     }
 
-    ser_send_char_poll(base_addr,'.'); // send point to end
+    ser_send_char_poll(base_addr,'.'); // send point to end - not sending because send string sends "\0"
     printf(".\n");
   }
   else // if receiver
@@ -173,11 +173,11 @@ int ser_test_int(unsigned short base_addr, unsigned char tx, unsigned long bits,
 
   if (tx)
   {
-    printf("Sending chars:\n");
+    printf("Sending chars with interrupts (with FIFOs for project):\n");
     // send each string!
     for (str_count=0; str_count < stringc; str_count++)
     {
-      ser_send_string_int(base_addr,strings[str_count]);
+      ser_send_string_int_fifo(base_addr,strings[str_count]);
 
       if (str_count != stringc-1) // if not the last string, send space to separate
       {
@@ -190,10 +190,10 @@ int ser_test_int(unsigned short base_addr, unsigned char tx, unsigned long bits,
   }
   else
   {
-    /*printf("Receiving chars:\n");
-    ser_receive_string_int(base_addr);
-    printf("\n");*/
-    printf("Nao faz nada\n");
+    printf("Receiving chars:\n");
+    ser_receive_string_int_fifo(base_addr,8);
+    printf("\n");
+    //printf("Nao faz nada\n");
   }
 
 
@@ -218,10 +218,13 @@ int ser_test_fifo(unsigned short base_addr, unsigned char tx, unsigned long bits
   if (ser_get_bit_rate(base_addr,&rate_backup))
     return 1;
 
-  if (ser_test_set(base_addr,bits,stop,parity,rate))
+  if (ser_set_config(base_addr,bits,stop,parity,rate))
     return 1;
 
   unsigned int str_count;
+
+  // INIT FIFOS
+  ser_init_fifo_poll(base_addr);
 
   if (tx)
   {
@@ -230,7 +233,7 @@ int ser_test_fifo(unsigned short base_addr, unsigned char tx, unsigned long bits
     for (str_count=0; str_count < stringc; str_count++)
     {
       //ser_send_string_int_fifo(base_addr,strings[str_count]);
-      ser_send_string_poll_fifo(base_addr,strings[str_count],delay);
+      ser_send_string_poll_fifo(base_addr,strings[str_count]);
 
       if (str_count != stringc-1) // if not the last string, send space to separate
       {
@@ -238,17 +241,21 @@ int ser_test_fifo(unsigned short base_addr, unsigned char tx, unsigned long bits
       }
     }
 
-    ser_send_char_poll(base_addr,'.'); // send a space to separate strings
-    printf(".\n");
+    //ser_send_char_poll(base_addr,'.'); // send a space to separate strings
+    printf("[final da string]\n");
   }
   else
   {
-    /*printf("Receiving chars:\n");
-    ser_receive_string_int_fifo(base_addr,8);
-    printf("\n");*/
-    printf("Nao faz nada\n");
+    printf("Receiving chars com fifuzinhu:\n");
+
+    unsigned char ss[100];
+    ser_receive_string_poll_fifo(base_addr, ss);
+
+    printf("string recebida: %s\n");
   }
 
+  // DISABLE FIFOS
+  ser_shut_fifo_poll(base_addr);
 
   // reset lcr and rate previously saved
   if (ser_set_reg(base_addr,UART_LCR,lcr_backup))

@@ -7,7 +7,7 @@ CC=gcc
 PROG=	proj
 
 #DEVICES
-SRCS=	main.c video_gr.c vbe.c mouse.c keyboard.c timer.c rtc.c rtc_assembly.S
+SRCS=	main.c video_gr.c vbe.c mouse.c keyboard.c timer.c rtc.c rtc_assembly.S serial.c
 
 # MODULES
 SRCS+= central_module.c graphic_module.c draw_module.c user_interaction.c time_module.c com_module.c
@@ -15,8 +15,8 @@ SRCS+= central_module.c graphic_module.c draw_module.c user_interaction.c time_m
 # EXTRA STRUCTURES
 SRCS+= stack.c
 
-CCFLAGS= -Wall
-CXXFLAGS= -O3
+CCFLAGS= -Wall -O3
+# CXXFLAGS= -O3
 
 DPADD+=	${LIBDRIVER} ${LIBSYS}
 LDADD+=	-llm -ldriver -lsys
