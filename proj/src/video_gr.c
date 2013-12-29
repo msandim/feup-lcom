@@ -188,7 +188,7 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
 
   if (yi >= dim_v || yf >= dim_v || xi >= dim_h || xf >= dim_h)
   {
-    printf("vg_set_pixel::Invalid X/Y\n");
+    //printf("vg_set_pixel::Invalid X/Y\n");
     return 1;
   }
 
@@ -287,15 +287,17 @@ void vg_draw_object_buffer(unsigned short* object, int w, int h, int x, int y, u
   }
 }
 
-void vg_draw_rectangle_buffer(int x, int y, int w, int h, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+void vg_draw_rectangle_buffer(unsigned int x, unsigned int y, unsigned int x_dim, unsigned int y_dim, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
 
   unsigned int i;
 
-  for (i = 0; i < h; i++)
-    vg_draw_line_buffer(x,y+i,x+w,y+i,color,buffer,dim_h,dim_v);
+  //printf("rect (%u,%u) w=%u, h=%u, color=%u, dim_h=%u, dim_v=%u",x,y,w,h,color,dim_h,dim_v);
+
+  for (i = 0; i < y_dim; i++)
+    vg_draw_line_buffer(x,y+i,x+x_dim,y+i,color,buffer,dim_h,dim_v);
 }
 
-void vg_draw_circle_buffer(int x, int y, int radius, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+void vg_draw_circle_buffer(unsigned int x, unsigned int y, unsigned int radius, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
   unsigned int v, h;
 
   for (v = 0; v <= radius; v++) {

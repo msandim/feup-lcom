@@ -88,6 +88,32 @@ int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area
   return 0;
 }
 
+int set_graphicsMenuMode()
+{
+  vg_fill_buffer(0xFFFF,double_buf, vg_get_h_res(), vg_get_v_res());
+
+  vg_draw_rectangle_buffer(400, 100, 200, 100, 0, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  vg_draw_rectangle_buffer(400, 300, 200, 100, 0, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  vg_draw_rectangle_buffer(400, 500, 200, 100, 0, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  vg_draw_rectangle_buffer(400, 700, 200, 50, 0, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  // draw mouse
+  drawMouse();
+
+  // update buffer in VRAM
+  drawBufferInVRAM();
+
+  return 0;
+}
+
+int set_graphicsGalleryMode()
+{
+
+}
+
 int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v)
 {
   // check if the area fits in the double buffer
@@ -103,6 +129,12 @@ int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corn
     memcpy(double_buf + (y_position * vg_get_h_res() + x_upperleft_corner),buffer+(i*dim_h),2*dim_h);
 
   return 0;
+}
+
+int areasAreEqual(draw_screen_area area1, draw_screen_area area2)
+{
+  return ((area1.h_dim == area2.h_dim) && (area1.v_dim == area2.v_dim) && (area1.x_ul_corner == area2.x_ul_corner)
+          && (area1.y_ul_corner == area2.y_ul_corner));
 }
 
 int drawMouse()

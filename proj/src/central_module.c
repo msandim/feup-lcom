@@ -3,7 +3,7 @@
 #include <minix/com.h>
 #include <minix/sysutil.h>
 
- #include <string.h>
+#include <string.h>
 
 #include "central_module.h"
 #include "mouse.h"
@@ -13,10 +13,11 @@
 #include "timer.h"
 #include "time_module.h"
 
-void menuInit()
+static program_state current_state;
+
+void programInit()
 {
   int exitFlag = 0;
-  unsigned char user_input;
 
   if (screenInit())
   {
@@ -25,28 +26,32 @@ void menuInit()
     return;
   }
 
-  while (!exitFlag)
-  {
-    // DRAW THESE PRINTFS
-    printf("Welcome to paint - minix style\n");
-    printf("Please choose option:\n1. Draw\n2. Library\nEsc. Exit");
+  drawModeLoad(); // load the stuff for drawMode
 
-    // fazer switch da variavel input, se for ESC sai do ecrã
+  current_state = MENU;
 
-    // experiencia: iniciar drawMode() e depois sair
+  runDevices();
 
-    drawModeInit();
-    vg_fill(3603);
-    sleep(2);
-    exitFlag = 1;
-  }
+  drawModeFree(); // free the stuff for drawMode
 
   screenExit();
 }
 
-void drawModeInit()
+void changeProgramState(program_state new_state)
 {
-  // *** ENABLE MOUSE, KEYBOARD & TIMER
+  // ter em atencao que se vem da gallery, tenho de passar o nome do ficheiro
+
+  if (new_state == DRAW_SINGULAR)
+    drawModeInit(0); // disable serial com
+  else if (new_state == DRAW_MULTI)
+    drawModeInit(1); // enable serial com
+
+  current_state = new_state;
+}
+
+void runDevices()
+{
+  // *** ENABLE MOUSE, KEYBOARD, RTC, TIMER & SERIAL PORT
   int irq_set_mouse = mouse_subscribe_int();
   mouse_send_cmd(ENABLE_PACKETS);
   int irq_set_timer = timer_subscribe_int();
@@ -57,51 +62,126 @@ void drawModeInit()
   if (initSerialPort())
     printf("ERRO A INICIAR PORTA SERIE\n");
 
-  // DRAW SCREEN PREPARATION ****************************
-  // ****************************************************
-  unsigned short* draw_scr = (unsigned short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(unsigned short));
+  int ipc_status;
 
-  if (draw_scr == NULL)
+  message msg;
+
+  unsigned int timer_count = 0;
+  int exit_flag = 0;
+
+  while(!exit_flag)
   {
-    printf("Could not allocate array draw_scr\n");
-    return;
+    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+      printf("driver_receive failed\n");
+      continue;
+    }
+
+    if (is_ipc_notify(ipc_status)) {
+      switch (_ENDPOINT_P(msg.m_source)) {
+      case HARDWARE:
+
+        if (msg.NOTIFY_ARG & irq_set_mouse) {
+
+          if(updateMouseStatus()) // update mouse status, if packet ended
+          {
+            if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
+            {
+              mouseDrawEvent();
+
+              if (getMouseMBstate()) // ISTO VAI SAIR DAQUI QUANDO O NETO FIZER O BOTAO
+                date_draw_handler();
+            }
+
+            else if (current_state == MENU)
+            {
+              int event_status = mouseMenuEvent();
+
+              if (event_status == 1)
+              {
+                printf("mudou para draw mode singular\n");
+                changeProgramState(DRAW_SINGULAR);
+              }
+              else if (event_status == 2)
+              {
+                changeProgramState(DRAW_MULTI);
+                printf("mudou para multi\n");
+              }
+              else if (event_status == 3)
+              {
+                changeProgramState(GALLERY);
+                printf("mudou para galeria\n");
+              }
+              else if (event_status == -1)
+              {
+                exit_flag = 1;
+                printf("saiu\n");
+              }
+            }
+
+            else if (current_state == GALLERY)
+            {
+              int event_status = mouseGalleryEvent();
+
+              if (mouseGalleryEvent() == 1)
+                changeProgramState(DRAW_SINGULAR);
+              else if (mouseGalleryEvent() == -1)
+                changeProgramState(MENU);
+            }
+
+          }
+        }
+
+        if (msg.NOTIFY_ARG & irq_set_kbd) {
+
+          if(updateKeyboardStatus()) // if a valid key is available
+          {
+            if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
+            {
+              if (keyboardDrawEvent() == -1) // come back in the states (to menu)
+                changeProgramState(MENU);
+            }
+
+          }
+        }
+
+        if (msg.NOTIFY_ARG & irq_set_rtc) {
+
+          updateRTCStatus(); // update hour
+        }
+
+        if (msg.NOTIFY_ARG & irq_set_timer) {
+
+          timer_count++;
+
+          if (timer_count%2 == 0){
+            if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
+              set_graphicsDrawMode(getDrawScreen(),getDrawScreenInfo(),getButtonArray(),getColorBar(),getColorSelected()); // desenhar tudo
+
+            else if(current_state == MENU)
+              set_graphicsMenuMode();
+
+            else if(current_state == GALLERY)
+              set_graphicsGalleryMode();
+          }
+
+          if(timer_count%10 == 0)
+          {
+            if (current_state == DRAW_MULTI)
+              checkPixelUpdate();
+          }
+
+        }
+
+        break;
+      default:
+        break;
+      }
+    } else {
+
+    }
   }
 
-  // start as white
-  memset(draw_scr,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
-
-  // INTERFACE LOADING *********************************
-  // ***************************************************
-
-  // Load buttons
-  BTN* btn_array = (BTN*) malloc (11* sizeof(BTN));
-  if (loadToolBar(btn_array))
-    return;
-
-  // Load color bar
-  SPRITE color_bar;
-  if (loadColorBar(&color_bar))
-    return;
-
-  // migrate into draw mode
-  drawMode(irq_set_mouse,irq_set_kbd,irq_set_timer,irq_set_rtc,draw_scr, btn_array, color_bar);
-
-  // Color bar (free memory)
-  free(color_bar.pixels);
-
-  // tool bar (free memory)
-  unsigned int i;
-  for (i=1; i < 12; i++)
-  {
-    free(btn_array[i-1].sprite_on.pixels);
-    free(btn_array[i-1].sprite_off.pixels);
-  }
-  free(btn_array);
-
-  // Draw Screen (free memory)
-  free(draw_scr);
-
-  // ** DISABLE MOUSE, MOUSE & TIMER
+  // ** DISABLE MOUSE, KBD, TIMER, RTC and Serial Port
   mouse_send_cmd(DISABLE_STREAM_MODE);
   mouse_unsubscribe_int();
   keyboard_unsubscribe_int();
@@ -111,4 +191,47 @@ void drawModeInit()
 
   if (shutSerialPort())
     printf("ERRO A SAIR DA PORTA SERIE\n");
+
+}
+
+int mouseMenuEvent()
+{
+  static int previous_LB_state = 0;
+
+  if (getxMousePosition() >= 400 &&
+      getxMousePosition() <= 400 + 200 - 1 &&
+      getyMousePosition() >= 100 &&
+      getyMousePosition() <= 100 + 100 - 1 &&
+      getMouseLBstate() && !previous_LB_state)
+    return 1; // ir para draw sem multi
+
+  else if (getxMousePosition() >= 400 &&
+      getxMousePosition() <= 400 + 200 - 1 &&
+      getyMousePosition() >= 300 &&
+      getyMousePosition() <= 300 + 100 - 1 &&
+      getMouseLBstate() && !previous_LB_state)
+    return 2; // ir para draw com multi
+
+  else if (getxMousePosition() >= 400 &&
+      getxMousePosition() <= 400 + 200 - 1 &&
+      getyMousePosition() >= 500 &&
+      getyMousePosition() <= 500 + 100 - 1 &&
+      getMouseLBstate() && !previous_LB_state)
+    return 3; // ir para galeria
+
+  else if (getxMousePosition() >= 400 &&
+      getxMousePosition() <= 400 + 200 - 1 &&
+      getyMousePosition() >= 700 &&
+      getyMousePosition() <= 700 + 50 - 1 &&
+      getMouseLBstate() && !previous_LB_state)
+    return -1; // sair
+
+  previous_LB_state = getMouseLBstate();
+
+  return 0;
+}
+
+int mouseGalleryEvent()
+{
+  return 0;
 }

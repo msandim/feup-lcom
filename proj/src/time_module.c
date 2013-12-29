@@ -43,6 +43,10 @@ void shutRTCuieInt()
   rtc_load_info(RTC_REG_B, &info);
   info ^= UIE_mask;
   rtc_save_info(RTC_REG_B, info);
+
+  // READ REG C (JUST IN CASE)
+  unsigned long test;
+  rtc_load_info(RTC_REG_C, &test);
 }
 
 date_info getRTCtime()

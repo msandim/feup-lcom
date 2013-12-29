@@ -91,9 +91,9 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
  */
 void vg_draw_object(unsigned short* object, int w, int h, int x, int y, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
-void vg_draw_circle_buffer(int x, int y, int radius, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
+void vg_draw_circle_buffer(unsigned int x, unsigned int y, unsigned int radius, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
-void vg_draw_rectangle_buffer(int x, int y, int w, int h, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
+void vg_draw_rectangle_buffer(unsigned int x, unsigned int y, unsigned int x_dim, unsigned int y_dim, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 void vg_flood_fill_buffer(int x, int y, unsigned long replacement_color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 

@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
   // For future use of lm_malloc
   lm_init();
 
-  menuInit();
+  programInit();
 
   printf("Acabou o projeto\n");
 

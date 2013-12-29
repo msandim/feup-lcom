@@ -20,12 +20,29 @@
 #define MAX_THICKNESS 200
 #define MIN_THICKNESS 1
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
-    BTN* btn_array, SPRITE clr_bar);
+typedef enum {st0, st1, st2, st3} tool_state;
 
-void mouseClickDrawEvent();
+unsigned short* getDrawScreen();
 
-void keyboardDrawEvent();
+draw_screen_area getDrawScreenInfo();
+
+BTN* getButtonArray();
+
+SPRITE getColorBar();
+
+unsigned short getColorSelected();
+
+
+int drawModeLoad();
+
+void drawModeFree();
+
+void drawModeInit(int enable_serial_com);
+
+
+void mouseDrawEvent();
+
+int keyboardDrawEvent();
 
 void checkPixelUpdate();
 

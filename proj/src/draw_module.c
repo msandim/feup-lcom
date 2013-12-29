@@ -11,8 +11,6 @@
 
 #include "com_module.h"
 
-typedef enum {st0, st1, st2, st3} tool_state;
-
 static unsigned short* draw_screen;
 static draw_screen_area default_area, current_area;
 
@@ -23,6 +21,8 @@ static tool_state tool_current_state;
 static SPRITE color_bar;
 static unsigned short color_selected;
 static unsigned int thickness;
+
+static int serial_com_enabled;
 
 void (*tool_handlers[8]) (void) = {
     blank_handler,
@@ -35,23 +35,79 @@ void (*tool_handlers[8]) (void) = {
     selected_area_handler
 };
 
+unsigned short* getDrawScreen()
+{ return draw_screen; }
 
-void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set_rtc, unsigned short* draw_scr,
-    BTN* btn_array, SPRITE clr_bar)
+draw_screen_area getDrawScreenInfo()
+{ return default_area; }
+
+BTN* getButtonArray()
+{ return button_array; }
+
+SPRITE getColorBar()
+{ return color_bar; }
+
+unsigned short getColorSelected()
+{ return color_selected; }
+
+int drawModeLoad()
 {
-  // fill variables
+  // DRAW SCREEN PREPARATION ****************************
+  // ****************************************************
+  draw_screen = (unsigned short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(unsigned short));
+
+  if (draw_screen == NULL)
+  {
+    printf("Could not allocate array draw_scr\n");
+    return 1;
+  }
+
+  // INTERFACE LOADING *********************************
+  // ***************************************************
+
+  // Load buttons
+  button_array = (BTN*) malloc (11* sizeof(BTN));
+  if (loadToolBar(button_array))
+    return 1;
+
+  // Load color bar
+  if (loadColorBar(&color_bar))
+    return 1;
+
+  // fill variables - default area
   default_area.h_dim = DRAW_SCREEN_H;
   default_area.v_dim = DRAW_SCREEN_V;
   default_area.x_ul_corner = DRAW_SCREENX_UL_CORNER;
   default_area.y_ul_corner = DRAW_SCREENY_UL_CORNER;
 
-  // fill variables - current screen
+  // fill variables - current area
   current_area = default_area;
 
-  // fill variables - buttons and color bar
-  draw_screen = draw_scr;
-  button_array = btn_array;
-  color_bar = clr_bar;
+  return 0;
+}
+
+void drawModeFree()
+{
+  // Color bar (free memory)
+  free(color_bar.pixels);
+
+  // tool bar (free memory)
+  unsigned int i;
+  for (i=1; i < 12; i++)
+  {
+    free(button_array[i-1].sprite_on.pixels);
+    free(button_array[i-1].sprite_off.pixels);
+  }
+  free(button_array);
+
+  // Draw Screen (free memory)
+  free(draw_screen);
+}
+
+void drawModeInit(int enable_serial_com)
+{
+  // start as white
+  memset(draw_screen,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
 
   // START DRAWING MODE **********
   tool_selected = 0;
@@ -59,78 +115,16 @@ void drawMode(int irq_set_mouse, int irq_set_kbd, int irq_set_timer, int irq_set
   thickness = 5;
   tool_current_state = st0;
 
+  // write a welcome message
+  drawText(300,60,"feel free to draw\n",color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+
   // start with first option selected
   button_array[tool_selected].press_state = 1;
 
-  int ipc_status;
-  message msg;
-
-  int timer_count=0; // count the timer interrupts
-
-  int exit_flag = 0;
-
-  while(!exit_flag)
-  {
-    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-      printf("driver_receive failed\n");
-      continue;
-    }
-
-    if (is_ipc_notify(ipc_status)) {
-      switch (_ENDPOINT_P(msg.m_source)) {
-      case HARDWARE:
-
-        if (msg.NOTIFY_ARG & irq_set_mouse) {
-
-          if(updateMouseStatus()) // update mouse status, if packet ended
-          {
-            mouseClickDrawEvent();
-
-            if (getMouseMBstate())
-              date_draw_handler();
-
-            if(getMouseRBstate())
-              exit_flag = 1;
-          }
-        }
-
-        if (msg.NOTIFY_ARG & irq_set_kbd) {
-
-          if(updateKeyboardStatus()) // if a valid key is available
-            keyboardDrawEvent();
-        }
-
-        if (msg.NOTIFY_ARG & irq_set_rtc) {
-
-          updateRTCStatus(); // update hour
-        }
-
-        if (msg.NOTIFY_ARG & irq_set_timer) {
-
-          timer_count++;
-
-          if (timer_count%2 == 0){
-            set_graphicsDrawMode(draw_screen,default_area,button_array,color_bar,color_selected); // desenhar tudo
-          }
-
-          if(timer_count%10 == 0)
-          {
-            checkPixelUpdate();
-          }
-
-        }
-
-        break;
-      default:
-        break;
-      }
-    } else {
-
-    }
-  }
+  serial_com_enabled = enable_serial_com;
 }
 
-void mouseClickDrawEvent()
+void mouseDrawEvent()
 {
   static int previous_LB_state = 0;
   // if the click was on the draw_screen
@@ -150,15 +144,18 @@ void mouseClickDrawEvent()
 
 
   // if the click was not on a relevant place, disable personalized draw area
-  else if (!previous_LB_state && getMouseLBstate()) // se foi um clique mesmo
+  else if (!previous_LB_state && getMouseLBstate()) // if it was a real click
+  {
+    button_array[7].press_state = 0;
     current_area = default_area;
+  }
 
 
   previous_LB_state = getMouseLBstate();
 
 }
 
-void keyboardDrawEvent()
+int keyboardDrawEvent()
 {
   if (getKeyboardPressState()) // if a makecode is released and not a breakcode
   {
@@ -172,12 +169,15 @@ void keyboardDrawEvent()
       tool_current_state = st0;
 
       reset_draw_screen();
-      sendCommandBlank();
+
+      if (serial_com_enabled) // if we have to send
+        sendCommandBlank();
 
       break;
 
     case 0x30: // pincel
-      button_array[tool_selected].press_state = 0;
+      if (tool_selected != 7)
+        button_array[tool_selected].press_state = 0;
       tool_selected = 1;
 
       button_array[tool_selected].press_state = 1;
@@ -185,7 +185,8 @@ void keyboardDrawEvent()
       break;
 
     case 0x25: // balde
-      button_array[tool_selected].press_state = 0;
+      if (tool_selected != 7)
+        button_array[tool_selected].press_state = 0;
       tool_selected = 2;
 
       button_array[tool_selected].press_state = 1;
@@ -193,7 +194,8 @@ void keyboardDrawEvent()
       break;
 
     case 0x17: // color picker
-      button_array[tool_selected].press_state = 0;
+      if (tool_selected != 7)
+        button_array[tool_selected].press_state = 0;
       tool_selected = 3;
 
       button_array[tool_selected].press_state = 1;
@@ -201,7 +203,8 @@ void keyboardDrawEvent()
       break;
 
     case 0x2E: // circulo
-      button_array[tool_selected].press_state = 0;
+      if (tool_selected != 7)
+        button_array[tool_selected].press_state = 0;
       tool_selected = 4;
 
       button_array[tool_selected].press_state = 1;
@@ -209,7 +212,8 @@ void keyboardDrawEvent()
       break;
 
     case 0x13: // rectangulo
-      button_array[tool_selected].press_state = 0;
+      if (tool_selected != 7)
+        button_array[tool_selected].press_state = 0;
       tool_selected = 5;
 
       button_array[tool_selected].press_state = 1;
@@ -217,20 +221,27 @@ void keyboardDrawEvent()
       break;
 
     case 0x26: // linha
-      button_array[tool_selected].press_state = 0;
+      if (tool_selected != 7)
+        button_array[tool_selected].press_state = 0;
       tool_selected = 6;
 
       button_array[tool_selected].press_state = 1;
       tool_current_state = st0;
       break;
 
-    case 0x2F:
+    case 0x2F: // selecao de areas
       button_array[tool_selected].press_state = 0;
       tool_selected = 7;
 
       button_array[tool_selected].press_state = 1;
       tool_current_state = st0;
       break;
+
+    case 0x01: // ESC (sair) -> voltar atrás no estado
+    {
+      button_array[tool_selected].press_state = 0; // desligar a tool em que estava
+      return -1;
+    }
     }
 
     if (getKeyboardLastKey() == 0x4E || getKeyboardLastKey() == 0x1A) // "+" pressed
@@ -246,121 +257,126 @@ void keyboardDrawEvent()
     }
 
   }
+
+  return 0;
 }
 
 void checkPixelUpdate()
 {
-  unsigned int number_pixels_update = MAX_COMMANDS_PER_UPDATE;
-  int empty_read = 0;
-
-  while (number_pixels_update)
+  if (serial_com_enabled)
   {
-    unsigned char cod_char[5];
-    unsigned char command_string[25];
+    unsigned int number_pixels_update = MAX_COMMANDS_PER_UPDATE;
+    int empty_read = 0;
 
-    empty_read = receiveCommand(cod_char,1);
-
-    if (empty_read)
+    while (number_pixels_update)
     {
-      //printf("empty\n");
-      return;
+      unsigned char cod_char[5];
+      unsigned char command_string[25];
+
+      empty_read = receiveCommand(cod_char,1);
+
+      if (empty_read)
+      {
+        //printf("empty\n");
+        return;
+      }
+
+      switch(cod_char[0])
+      {
+      case 0x1: // circulo
+      {
+        receiveCommand(command_string,8);
+
+        unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+        unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+        unsigned int radius = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
+        unsigned short color = (unsigned short) (command_string[6] | (((unsigned short) command_string[7]) << 8));
+
+        //printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
+
+        vg_draw_circle_buffer(x,y,radius,color,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        break;
+      }
+
+      case 0x2: // rectangulo
+      {
+        receiveCommand(command_string,10);
+
+        unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+        unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+        unsigned int dim_h = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
+        unsigned int dim_v = (unsigned int) (command_string[6] | (((unsigned int) command_string[7]) << 8));
+        unsigned short color = (unsigned short) (command_string[8] | (((unsigned short) command_string[9]) << 8));
+
+        vg_draw_rectangle_buffer(x, y, dim_h, dim_v, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        break;
+      }
+
+      case 0x3: // linha
+      {
+        receiveCommand(command_string,11);
+
+        unsigned int xi = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+        unsigned int yi = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+        unsigned int xf = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
+        unsigned int yf = (unsigned int) (command_string[6] | (((unsigned int) command_string[7]) << 8));
+        unsigned int radius = (unsigned int) command_string[8];
+        unsigned short color = (unsigned short) (command_string[9] | (((unsigned short) command_string[10]) << 8));
+
+        vg_draw_brush_buffer(xi, yi, xf, yf, color, radius, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        break;
+      }
+
+      case 0x4: // linha
+      {
+        receiveCommand(command_string,6);
+
+        unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+        unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+        unsigned short color = (unsigned short) (command_string[4] | (((unsigned short) command_string[5]) << 8));
+
+        vg_flood_fill_buffer(x, y, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        break;
+      }
+
+      case 0x5: // data stamping
+      {
+        receiveCommand(command_string,12);
+
+        unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+        unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+        unsigned char seconds = command_string[4];
+        unsigned char minutes = command_string[5];
+        unsigned char hours = command_string[6];
+        unsigned char month_day = command_string[7];
+        unsigned char month = command_string[8];
+        unsigned char year = command_string[9];
+        unsigned short color = (unsigned short) (command_string[10] | (((unsigned short) command_string[11]) << 8));
+
+        char string_date[25];
+
+        snprintf(string_date,25,"%02xh %02xm %02xs %02x-%02x-%02x",
+            hours, minutes, seconds, month_day, month, year);
+
+        drawText(x,y,string_date,color,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+        break;
+      }
+
+      case 0x6: // blank
+      {
+        reset_draw_screen();
+        break;
+      }
+
+      default:
+        printf("Comando nao reconhecido\n");
+      }
+
+      number_pixels_update--;
     }
 
-    switch(cod_char[0])
-    {
-    case 0x1: // circulo
-    {
-      receiveCommand(command_string,8);
-
-      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
-      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
-      unsigned int radius = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
-      unsigned short color = (unsigned short) (command_string[6] | (((unsigned short) command_string[7]) << 8));
-
-      //printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
-
-      vg_draw_circle_buffer(x,y,radius,color,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-      break;
-    }
-
-    case 0x2: // rectangulo
-    {
-      receiveCommand(command_string,10);
-
-      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
-      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
-      unsigned int dim_h = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
-      unsigned int dim_v = (unsigned int) (command_string[6] | (((unsigned int) command_string[7]) << 8));
-      unsigned short color = (unsigned short) (command_string[8] | (((unsigned short) command_string[9]) << 8));
-
-      vg_draw_rectangle_buffer(x, y, dim_h, dim_v, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-      break;
-    }
-
-    case 0x3: // linha
-    {
-      receiveCommand(command_string,11);
-
-      unsigned int xi = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
-      unsigned int yi = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
-      unsigned int xf = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
-      unsigned int yf = (unsigned int) (command_string[6] | (((unsigned int) command_string[7]) << 8));
-      unsigned int radius = (unsigned int) command_string[8];
-      unsigned short color = (unsigned short) (command_string[9] | (((unsigned short) command_string[10]) << 8));
-
-      vg_draw_brush_buffer(xi, yi, xf, yf, color, radius, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-      break;
-    }
-
-    case 0x4: // linha
-    {
-      receiveCommand(command_string,6);
-
-      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
-      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
-      unsigned short color = (unsigned short) (command_string[4] | (((unsigned short) command_string[5]) << 8));
-
-      vg_flood_fill_buffer(x, y, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-      break;
-    }
-
-    case 0x5: // data stamping
-    {
-      receiveCommand(command_string,12);
-
-      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
-      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
-      unsigned char seconds = command_string[4];
-      unsigned char minutes = command_string[5];
-      unsigned char hours = command_string[6];
-      unsigned char month_day = command_string[7];
-      unsigned char month = command_string[8];
-      unsigned char year = command_string[9];
-      unsigned short color = (unsigned short) (command_string[10] | (((unsigned short) command_string[11]) << 8));
-
-      char string_date[25];
-
-      snprintf(string_date,25,"%02xh %02xm %02xs %02x-%02x-%02x",
-          hours, minutes, seconds, month_day, month, year);
-
-      drawText(x,y,string_date,color,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
-      break;
-    }
-
-    case 0x6: // blank
-    {
-      reset_draw_screen();
-      break;
-    }
-
-    default:
-      printf("Comando nao reconhecido\n");
-    }
-
-    number_pixels_update--;
+    //printf("O number_pixels_update saiu como: %u\n",number_pixels_update);
   }
-
-  //printf("O number_pixels_update saiu como: %u\n",number_pixels_update);
 }
 
 void blank_handler()
@@ -431,7 +447,8 @@ void flood_fill_handler()
     //draw_screen, current_area.h_dim, current_area.v_dim);
     vg_flood_fill_buffer(x, y, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-    sendCommandFloodFill(x, y, color_selected);
+    if (serial_com_enabled)
+      sendCommandFloodFill(x, y, color_selected);
   }
 }
 
@@ -450,15 +467,15 @@ void color_picker_handler()
 
 void circle_handler()
 {
-  static unsigned int x_i, y_i, x_f, y_f;
+  static unsigned int xi, yi, xf, yf;
 
   switch(tool_current_state)
   {
   case st0:
     if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
     {
-      x_i = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-      y_i = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+      xi = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+      yi = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
       tool_current_state = st1;
     }
     break;
@@ -466,30 +483,36 @@ void circle_handler()
   case st1:
     if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates and draw rectangle
     {
-      x_f = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-      y_f = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+      xf = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+      yf = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
       // assert that xf > xi and yi > yf
-      if (x_f < x_i) {
-        unsigned int tmp = x_i;
-        x_i = x_f;
-        x_f = tmp;
+      if (xf < xi) {
+        unsigned int tmp = xi;
+        xi = xf;
+        xf = tmp;
       }
 
-      if (y_f < y_i) {
-        unsigned int tmp = y_i;
-        y_i = y_f;
-        y_f = tmp;
+      if (yf < yi) {
+        unsigned int tmp = yi;
+        yi = yf;
+        yf = tmp;
       }
 
-      unsigned int r = (unsigned int) sqrt ( pow ((x_f - x_i), 2) + pow ((y_f - y_i), 2));
+      unsigned int r = (unsigned int) sqrt ( pow ((xf - xi), 2) + pow ((yf - yi), 2));
 
       //printf ("Xi: %u\nYi: %u\nXf: %u\nYf: %u\nR: %u\n",x_i,y_i,x_f,y_f,r);
 
-      vg_draw_circle_buffer(x_i, y_i, r, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+      // see if we are working in personalized area, and if we are, check if the circle fits the area
+      if ((!areasAreEqual(default_area, current_area) && (xi + DRAW_SCREENX_UL_CORNER + r <= current_area.x_ul_corner + current_area.h_dim)
+          && (xi + DRAW_SCREENX_UL_CORNER - r >= current_area.x_ul_corner) && (yi + DRAW_SCREENY_UL_CORNER + r <= current_area.y_ul_corner + current_area.v_dim)
+          && (yi + DRAW_SCREENY_UL_CORNER - r >= current_area.y_ul_corner)) || areasAreEqual(default_area, current_area))
+      {
+        vg_draw_circle_buffer(xi, yi, r, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-      // se for para enviar cenas, fazer o que esta a seguir
-      sendCommandCircle(x_i, y_i, r, color_selected);
+        if (serial_com_enabled)
+          sendCommandCircle(xi, yi, r, color_selected);
+      }
 
       tool_current_state = st0;
     }
@@ -531,7 +554,9 @@ void rectangle_handler()
       }
 
       vg_draw_rectangle_buffer(x_i,y_i,x_f - x_i,y_f - y_i,color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
-      sendCommandRectangle(x_i, y_i, x_f - x_i, y_f - y_i, color_selected);
+
+      if (serial_com_enabled)
+        sendCommandRectangle(x_i, y_i, x_f - x_i, y_f - y_i, color_selected);
 
       tool_current_state = st0;
     }
@@ -567,7 +592,8 @@ void rect_line_handler()
       vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
           color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-      sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
+      if (serial_com_enabled)
+        sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
 
       tool_current_state = st0;
     }
@@ -599,21 +625,22 @@ void date_draw_handler()
 
     drawText(x,y,string_date,color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
 
-    sendCommandDateDraw(x,y,current_rtc_time,color_selected);
+    if (serial_com_enabled)
+      sendCommandDateDraw(x,y,current_rtc_time,color_selected);
   }
 }
 
 void selected_area_handler()
 {
-  static unsigned int x_i, y_i, x_f, y_f;
+  static unsigned int xi, yi, xf, yf;
 
   switch(tool_current_state)
   {
   case st0:
     if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
     {
-      x_i = getxMousePosition();
-      y_i = getyMousePosition();
+      xi = getxMousePosition();
+      yi = getyMousePosition();
       tool_current_state = st1;
     }
     break;
@@ -621,31 +648,31 @@ void selected_area_handler()
   case st1:
     if (getMouseLBstate()) // if the left key is not pressed, return to state 0
     {
-      x_f = getxMousePosition();
-      y_f = getyMousePosition();
+      xf = getxMousePosition();
+      yf = getyMousePosition();
 
       // assert that xf > xi and yi > yf
-      if (x_f < x_i) {
-        unsigned int tmp = x_i;
-        x_i = x_f;
-        x_f = tmp;
+      if (xf < xi) {
+        unsigned int tmp = xi;
+        xi = xf;
+        xf = tmp;
       }
 
-      if (y_f < y_i) {
-        unsigned int tmp = y_i;
-        y_i = y_f;
-        y_f = tmp;
+      if (yf < yi) {
+        unsigned int tmp = yi;
+        yi = yf;
+        yf = tmp;
       }
 
-      if (y_i != y_f && x_i != x_f)
+      if (yi != yf && xi != xf)
       {
-        current_area.h_dim = x_f - x_i;
-        current_area.v_dim = y_f - y_i;
-        current_area.x_ul_corner = x_i;
-        current_area.y_ul_corner = y_i;
+        current_area.h_dim = xf - xi;
+        current_area.v_dim = yf - yi;
+        current_area.x_ul_corner = xi;
+        current_area.y_ul_corner = yi;
 
-        vg_draw_rectangle_buffer(x_i - DRAW_SCREENX_UL_CORNER,
-            y_i - DRAW_SCREENY_UL_CORNER, x_f - x_i, y_f - y_i, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        vg_draw_rectangle_buffer(xi - DRAW_SCREENX_UL_CORNER,
+            yi - DRAW_SCREENY_UL_CORNER, xf - xi, yf - yi, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
       }
 
       tool_current_state = st0;
