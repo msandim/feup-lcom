@@ -31,6 +31,8 @@ void checkPixelUpdate();
 
 void blank_handler();
 
+void reset_draw_screen();
+
 void brush_handler();
 
 void flood_fill_handler();

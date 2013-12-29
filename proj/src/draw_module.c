@@ -171,7 +171,9 @@ void keyboardDrawEvent()
       button_array[tool_selected].press_state = 1;
       tool_current_state = st0;
 
-      blank_handler();
+      reset_draw_screen();
+      sendCommandBlank();
+
       break;
 
     case 0x30: // pincel
@@ -266,19 +268,88 @@ void checkPixelUpdate()
 
     switch(cod_char[0])
     {
-    case 0x1: // circunferencia
+    case 0x1: // circulo
     {
       receiveCommand(command_string,8);
 
-      unsigned int x, y, radius; unsigned short color;
-      x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
-      y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
-      radius = (unsigned short) (command_string[4] | (((unsigned short) command_string[5]) << 8));
-      color = (unsigned int) (command_string[6] | (((unsigned int) command_string[7]) << 8));
+      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+      unsigned int radius = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
+      unsigned short color = (unsigned short) (command_string[6] | (((unsigned short) command_string[7]) << 8));
 
-      printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
+      //printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
 
       vg_draw_circle_buffer(x,y,radius,color,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+      break;
+    }
+
+    case 0x2: // rectangulo
+    {
+      receiveCommand(command_string,10);
+
+      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+      unsigned int dim_h = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
+      unsigned int dim_v = (unsigned int) (command_string[6] | (((unsigned int) command_string[7]) << 8));
+      unsigned short color = (unsigned short) (command_string[8] | (((unsigned short) command_string[9]) << 8));
+
+      vg_draw_rectangle_buffer(x, y, dim_h, dim_v, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+      break;
+    }
+
+    case 0x3: // linha
+    {
+      receiveCommand(command_string,11);
+
+      unsigned int xi = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+      unsigned int yi = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+      unsigned int xf = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
+      unsigned int yf = (unsigned int) (command_string[6] | (((unsigned int) command_string[7]) << 8));
+      unsigned int radius = (unsigned int) command_string[8];
+      unsigned short color = (unsigned short) (command_string[9] | (((unsigned short) command_string[10]) << 8));
+
+      vg_draw_brush_buffer(xi, yi, xf, yf, color, radius, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+      break;
+    }
+
+    case 0x4: // linha
+    {
+      receiveCommand(command_string,6);
+
+      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+      unsigned short color = (unsigned short) (command_string[4] | (((unsigned short) command_string[5]) << 8));
+
+      vg_flood_fill_buffer(x, y, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+      break;
+    }
+
+    case 0x5: // data stamping
+    {
+      receiveCommand(command_string,12);
+
+      unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
+      unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
+      unsigned char seconds = command_string[4];
+      unsigned char minutes = command_string[5];
+      unsigned char hours = command_string[6];
+      unsigned char month_day = command_string[7];
+      unsigned char month = command_string[8];
+      unsigned char year = command_string[9];
+      unsigned short color = (unsigned short) (command_string[10] | (((unsigned short) command_string[11]) << 8));
+
+      char string_date[25];
+
+      snprintf(string_date,25,"%02xh %02xm %02xs %02x-%02x-%02x",
+          hours, minutes, seconds, month_day, month, year);
+
+      drawText(x,y,string_date,color,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+      break;
+    }
+
+    case 0x6: // blank
+    {
+      reset_draw_screen();
       break;
     }
 
@@ -293,6 +364,9 @@ void checkPixelUpdate()
 }
 
 void blank_handler()
+{ }
+
+void reset_draw_screen()
 {
   memset(draw_screen,0xFF,current_area.h_dim * current_area.v_dim * 2);
 }
@@ -347,7 +421,6 @@ void flood_fill_handler()
   {
     x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
     y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
-    unsigned long old_color = vg_get_pixel_buffer(x,y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
     //printf("X: %u\n",x);
     //printf("Y: %u\n",y);
@@ -356,7 +429,9 @@ void flood_fill_handler()
     //vg_fill_ra(x, y,
     //  color_selected,
     //draw_screen, current_area.h_dim, current_area.v_dim);
-    vg_flood_fill_buffer(x,y,old_color,color_selected,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+    vg_flood_fill_buffer(x, y, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+    sendCommandFloodFill(x, y, color_selected);
   }
 }
 
@@ -414,10 +489,7 @@ void circle_handler()
       vg_draw_circle_buffer(x_i, y_i, r, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
       // se for para enviar cenas, fazer o que esta a seguir
-      if (sendCommandCircle(x_i, y_i, r, color_selected))
-        printf("erro a enviar\n");
-      else
-        printf("enviou fixe\n");
+      sendCommandCircle(x_i, y_i, r, color_selected);
 
       tool_current_state = st0;
     }
@@ -459,6 +531,8 @@ void rectangle_handler()
       }
 
       vg_draw_rectangle_buffer(x_i,y_i,x_f - x_i,y_f - y_i,color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+      sendCommandRectangle(x_i, y_i, x_f - x_i, y_f - y_i, color_selected);
+
       tool_current_state = st0;
     }
 
@@ -493,6 +567,8 @@ void rect_line_handler()
       vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
           color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
+      sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
+
       tool_current_state = st0;
     }
   }
@@ -522,6 +598,8 @@ void date_draw_handler()
     //printf("O tempo eh: %s\n",string_date);
 
     drawText(x,y,string_date,color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+
+    sendCommandDateDraw(x,y,current_rtc_time,color_selected);
   }
 }
 

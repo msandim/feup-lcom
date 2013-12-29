@@ -314,8 +314,10 @@ void vg_draw_circle_buffer(int x, int y, int radius, unsigned short color, unsig
   }
 }
 
-void vg_flood_fill_buffer(int x, int y, unsigned long target_color, unsigned long replacement_color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v)
+void vg_flood_fill_buffer(int x, int y, unsigned long replacement_color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v)
 {
+
+  unsigned long target_color = vg_get_pixel_buffer(x, y, buffer, dim_h, dim_v);
 
   if(replacement_color == target_color) return; //avoid infinite loop
 
