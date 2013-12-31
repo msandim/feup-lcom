@@ -52,6 +52,4 @@ void *lm_alloc(unsigned long size, mmap_t *map);
  */
 void lm_free(mmap_t *map);
 
-/** @} */
-
 #endif /*__LMLIB_H */

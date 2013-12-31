@@ -173,14 +173,14 @@ int initSerialPort()
     return 1;
 
   // configs
-  if (ser_set_config(SER_PORT_COM1, 8, 1, 0, 600))
+  if (ser_set_config(SER_PORT_COM1, 8, 1, 0, 9600))
     return 1;
 
   unsigned long big_ratty;
 
   ser_get_bit_rate(SER_PORT_COM1,&big_ratty);
 
-  printf("RATE 1200 muheheh com gostilolinhu ta quase por cada 10 gurl: %u\n",big_ratty);
+  printf("RATE 96 muheheh com 700 por cada 10 gurl: %u\n",big_ratty);
 
   // init fifos
   ser_init_fifo_poll(SER_PORT_COM1);
