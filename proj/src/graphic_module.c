@@ -109,9 +109,26 @@ int set_graphicsMenuMode()
   return 0;
 }
 
-int set_graphicsGalleryMode()
+int set_graphicsGalleryMode(SPRITE file_drawing)
 {
+  vg_fill_buffer(0,double_buf, vg_get_h_res(), vg_get_v_res());
 
+  // draw file drawing
+  drawAreaInDoubleBuffer(file_drawing.pixels, 100, 10, file_drawing.width, file_drawing.height);
+
+  vg_draw_rectangle_buffer(100, 670, 50, 100, 63, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  vg_draw_rectangle_buffer(200, 670, 50, 100, 63, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  vg_draw_rectangle_buffer(300, 670, 50, 100, 63, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  vg_draw_rectangle_buffer(400, 670, 50, 100, 63, double_buf, vg_get_h_res(), vg_get_v_res());
+
+  // draw mouse
+  drawMouse();
+
+  // update buffer in VRAM
+  drawBufferInVRAM();
 }
 
 int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v)

@@ -10,6 +10,7 @@
 #include "user_interaction.h"
 #include "graphic_module.h"
 #include "draw_module.h"
+#include "gallery_module.h"
 #include "timer.h"
 #include "time_module.h"
 
@@ -26,13 +27,27 @@ void programInit()
     return;
   }
 
-  drawModeLoad(); // load the stuff for drawMode
+  if (drawModeLoad()) // load the stuff for drawMode
+  {
+    printf("Error loading drawMode\n");
+    screenExit();
+    return;
+  }
+
+  if (galleryModeLoad())
+  {
+    printf("Error loading galleryMode\n");
+    screenExit();
+    return;
+  }
 
   current_state = MENU;
 
   runDevices();
 
   drawModeFree(); // free the stuff for drawMode
+
+  galleryModeFree(); // free the stuff for galleryMode
 
   screenExit();
 }
@@ -41,10 +56,31 @@ void changeProgramState(program_state new_state)
 {
   // ter em atencao que se vem da gallery, tenho de passar o nome do ficheiro
 
+  // if we leave draw_multi -> disable serial port
+  if (current_state == DRAW_MULTI)
+  {
+    shutSerialPort();
+    printf("porta serie desactivada\n");
+  }
+
+
   if (new_state == DRAW_SINGULAR)
-    drawModeInit(0); // disable serial com
+  {
+    if (current_state == GALLERY)
+      drawModeInit(0); // disable serial com and edit the file we were seeing in the gallery
+    else
+      drawModeInit(0); // disable serial com and get a new filename to use
+  }
+
   else if (new_state == DRAW_MULTI)
-    drawModeInit(1); // enable serial com
+  {
+    initSerialPort();
+    printf("porta serie iniciada\n");
+    drawModeInit(1); // enable serial com and get a new filename to use
+  }
+
+  else if (new_state == GALLERY)
+    galleryModeInit();
 
   current_state = new_state;
 }
@@ -58,9 +94,6 @@ void runDevices()
   int irq_set_kbd = keyboard_subscribe_int();
   int irq_set_rtc = rtc_subscribe_int();
   initRTCuieInt();
-
-  if (initSerialPort())
-    printf("ERRO A INICIAR PORTA SERIE\n");
 
   int ipc_status;
 
@@ -161,10 +194,10 @@ void runDevices()
               set_graphicsMenuMode();
 
             else if(current_state == GALLERY)
-              set_graphicsGalleryMode();
+              set_graphicsGalleryMode(getFileDraw());
           }
 
-          if(timer_count%10 == 0)
+          if(timer_count%5 == 0)
           {
             if (current_state == DRAW_MULTI)
               checkPixelUpdate();
@@ -188,10 +221,6 @@ void runDevices()
   timer_unsubscribe_int();
   shutRTCuieInt();
   rtc_unsubscribe_int();
-
-  if (shutSerialPort())
-    printf("ERRO A SAIR DA PORTA SERIE\n");
-
 }
 
 int mouseMenuEvent()
@@ -228,10 +257,5 @@ int mouseMenuEvent()
 
   previous_LB_state = getMouseLBstate();
 
-  return 0;
-}
-
-int mouseGalleryEvent()
-{
   return 0;
 }

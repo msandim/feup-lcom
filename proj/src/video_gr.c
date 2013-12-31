@@ -58,16 +58,8 @@ int vg_copy_buffer(unsigned short* buffer)
 
   unsigned short* ptrVRAM = video_mem;
 
-  /* copy all the pixels
-  for (i=0; i < h_res * v_res; i++)
-  {
-   *ptrVRAM = *buffer;
-
-    ptrVRAM++;
-    buffer++;
-  }*/
-
   memcpy(ptrVRAM,buffer,h_res*v_res*2); // *2 because we are copying bytes!
+
   return 0;
 }
 
@@ -143,7 +135,6 @@ int vg_fill_buffer(unsigned long color, unsigned short* buffer, unsigned long di
     buffer++;
   }
 
-
   return 0;
 }
 
@@ -163,6 +154,11 @@ int vg_set_pixel_buffer(unsigned long x, unsigned long y, unsigned long color, u
   return 0;
 }
 
+long vg_get_pixel(unsigned long x, unsigned long y)
+{
+  return vg_get_pixel_buffer(x,y,video_mem,h_res,v_res);
+}
+
 long vg_get_pixel_buffer(unsigned long x, unsigned long y, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
 
 
@@ -170,15 +166,10 @@ long vg_get_pixel_buffer(unsigned long x, unsigned long y, unsigned short* buffe
   {
     //printf("vg_get_pixel::Invalid X/Y\n");
     //printf("X: %u, Y: %u V_RES: %u H_RES: %u",x,y,dim_v,dim_h);
-    return 1;
+    return -1;
   }
 
   return *(buffer + ((y*dim_h) + x));
-}
-
-long vg_get_pixel(unsigned long x, unsigned long y)
-{
-  return vg_get_pixel_buffer(x,y,video_mem,h_res,v_res);
 }
 
 int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
@@ -187,10 +178,7 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
 
 
   if (yi >= dim_v || yf >= dim_v || xi >= dim_h || xf >= dim_h)
-  {
-    //printf("vg_set_pixel::Invalid X/Y\n");
     return 1;
-  }
 
 
   int cx, cy,
@@ -269,15 +257,13 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
   return 0;
 }
 
-void vg_draw_object_buffer(unsigned short* object, int w, int h, int x, int y, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+int vg_draw_object_buffer(unsigned short* object, unsigned long w, unsigned long h, unsigned long x, unsigned long y, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+
+  if (w > dim_h || h > dim_v || x >= dim_h || y >= dim_v)
+    return 1;
 
   int i, j, k;
-  /*
-	printf ("H: %u\n", h);
-	printf ("W: %u\n", w);
-	printf ("X: %u\n", x);
-	printf ("Y: %u\n", y);
-   */
+
   for (i = 0; i < h; i++) {
     k = 0;
     for (j = w; j > 0; j--) {
@@ -285,20 +271,28 @@ void vg_draw_object_buffer(unsigned short* object, int w, int h, int x, int y, u
       k++;
     }
   }
+
+  return 0;
 }
 
-void vg_draw_rectangle_buffer(unsigned int x, unsigned int y, unsigned int x_dim, unsigned int y_dim, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+int vg_draw_rectangle_buffer(unsigned long x, unsigned long y, unsigned long w, unsigned long h, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+
+  if (w > dim_h || h > dim_v || x >= dim_h || y >= dim_v)
+    return 1;
 
   unsigned int i;
 
-  //printf("rect (%u,%u) w=%u, h=%u, color=%u, dim_h=%u, dim_v=%u",x,y,w,h,color,dim_h,dim_v);
+  for (i = 0; i < h; i++)
+    vg_draw_line_buffer(x,y+i,x+w,y+i,color,buffer,dim_h,dim_v);
 
-  for (i = 0; i < y_dim; i++)
-    vg_draw_line_buffer(x,y+i,x+x_dim,y+i,color,buffer,dim_h,dim_v);
+  return 0;
 }
 
-void vg_draw_circle_buffer(unsigned int x, unsigned int y, unsigned int radius, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+int vg_draw_circle_buffer(unsigned long x, unsigned long y, unsigned long radius, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
   unsigned int v, h;
+
+  if (radius > 2000 || x >= dim_h || y >= dim_v)
+    return 1;
 
   for (v = 0; v <= radius; v++) {
     for (h = 0; h <= radius; h++) {
@@ -314,10 +308,15 @@ void vg_draw_circle_buffer(unsigned int x, unsigned int y, unsigned int radius, 
       }
     }
   }
+
+  return 0;
 }
 
-void vg_flood_fill_buffer(int x, int y, unsigned long replacement_color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v)
+int vg_flood_fill_buffer(unsigned long x, unsigned long y, unsigned long replacement_color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v)
 {
+
+  if (x >= dim_h || y >= dim_v)
+    return 1;
 
   unsigned long target_color = vg_get_pixel_buffer(x, y, buffer, dim_h, dim_v);
 
@@ -362,9 +361,14 @@ void vg_flood_fill_buffer(int x, int y, unsigned long replacement_color, unsigne
 
   delete_stack(s);
 
+  return 0;
+
 }
 
-void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, unsigned int thickness, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+int vg_draw_brush_buffer(unsigned long xi, unsigned long yi, unsigned long xf, unsigned long yf, unsigned short color, unsigned long thickness, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+
+  if (yi >= dim_v || yf >= dim_v || xi >= dim_h || xf >= dim_h || thickness > 200)
+    return 1;
 
   int cx, cy,
   ix, iy,
@@ -378,7 +382,7 @@ void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, 
       do vg_draw_circle_buffer(xi,cy++,thickness,color,buffer,dim_h,dim_v);
       while (cy <= yf);
 
-      return;
+      return 0;
 
     } else {
       cy= yf;
@@ -386,7 +390,7 @@ void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, 
       do vg_draw_circle_buffer(xi,cy++,thickness,color,buffer,dim_h,dim_v);
       while (cy <= yi);
 
-      return;
+      return 0;
     }
   }
   if (!ddy) { //horizontal line special case
@@ -396,14 +400,14 @@ void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, 
       do vg_draw_circle_buffer(cx,yi,thickness,color,buffer,dim_h,dim_v);
       while (++cx <= xf);
 
-      return;
+      return 0;
     } else {
       cx= xf;
 
       do vg_draw_circle_buffer(cx,yi,thickness,color,buffer,dim_h,dim_v);
       while (++cx <= xi);
 
-      return;
+      return 0;
     }
   }
 
@@ -439,9 +443,14 @@ void vg_draw_brush_buffer(int xi, int yi, int xf, int yf, unsigned short color, 
       cy+=iy;
     } while (dy > 0);
   }
+
+  return 0;
 }
 
-void vg_draw_char_buffer(unsigned short* object, int w, int h, int x, int y, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+int vg_draw_char_buffer(unsigned short* object, int w, int h, int x, int y, unsigned short color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v) {
+
+  if (w > dim_h || h > dim_v || x >= dim_h || y >= dim_v)
+    return 1;
 
   int i, j, k;
 

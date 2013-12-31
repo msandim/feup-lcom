@@ -14,6 +14,8 @@
 static unsigned short* draw_screen;
 static draw_screen_area default_area, current_area;
 
+static char* filename;
+
 static BTN* button_array;
 static int tool_selected;
 static tool_state tool_current_state;
@@ -265,6 +267,8 @@ void checkPixelUpdate()
 {
   if (serial_com_enabled)
   {
+    //printf("entrou no update\n");
+
     unsigned int number_pixels_update = MAX_COMMANDS_PER_UPDATE;
     int empty_read = 0;
 
@@ -275,9 +279,12 @@ void checkPixelUpdate()
 
       empty_read = receiveCommand(cod_char,1);
 
-      if (empty_read)
+      if (empty_read == 1 || empty_read == 2)
       {
         //printf("empty\n");
+        if (empty_read == 2)
+          printf("timeout .....\n");
+
         return;
       }
 
@@ -285,21 +292,25 @@ void checkPixelUpdate()
       {
       case 0x1: // circulo
       {
+        printf("comeca circulo\n");
         receiveCommand(command_string,8);
+        printf("resto circulo\n");
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
         unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
         unsigned int radius = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
         unsigned short color = (unsigned short) (command_string[6] | (((unsigned short) command_string[7]) << 8));
 
-        //printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
+        printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
 
         vg_draw_circle_buffer(x,y,radius,color,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        printf("circulo desenhado\n");
         break;
       }
 
       case 0x2: // rectangulo
       {
+        printf("comeca rect\n");
         receiveCommand(command_string,10);
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -309,11 +320,13 @@ void checkPixelUpdate()
         unsigned short color = (unsigned short) (command_string[8] | (((unsigned short) command_string[9]) << 8));
 
         vg_draw_rectangle_buffer(x, y, dim_h, dim_v, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        printf("rect\n");
         break;
       }
 
       case 0x3: // linha
       {
+        printf("comeca lin\n");
         receiveCommand(command_string,11);
 
         unsigned int xi = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -324,11 +337,13 @@ void checkPixelUpdate()
         unsigned short color = (unsigned short) (command_string[9] | (((unsigned short) command_string[10]) << 8));
 
         vg_draw_brush_buffer(xi, yi, xf, yf, color, radius, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        printf("linha\n");
         break;
       }
 
-      case 0x4: // linha
+      case 0x4: // flood fill
       {
+        printf("comeca flood\n");
         receiveCommand(command_string,6);
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -336,11 +351,13 @@ void checkPixelUpdate()
         unsigned short color = (unsigned short) (command_string[4] | (((unsigned short) command_string[5]) << 8));
 
         vg_flood_fill_buffer(x, y, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        printf("flood fill\n");
         break;
       }
 
       case 0x5: // data stamping
       {
+        printf("comeca data\n");
         receiveCommand(command_string,12);
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -359,19 +376,24 @@ void checkPixelUpdate()
             hours, minutes, seconds, month_day, month, year);
 
         drawText(x,y,string_date,color,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+        printf("date\n");
         break;
       }
 
       case 0x6: // blank
       {
+        printf("comeca blank\n");
         reset_draw_screen();
+        printf("blank\n");
         break;
       }
 
       default:
         printf("Comando nao reconhecido\n");
+        return;
       }
 
+      printf("comando aceite\n");
       number_pixels_update--;
     }
 

@@ -3,9 +3,6 @@
 
 #include "graphic_module.h"
 
-#define DRAW_SCREEN_H 880
-#define DRAW_SCREEN_V 650
-
 #define DRAW_SCREENX_UL_CORNER 122
 #define DRAW_SCREENY_UL_CORNER 30
 
@@ -14,7 +11,7 @@
 #define COLOR_BAR_H_LENGTH 882
 #define COLOR_BAR_V_LENGTH 62
 
-#define MAX_COMMANDS_PER_UPDATE 50
+#define MAX_COMMANDS_PER_UPDATE 7
 
 // VARIABLES FOR DRAWING
 #define MAX_THICKNESS 200
