@@ -86,10 +86,10 @@ int mouseGalleryEvent()
   static int previous_LB_state = 0;
 
   // se clickarmos na direita
-  if (getxMousePosition() >= 100 &&
-      getxMousePosition() <= 100 + 50 - 1 &&
-      getyMousePosition() >= 670 &&
-      getyMousePosition() <= 670 + 100 - 1 &&
+  if (getxMousePosition() >= 952 &&
+      getxMousePosition() <= 1023 &&
+      getyMousePosition() >= 0 &&
+      getyMousePosition() <= 767 &&
       getMouseLBstate() && file_number != 0 && !previous_LB_state)
   {
     // Open file
@@ -120,10 +120,11 @@ int mouseGalleryEvent()
     }
   }
 
-  else if (getxMousePosition() >= 200 &&
-      getxMousePosition() <= 200 + 50 - 1 &&
-      getyMousePosition() >= 670 &&
-      getyMousePosition() <= 670 + 50 - 1 &&
+  // click on the left
+  else if (getxMousePosition() >= 0 &&
+      getxMousePosition() <= 72 &&
+      getyMousePosition() >= 0 &&
+      getyMousePosition() <= 767 &&
       getMouseLBstate() && file_number != 0 && !previous_LB_state)
   {
     if (file_number > 1)
@@ -148,17 +149,17 @@ int mouseGalleryEvent()
     }
   }
 
-  else if (getxMousePosition() >= 300 &&
-      getxMousePosition() <= 300 + 50 - 1 &&
-      getyMousePosition() >= 670 &&
-      getyMousePosition() <= 670 + 100 - 1 &&
+  else if (getxMousePosition() >= 170 &&
+      getxMousePosition() <= 420 &&
+      getyMousePosition() >= 687 &&
+      getyMousePosition() <= 756 &&
       getMouseLBstate() && file_number != 0 && !previous_LB_state)
     return 1; // editar este ficheiro
 
-  else if (getxMousePosition() >= 400 &&
-      getxMousePosition() <= 400 + 50 - 1 &&
-      getyMousePosition() >= 670 &&
-      getyMousePosition() <= 670 + 100 - 1 &&
+  else if (getxMousePosition() >= 600 &&
+      getxMousePosition() <= 850 &&
+      getyMousePosition() >= 687 &&
+      getyMousePosition() <= 756 &&
       getMouseLBstate() && !previous_LB_state)
     return -1; // sair
 

@@ -14,6 +14,8 @@
 static unsigned short* draw_screen;
 static draw_screen_area default_area, current_area;
 
+static char* filename;
+
 static BTN* button_array;
 static int tool_selected;
 static tool_state tool_current_state;
@@ -24,7 +26,7 @@ static unsigned int thickness;
 
 static int serial_com_enabled;
 
-void (*tool_handlers[8]) (void) = {
+void (*tool_handlers[11]) (void) = {
     blank_handler,
     brush_handler,
     flood_fill_handler,
@@ -32,7 +34,10 @@ void (*tool_handlers[8]) (void) = {
     circle_handler,
     rectangle_handler,
     rect_line_handler,
-    selected_area_handler
+    selected_area_handler,
+    mirror_effect_handler,
+    magic_bucket_handler,
+    date_draw_handler
 };
 
 unsigned short* getDrawScreen()
@@ -107,7 +112,7 @@ void drawModeFree()
 void drawModeInit(int enable_serial_com)
 {
   // start as white
-  memset(draw_screen,0xFF,DRAW_SCREEN_H * DRAW_SCREEN_V * 2);
+  vg_fill_buffer_white(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
   // START DRAWING MODE **********
   tool_selected = 0;
@@ -168,7 +173,7 @@ int keyboardDrawEvent()
       button_array[tool_selected].press_state = 1;
       tool_current_state = st0;
 
-      reset_draw_screen();
+      vg_fill_buffer_white(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
       if (serial_com_enabled) // if we have to send
         sendCommandBlank();
@@ -237,6 +242,14 @@ int keyboardDrawEvent()
       tool_current_state = st0;
       break;
 
+    case 0x14: // stamp
+      button_array[tool_selected].press_state = 0;
+      tool_selected = 10;
+
+      button_array[tool_selected].press_state = 1;
+      tool_current_state = st0;
+      break;
+
     case 0x01: // ESC (sair) -> voltar atrás no estado
     {
       button_array[tool_selected].press_state = 0; // desligar a tool em que estava
@@ -263,8 +276,25 @@ int keyboardDrawEvent()
 
 void checkPixelUpdate()
 {
+
+  unsigned int number_pixels_update = MAX_COMMANDS_PER_UPDATE;
+
+  while (number_pixels_update)
+  {
+    if (command_handler(draw_screen))
+      return;
+
+    number_pixels_update--;
+  }
+}
+
+/*
+void checkPixelUpdate()
+{
   if (serial_com_enabled)
   {
+
+
     unsigned int number_pixels_update = MAX_COMMANDS_PER_UPDATE;
     int empty_read = 0;
 
@@ -275,9 +305,12 @@ void checkPixelUpdate()
 
       empty_read = receiveCommand(cod_char,1);
 
-      if (empty_read)
+      if (empty_read == 1 || empty_read == 2)
       {
         //printf("empty\n");
+        if (empty_read == 2)
+          printf("timeout .....\n");
+
         return;
       }
 
@@ -285,14 +318,16 @@ void checkPixelUpdate()
       {
       case 0x1: // circulo
       {
+        printf("comeca circulo\n");
         receiveCommand(command_string,8);
+        printf("resto circulo\n");
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
         unsigned int y = (unsigned int) (command_string[2] | (((unsigned int) command_string[3]) << 8));
         unsigned int radius = (unsigned int) (command_string[4] | (((unsigned int) command_string[5]) << 8));
         unsigned short color = (unsigned short) (command_string[6] | (((unsigned short) command_string[7]) << 8));
 
-        //printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
+        printf("Recebi um circulo (%u,%u) r=%u, color=%u\n",x,y,radius,color);
 
         vg_draw_circle_buffer(x,y,radius,color,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
         break;
@@ -300,6 +335,7 @@ void checkPixelUpdate()
 
       case 0x2: // rectangulo
       {
+        printf("comeca rect\n");
         receiveCommand(command_string,10);
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -309,11 +345,13 @@ void checkPixelUpdate()
         unsigned short color = (unsigned short) (command_string[8] | (((unsigned short) command_string[9]) << 8));
 
         vg_draw_rectangle_buffer(x, y, dim_h, dim_v, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        printf("rect\n");
         break;
       }
 
       case 0x3: // linha
       {
+        printf("comeca lin\n");
         receiveCommand(command_string,11);
 
         unsigned int xi = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -324,11 +362,13 @@ void checkPixelUpdate()
         unsigned short color = (unsigned short) (command_string[9] | (((unsigned short) command_string[10]) << 8));
 
         vg_draw_brush_buffer(xi, yi, xf, yf, color, radius, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        printf("linha\n");
         break;
       }
 
-      case 0x4: // linha
+      case 0x4: // flood fill
       {
+        printf("comeca flood\n");
         receiveCommand(command_string,6);
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -336,11 +376,13 @@ void checkPixelUpdate()
         unsigned short color = (unsigned short) (command_string[4] | (((unsigned short) command_string[5]) << 8));
 
         vg_flood_fill_buffer(x, y, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        printf("flood fill\n");
         break;
       }
 
       case 0x5: // data stamping
       {
+        printf("comeca data\n");
         receiveCommand(command_string,12);
 
         unsigned int x = (unsigned int) (command_string[0] | (((unsigned int) command_string[1]) << 8));
@@ -359,33 +401,33 @@ void checkPixelUpdate()
             hours, minutes, seconds, month_day, month, year);
 
         drawText(x,y,string_date,color,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+        printf("date\n");
         break;
       }
 
       case 0x6: // blank
       {
+        printf("comeca blank\n");
         reset_draw_screen();
+        printf("blank\n");
         break;
       }
 
       default:
         printf("Comando nao reconhecido\n");
+        return;
       }
 
+      printf("comando aceite\n");
       number_pixels_update--;
     }
 
     //printf("O number_pixels_update saiu como: %u\n",number_pixels_update);
   }
 }
-
+ */
 void blank_handler()
 { }
-
-void reset_draw_screen()
-{
-  memset(draw_screen,0xFF,current_area.h_dim * current_area.v_dim * 2);
-}
 
 void brush_handler()
 {
@@ -417,7 +459,8 @@ void brush_handler()
       vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
           color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-      //sendSetPixel(new_x, new_y, color_selected);
+      if (serial_com_enabled)
+        sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
 
       // update last coordinates
       last_x = new_x;
@@ -603,33 +646,6 @@ void rect_line_handler()
   }
 }
 
-void date_draw_handler()
-{
-  unsigned int x, y;
-
-  if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
-  {
-    x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
-    y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
-
-    // get time (attention, it's in BCD)
-    date_info current_rtc_time = getRTCtime();
-
-    char string_date[25];
-
-    snprintf(string_date,25,"%02xh %02xm %02xs %02x-%02x-%02x",
-        current_rtc_time.hours,current_rtc_time.minutes, current_rtc_time.seconds,
-        current_rtc_time.month_day, current_rtc_time.month, current_rtc_time.year);
-
-    //printf("O tempo eh: %s\n",string_date);
-
-    drawText(x,y,string_date,color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
-
-    if (serial_com_enabled)
-      sendCommandDateDraw(x,y,current_rtc_time,color_selected);
-  }
-}
-
 void selected_area_handler()
 {
   static unsigned int xi, yi, xf, yf;
@@ -678,5 +694,42 @@ void selected_area_handler()
       tool_current_state = st0;
     }
 
+  }
+}
+
+void mirror_effect_handler()
+{
+
+}
+
+void magic_bucket_handler()
+{
+
+}
+
+void date_draw_handler()
+{
+  unsigned int x, y;
+
+  if (getMouseLBstate()) // if the left button is pressed, take note of the coordinates
+  {
+    x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
+    y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
+
+    // get time (attention, it's in BCD)
+    date_info current_rtc_time = getRTCtime();
+
+    char string_date[25];
+
+    snprintf(string_date,25,"%02xh %02xm %02xs %02x-%02x-%02x",
+        current_rtc_time.hours,current_rtc_time.minutes, current_rtc_time.seconds,
+        current_rtc_time.month_day, current_rtc_time.month, current_rtc_time.year);
+
+    //printf("O tempo eh: %s\n",string_date);
+
+    drawText(x,y,string_date,color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+
+    if (serial_com_enabled)
+      sendCommandDateDraw(x,y,current_rtc_time,color_selected);
   }
 }

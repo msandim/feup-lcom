@@ -43,6 +43,34 @@ void programInit()
 
   current_state = MENU;
 
+  /* APENAS PARA TESTESSSSSSSSSSSSSSS
+  char buffer[16];
+  unsigned long var = 12690;
+  unsigned long vary;
+  unsigned long var2 = 65535;
+  unsigned char varyy;
+  sprintf(buffer, "%u", var);
+  sscanf(buffer, "%x", &vary);
+
+  printf("bcd result: %x\n",vary);
+  printf("decimal do bcd: %u\n",vary);
+
+  sprintf(buffer,"%x",vary);
+  sscanf(buffer,"%u",&vary);
+
+  printf("bin result: %u\n",vary);
+
+  sprintf(buffer, "%u", var);
+  sscanf(buffer, "%x", &varyy);
+
+  printf("bcd result2: %x\n",varyy);
+
+  sprintf(buffer,"%x",varyy);
+  sscanf(buffer,"%u",&varyy);
+
+  printf("bin result2: %u\n",varyy);
+  //ACABOU O QUE ERA PARA TESTESSSSSSSS */
+
   runDevices();
 
   drawModeFree(); // free the stuff for drawMode
@@ -118,12 +146,7 @@ void runDevices()
           if(updateMouseStatus()) // update mouse status, if packet ended
           {
             if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
-            {
               mouseDrawEvent();
-
-              if (getMouseMBstate()) // ISTO VAI SAIR DAQUI QUANDO O NETO FIZER O BOTAO
-                date_draw_handler();
-            }
 
             else if (current_state == MENU)
             {
@@ -225,33 +248,25 @@ void runDevices()
 
 int mouseMenuEvent()
 {
-  static int previous_LB_state = 0;
+  static int previous_LB_state = 1;
 
-  if (getxMousePosition() >= 400 &&
-      getxMousePosition() <= 400 + 200 - 1 &&
-      getyMousePosition() >= 100 &&
-      getyMousePosition() <= 100 + 100 - 1 &&
+  if (  getyMousePosition() >= 0 &&
+      getyMousePosition() < 192 &&
       getMouseLBstate() && !previous_LB_state)
     return 1; // ir para draw sem multi
 
-  else if (getxMousePosition() >= 400 &&
-      getxMousePosition() <= 400 + 200 - 1 &&
-      getyMousePosition() >= 300 &&
-      getyMousePosition() <= 300 + 100 - 1 &&
+  else if (getyMousePosition() >= 192 &&
+      getyMousePosition() < 384 &&
       getMouseLBstate() && !previous_LB_state)
     return 2; // ir para draw com multi
 
-  else if (getxMousePosition() >= 400 &&
-      getxMousePosition() <= 400 + 200 - 1 &&
-      getyMousePosition() >= 500 &&
-      getyMousePosition() <= 500 + 100 - 1 &&
+  else if (getyMousePosition() >= 384 &&
+      getyMousePosition() < 576 &&
       getMouseLBstate() && !previous_LB_state)
     return 3; // ir para galeria
 
-  else if (getxMousePosition() >= 400 &&
-      getxMousePosition() <= 400 + 200 - 1 &&
-      getyMousePosition() >= 700 &&
-      getyMousePosition() <= 700 + 50 - 1 &&
+  else if (getyMousePosition() >= 576 &&
+      getyMousePosition() <= 768 &&
       getMouseLBstate() && !previous_LB_state)
     return -1; // sair
 

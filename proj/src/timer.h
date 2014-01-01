@@ -95,4 +95,6 @@ int timer_test_config(unsigned long timer);
 
 // waits time seconds
 int timer_interrupt_wait(unsigned long time);
+
+/** @} */
 #endif /* __TIMER_H */

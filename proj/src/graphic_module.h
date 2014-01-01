@@ -1,6 +1,9 @@
 #ifndef _GRAPHIC_MODULE_H_
 #define _GRAPHIC_MODULE_H_
 
+#define DRAW_SCREEN_H 880
+#define DRAW_SCREEN_V 650
+
 typedef struct {
 	unsigned short int type;                 /* Magic identifier            */
 	unsigned int size;                       /* File size in bytes          */
@@ -68,5 +71,13 @@ int loadColorBar(SPRITE* color_bar);
 int loadCursor();
 
 int loadChars();
+
+int loadMenuGraphics();
+
+void freeMenuGraphics();
+
+int loadGalleryGraphics();
+
+void freeGalleryGraphics();
 
 #endif

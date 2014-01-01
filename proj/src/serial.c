@@ -694,7 +694,7 @@ int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[], 
 
 int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[], unsigned int string_size)
 {
-  int scount = 0, fifo_counter = 0, end_string = 0, started_rx = 0, nothing_rx = 0;
+  int scount = 0, fifo_counter = 0, end_string = 0, started_rx = 0, nothing_rx = 0, timeout = 0;
 
   unsigned long rx_content = '1';
 
@@ -734,15 +734,21 @@ int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[
 
     else
     {
-      if (started_rx) // if we started receiving, wait for more
+      if (started_rx && timeout < 2000) // if we started receiving, wait for more
       {
-        printf("esperar pelo q ja comecei a receber\n");
         //tickdelay(micros_to_ticks(5000));
+        timeout++;
       }
 
       else
       {
         //printf("nao ha nada para receber...\n");
+        if (timeout >= 15)
+        {
+          printf("timeout\n");
+          return 2;
+        }
+
         return 1; // se nao ha nada para receber, saio logo
       }
     }
