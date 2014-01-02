@@ -216,6 +216,8 @@ int keyboardDrawEvent()
 
 			button_array[tool_selected].press_state = 1;
 			tool_current_state = st0;
+
+			printf("Color Selected %X\n",color_selected);
 			break;
 
 		case 0x2E: // circulo
@@ -251,6 +253,17 @@ int keyboardDrawEvent()
 
 			button_array[tool_selected].press_state = 1;
 			tool_current_state = st0;
+			break;
+
+		case 0x22: //magic bucket
+
+			magic_bucket_handler();
+			/*button_array[tool_selected].press_state = 0;
+			tool_selected = 8;
+
+			button_array[tool_selected].press_state = 1;
+			tool_current_state = st0;
+			 */
 			break;
 
 		case 0x14: // stamp
@@ -520,7 +533,10 @@ void color_picker_handler()
 		y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
 		color_selected = vg_get_pixel_buffer(x, y, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+		printf("Color Selected %X\n",color_selected);
 	}
+	printf("Color Selected %X\n",color_selected);
 }
 
 void circle_handler()
@@ -719,6 +735,100 @@ void mirror_effect_handler()
 
 void magic_bucket_handler()
 {
+	//Colors
+
+	//1		- 0xE8E4
+	//2		- 0xFF80
+	//3		- 0x052A
+	//4		- 0x057D
+	//5		- 0x3192
+	//6		- 0xE811
+	//7		- 0xB8E5
+	//8		- 0xF484
+	//9		- 0x8E28
+	//10	- 0x290C
+	//11	- 0x990C
+	//12	- 0x732B
+	//13	- 0xA3EA
+	//14	- 0x61C2
+	//15	- 0x2104
+	//16	- 0xEF9D
+
+	unsigned int i,j;
+	unsigned short old_color;
+
+	for (i = 0; i < DRAW_SCREEN_V; i++) {
+		for (j = 0; j < DRAW_SCREEN_H; j++) {
+			old_color = vg_get_pixel_buffer(j, i, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+			switch(old_color) {
+			case 0xE8E4:
+				vg_set_pixel_buffer(j, i, 0xFF80, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0xFF80:
+				vg_set_pixel_buffer(j, i, 0x052A, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x052A:
+				vg_set_pixel_buffer(j, i, 0x057D, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x057D:
+				vg_set_pixel_buffer(j, i, 0x3192, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x3192:
+				vg_set_pixel_buffer(j, i, 0xE811, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0xE811:
+				vg_set_pixel_buffer(j, i, 0xB8E5, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0xB8E5:
+				vg_set_pixel_buffer(j, i, 0xF484, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0xF484:
+				vg_set_pixel_buffer(j, i, 0x8E28, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x8E28:
+				vg_set_pixel_buffer(j, i, 0x290C, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x290C:
+				vg_set_pixel_buffer(j, i, 0x990C, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x990C:
+				vg_set_pixel_buffer(j, i, 0x732B, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x732B:
+				vg_set_pixel_buffer(j, i, 0xA3EA, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0xA3EA:
+				vg_set_pixel_buffer(j, i, 0x61C2, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x61C2:
+				vg_set_pixel_buffer(j, i, 0x2104, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0x2104:
+				vg_set_pixel_buffer(j, i, 0xEF9D, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			case 0xEF9D:
+				vg_set_pixel_buffer(j, i, 0xE8E4, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+				break;
+
+			}
+		}
+	}
+
 
 }
 
