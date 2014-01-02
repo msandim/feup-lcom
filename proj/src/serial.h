@@ -1,27 +1,33 @@
 #ifndef _LCOM_SERIAL_H_
 #define _LCOM_SERIAL_H_
 
+/** @defgroup serial Serial Port (UART)
+ * @{
+ *
+ * Low level module that has several functions that work directly with the UART
+ */
+
 #define BIT(n) (0x01<<(n))
 
-#define BITRATE_CONSTANT 115200
+#define BITRATE_CONSTANT 115200 /**< @brief Bitrate constant */
 
-#define SER_COM1_IRQ 0x4
-#define SER_COM2_IRQ 0x3
+#define SER_COM1_IRQ 0x4 /**< @brief IRQ to COM1 */
+#define SER_COM2_IRQ 0x3 /**< @brief IRQ TO COM2 */
 
 /* REGISTER ADDRESSES */
-#define SER_PORT_COM1 0x3F8
-#define SER_PORT_COM2 0x2F8
+#define SER_PORT_COM1 0x3F8 /**< @brief COM1 Address */
+#define SER_PORT_COM2 0x2F8 /**< @brief COM2 Address */
 
-#define UART_RBR 0 // Receiver Buffer (read)
-#define UART_THR 0 // Transmitter Holding (write)
-#define UART_LSR 5 // Line Status (read)
-#define UART_LCR 3// Line Control (read/write)
-#define UART_IER 1 // Interrupt Enable (read/write)
-#define UART_IIR 2 // Interrupt Identification Register (read)
-#define UART_FCR 2// FIFO Control (write)
+#define UART_RBR 0 /**< @brief Receiver Buffer (read) */
+#define UART_THR 0 /**< @brief Transmitter Holding (write) */
+#define UART_LSR 5 /**< @brief Line Status (read) */
+#define UART_LCR 3 /**< @brief Line Control (read/write) */
+#define UART_IER 1 /**< @brief Interrupt Enable (read/write) */
+#define UART_IIR 2 /**< @brief Interrupt Identification Register (read) */
+#define UART_FCR 2 /**< @brief FIFO Control (write) */
 
-#define UART_DLL 0 // Divisor Latch Least
-#define UART_DLM 1 // Divisor Latch Most
+#define UART_DLL 0 /**< @brief Divisor Latch Least */
+#define UART_DLM 1 /**< @brief Divisor Latch Most */
 
 /* BITMASKS FOR UART LCR */
 #define UART_LCR_WORD_LENGTH 0x3
@@ -54,11 +60,11 @@
 #define UART_LCR_DLAB_DATA 0x00
 
 /* BITMASKS FOR LSR */
-#define UART_LSR_RBR_READY 0x1
-#define UART_LSR_OVERRUN_ERROR 0x2
-#define UART_LSR_PARITY_ERROR (1<<2)
-#define UART_LSR_FRAMING_ERROR (1<<3)
-#define UART_LSR_THR_EMPTY (1<<5)
+#define UART_LSR_RBR_READY 0x1 /**< @brief Bit mask to bit 0 in LSR (Receiver Ready) */
+#define UART_LSR_OVERRUN_ERROR 0x2 /**< @brief Bit mask to bit 0 in LSR (Overrun Error) */
+#define UART_LSR_PARITY_ERROR (1<<2) /**< @brief Bit mask to bit 0 in LSR (Parity Error) */
+#define UART_LSR_FRAMING_ERROR (1<<3) /**< @brief Bit mask to bit 0 in LSR (Framing Error) */
+#define UART_LSR_THR_EMPTY (1<<5) /**< @brief Bit mask to bit 0 in LSR (Transmiter Register Empty) */
 
 /* BITMASKS FOR IER */
 #define UART_IER_ENABLE_RD 0x1
@@ -76,10 +82,10 @@
 #define UART_INT_LS 0x6
 
 /* BITMASKS FOR FCR */
-#define UART_ENABLE_FIFO 0x1
-#define UART_FCR_CLEAR_BUFFERS 0x6
-#define UART_CLEAR_RFIFO 0x2
-#define UART_CLEAR_TFIFO 0x4
+#define UART_ENABLE_FIFO 0x1 /**< @brief Bit mask to enable FIFO in FCR */
+#define UART_FCR_CLEAR_BUFFERS 0x6 /**< @brief Bit mask to clear XMIT and TMIT buffers in FCR */
+#define UART_CLEAR_RFIFO 0x2 /**< @brief Bit mask to clear XMIT buffer in FCR */
+#define UART_CLEAR_TFIFO 0x4 /**< @brief Bit mask to clear TMIT buffer in FCR */
 
 #define UART_TRIGGER_LVL_1 0x00
 #define UART_TRIGGER_LVL_4 0x40
@@ -166,5 +172,7 @@ int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo,
 int ser_subscribe_int(unsigned short base_addr);
 
 int ser_unsubscribe_int();
+
+/** @} */
 
 #endif

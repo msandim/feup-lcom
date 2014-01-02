@@ -8,9 +8,6 @@
 // RTC VARIABLES
 static date_info current_time;
 
-// private members
-unsigned long reg_A_backup;
-
 /* RTC STATUS FUNCTIONS */
 int updateRTCStatus()
 {

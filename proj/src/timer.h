@@ -1,7 +1,7 @@
 #ifndef __TIMER_H
 #define __TIMER_H
 
-/** @defgroup timer timer
+/** @defgroup timer Timer
  * @{
  *
  * Functions for using the i8254 timers
@@ -42,8 +42,8 @@ void timer_int_handler();
 /**
  * @brief Reads the input timer configuration
  *
- * param timer Timer whose config to read (Ranges from 0 to 2)
- * param st    Address of memory position to be filled with the timer config
+ * @param timer Timer whose config to read (Ranges from 0 to 2)
+ * @param st    Address of memory position to be filled with the timer config
  * return Return 0 upon success and non-zero otherwise
  */
 int timer_get_config(unsigned long timer, unsigned char *st);

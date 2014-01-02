@@ -1,6 +1,12 @@
 #ifndef _LCOM_MOUSE_H_
 #define _LCOM_MOUSE_H_
 
+/** @defgroup mouse Mouse
+ * @{
+ *
+ * Low level module that has several functions that work directly with the mouse
+ */
+
 // ******* constants to use in keyboard
 
 #define BIT(n) (0x01<<(n))
@@ -61,45 +67,100 @@
 
 // ******* MOUSE FUNCTIONS ****************************************************
 
-// Subscribes and enables mouse interrupts
-// Returns a bit order in interrupt mask if sucessful, -1 if not
+/**
+ * @brief Subscribes and enables mouse interrupts
+ *
+ * Returns a bit mask with with bit 1 selected on the interrupt type.
+ *
+ * @return the bit mask, or -1 if it's not successful
+ */
 int mouse_subscribe_int();
 
-// Unsubscribes mouse interrupts
-// Returns 0 if success, non-zero if not
+/**
+ * @brief Unsubscribes mouse interrupts
+ *
+ * @return 0 on success, non-zero otherwise
+ */
 int mouse_unsubscribe_int();
 
-// Sends a byte to mouse (with 0xD4 first to 0x64)
-// returns 0 in success, 1 in non-success
+/**
+ * @brief Sends a command to the mouse
+ *
+ * This function sends the WRITE_BYTE_MOUSE command to KBC_CMD_REG before sending the command to MOUSE_CMD_PORT
+ *
+ * @param cmd Command code to send
+ *
+ * @return 0 on success, non-zero otherwise
+ */
 int mouse_send_cmd(unsigned long cmd);
 
-// receives data from OUT_BUF
-// returns 0 in success, 1 in non-succcess
+
+/**
+ * @brief Receives a byte from the OUT_BUF
+ * @param data pointer to the unsigned char to fill with the byte coming from the OUT_BUF
+ * @return 0 on success, non-zero otherwise
+ */
 int mouse_receive_data_outbuf(unsigned char *data);
 
-// Handles the interrupts from the mouse (syncs the bytes, saves ..)
+/**
+ * @brief Mouse Interrupt Handler
+ *
+ * This handler syncs the bytes coming from the OUT_BUF, and saves them in a packet (array in mouse.c)
+ */
 void mouse_interrupt_handler();
 
-// Checks if its a valid packet (bit 3 of packet[0] is 1)
+/**
+ * @brief Checks if the packet is valid
+ *
+ * This function checks if the "packet" array in mouse.c is a valid packet (bit 3 of packet[0] is set to 1)
+ * @return 0 on false, non-zero on true
+ */
 int mouse_valid_packet();
 
-// Checks if a valid packet ended
+/**
+ * @brief Checks if the packet is complete (and checks if it's valid)
+ *
+ * This function checks if the "packet" array in mouse.c is a valid packet (bit 3 of packet[0] is set to 1)
+ * and if the count variable is set to 0 (packet ended signal)
+ * @return 0 on false, non-zero on true
+ */
 int mouse_ended_packet();
 
-// Returns a pointer to the first element of the array
+/**
+ * @brief Returns the packet received
+ *
+ * @return pointer to the first element of the array "packet"
+ */
 unsigned char * mouse_get_packet();
 
-// Gets the 3 config bytes from the status, changes the arguments
-// Returns 0 in success, 1 in non-success
+/**
+ * @brief Receives the config from the mouse registers
+ * @param byte1 pointer to the first byte of config to be changed
+ * @param byte2 pointer to the second byte of config to be changed
+ * @param byte3 pointer to the third byte of config to be changed
+ * @return 0 on success, non-zero otherwise
+ */
 int mouse_get_config(unsigned char *byte1, unsigned char *byte2, unsigned char *byte3);
 
-// shows the config
+/**
+ * @brief Shows the configuration of the mouse in an human friendly way
+ * @param byte1 first byte of config
+ * @param byte2 second byte of config
+ * @param byte3 third byte of config
+ */
 void mouse_show_config(unsigned char byte1, unsigned char byte2, unsigned char byte3);
 
-// changes the state (if reaches the final state returns 1, otherwise 0)
+/**
+ * @brief Changes the state to exit in lab5 (function designed for lab5)
+ * @return 1 if it reaches the final state, 0 otherwise
+ */
 int mouse_exit_handler();
 
-// Prints a packet
+/**
+ * @brief Prints the current packet in a human friendly way
+ */
 void mouse_print_packet();
+
+/** @} */
 
 #endif

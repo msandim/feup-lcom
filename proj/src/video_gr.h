@@ -1,7 +1,7 @@
 #ifndef __VIDEO_GR_H
 #define __VIDEO_GR_H
 
-/** @defgroup video_gr video_gr
+/** @defgroup video_gr Video_gr
  * @{
  *
  * Functions for outputing data to screen in graphics mode
@@ -62,17 +62,6 @@ int vg_fill(unsigned long color);
  * @return 0 on success, non-zero upon failure
  */
 int vg_fill_buffer(unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
-
-/**
- * @brief Fills the buffer "buffer" with 0xFFFF color (white)
- *
- * This function differs from the vg_fill ones, since it uses memset (sets all the buffer's bytes with 0xFF) to run faster
- * @param buffer pointer to the buffer
- * @param dim_h horizontal dimension of the buffer
- * @param dim_v vertical dimension of the buffer
- * @return 0 on success, non-zero upon failure
- */
-int vg_fill_buffer_white(unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 /**
  * @brief Sets input pixel with input color on the input buffer
@@ -180,6 +169,17 @@ int vg_draw_rectangle_buffer(unsigned long x, unsigned long y, unsigned long w, 
  */
 int vg_draw_circle_buffer(unsigned long x, unsigned long y, unsigned long radius, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
+/**
+ * @brief Does the flood-fill effect on a buffer (bucket tool of paint)
+ *
+ * @param x horizontal coordinate of the initial point
+ * @param y vertical coordinate of the initial point
+ * @param replacement_color color using to apply the effect
+ * @param buffer buffer where to do the action
+ * @param dim_h horizontal dimension of the buffer
+ * @param dim_v vertical dimension of the buffer
+ * @return 0 upon success, non-zero upon failure
+ */
 int vg_flood_fill_buffer(unsigned long x, unsigned long y, unsigned long replacement_color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
 /**
@@ -198,6 +198,25 @@ int vg_flood_fill_buffer(unsigned long x, unsigned long y, unsigned long replace
  */
 int vg_draw_brush_buffer(unsigned long xi, unsigned long yi, unsigned long xf, unsigned long yf, unsigned short color, unsigned long thickness, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
+/**
+ * @brief Does the mirror effect on a buffer
+ *
+ * @param buffer buffer where to do the action
+ * @param dim_h horizontal dimension of the buffer
+ * @param dim_v vertical dimension of the buffer
+ * @return 0 upon success, non-zero upon failure
+ */
+int vg_mirror_effect_buffer(unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
+
+/**
+ * @brief Does the magic bucket effect on a buffer
+ *
+ * @param buffer buffer where to do the action
+ * @param dim_h horizontal dimension of the buffer
+ * @param dim_v vertical dimension of the buffer
+ * @return 0 upon success, non-zero upon failure
+ */
+int vg_magic_bucket_effect_buffer(unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 /**
  * @brief Draws a char on the "buffer"
  *

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-/** @defgroup vbe vbe
+/** @defgroup vbe Vbe
  * @{
  *
  * Functions related to the VBE standard

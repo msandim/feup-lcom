@@ -18,32 +18,32 @@ static program_state current_state;
 
 void programInit()
 {
-	int exitFlag = 0;
+  int exitFlag = 0;
 
-	if (screenInit())
-	{
-		printf("Error starting graphic mode\n");
-		screenExit();
-		return;
-	}
+  if (screenInit())
+  {
+    printf("Error starting graphic mode\n");
+    screenExit();
+    return;
+  }
 
-	if (drawModeLoad()) // load the stuff for drawMode
-	{
-		printf("Error loading drawMode\n");
-		screenExit();
-		return;
-	}
+  if (drawModeLoad()) // load the stuff for drawMode
+  {
+    printf("Error loading drawMode\n");
+    screenExit();
+    return;
+  }
 
-	if (galleryModeLoad())
-	{
-		printf("Error loading galleryMode\n");
-		screenExit();
-		return;
-	}
+  if (galleryModeLoad())
+  {
+    printf("Error loading galleryMode\n");
+    screenExit();
+    return;
+  }
 
-	current_state = MENU;
+  current_state = MENU;
 
-	/* APENAS PARA TESTESSSSSSSSSSSSSSS
+  /* APENAS PARA TESTESSSSSSSSSSSSSSS
   char buffer[16];
   unsigned long var = 12690;
   unsigned long vary;
@@ -71,208 +71,215 @@ void programInit()
   printf("bin result2: %u\n",varyy);
   //ACABOU O QUE ERA PARA TESTESSSSSSSS */
 
-	runDevices();
+  runDevices();
 
-	drawModeFree(); // free the stuff for drawMode
+  drawModeFree(); // free the stuff for drawMode
 
-	galleryModeFree(); // free the stuff for galleryMode
+  galleryModeFree(); // free the stuff for galleryMode
 
-	screenExit();
+  screenExit();
 }
 
 void changeProgramState(program_state new_state)
 {
-	// ter em atencao que se vem da gallery, tenho de passar o nome do ficheiro
+  // ter em atencao que se vem da gallery, tenho de passar o nome do ficheiro
 
-	// if we leave draw_multi -> disable serial port
-	if (current_state == DRAW_MULTI)
-	{
-		shutSerialPort();
-		printf("porta serie desactivada\n");
-	}
+  // if we leave draw_multi -> disable serial port
+  if (current_state == DRAW_MULTI)
+  {
+    shutSerialPort();
+    printf("porta serie desactivada\n");
+  }
 
 
-	if (new_state == DRAW_SINGULAR)
-	{
-		if (current_state == GALLERY)
-			drawModeInit(0,getFileNumber()); // disable serial com and edit the file we were seeing in the gallery
-		else {
-			drawModeInit(0,getTotal()); // disable serial com and get a new filename to use
-		}
+  if (new_state == DRAW_SINGULAR)
+  {
+    if (current_state == GALLERY)
+      drawModeInit(0,getFileNumber()); // disable serial com and edit the file we were seeing in the gallery
+    else
+      drawModeInit(0,getTotal()); // disable serial com and get a new filename to use
+  }
 
-	}
+  else if (new_state == DRAW_MULTI)
+  {
+    initSerialPort();
+    printf("porta serie iniciada\n");
+    drawModeInit(1,getTotal()); // enable serial com and get a new filename to use
+  }
 
-	else if (new_state == DRAW_MULTI)
-	{
-		initSerialPort();
-		printf("porta serie iniciada\n");
-		drawModeInit(1,getTotal()); // enable serial com and get a new filename to use
-	}
+  else if (new_state == GALLERY)
+    galleryModeInit();
 
-	else if (new_state == GALLERY)
-		galleryModeInit();
-
-	current_state = new_state;
+  current_state = new_state;
 }
 
 void runDevices()
 {
-	// *** ENABLE MOUSE, KEYBOARD, RTC, TIMER & SERIAL PORT
-	int irq_set_mouse = mouse_subscribe_int();
-	mouse_send_cmd(ENABLE_PACKETS);
-	int irq_set_timer = timer_subscribe_int();
-	int irq_set_kbd = keyboard_subscribe_int();
-	int irq_set_rtc = rtc_subscribe_int();
-	initRTCuieInt();
+  // *** ENABLE MOUSE, KEYBOARD, RTC, TIMER & SERIAL PORT
+  int irq_set_mouse = mouse_subscribe_int();
+  mouse_send_cmd(ENABLE_PACKETS);
+  int irq_set_timer = timer_subscribe_int();
+  int irq_set_kbd = keyboard_subscribe_int();
+  int irq_set_rtc = rtc_subscribe_int();
+  initRTCuieInt();
 
-	int ipc_status;
+  int ipc_status;
 
-	message msg;
+  message msg;
 
-	unsigned int timer_count = 0;
-	int exit_flag = 0;
+  unsigned int timer_count = 0;
+  int exit_flag = 0;
 
-	while(!exit_flag)
-	{
-		if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
-			printf("driver_receive failed\n");
-			continue;
-		}
+  while(!exit_flag)
+  {
+    if ( driver_receive(ANY, &msg, &ipc_status) != 0 ) {
+      printf("driver_receive failed\n");
+      continue;
+    }
 
-		if (is_ipc_notify(ipc_status)) {
-			switch (_ENDPOINT_P(msg.m_source)) {
-			case HARDWARE:
+    if (is_ipc_notify(ipc_status)) {
+      switch (_ENDPOINT_P(msg.m_source)) {
+      case HARDWARE:
 
-				if (msg.NOTIFY_ARG & irq_set_mouse) {
+        if (msg.NOTIFY_ARG & irq_set_mouse) {
 
-					if(updateMouseStatus()) // update mouse status, if packet ended
-					{
-						if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
-							mouseDrawEvent();
+          if(updateMouseStatus()) // update mouse status, if packet ended
+          {
+            if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
+              mouseDrawEvent();
 
-						else if (current_state == MENU)
-						{
-							int event_status = mouseMenuEvent();
+            else if (current_state == MENU)
+            {
+              int event_status = mouseMenuEvent();
 
-							if (event_status == 1)
-							{
-								printf("mudou para draw mode singular\n");
-								changeProgramState(DRAW_SINGULAR);
-							}
-							else if (event_status == 2)
-							{
-								changeProgramState(DRAW_MULTI);
-								printf("mudou para multi\n");
-							}
-							else if (event_status == 3)
-							{
-								changeProgramState(GALLERY);
-								printf("mudou para galeria\n");
-							}
-							else if (event_status == -1)
-							{
-								exit_flag = 1;
-								printf("saiu\n");
-							}
-						}
+              if (event_status == 1)
+                changeProgramState(DRAW_SINGULAR);
 
-						else if (current_state == GALLERY)
-						{
-							int event_status = mouseGalleryEvent();
+              else if (event_status == 2)
+                changeProgramState(DRAW_MULTI);
 
-							if (mouseGalleryEvent() == 1)
-								changeProgramState(DRAW_SINGULAR);
-							else if (mouseGalleryEvent() == -1)
-								changeProgramState(MENU);
-						}
+              else if (event_status == 3)
+                changeProgramState(GALLERY);
 
-					}
-				}
+              else if (event_status == -1)
+              {
+                exit_flag = 1;
+                printf("saiu\n");
+              }
+            }
 
-				if (msg.NOTIFY_ARG & irq_set_kbd) {
+            else if (current_state == GALLERY)
+            {
+              int event_status = mouseGalleryEvent();
 
-					if(updateKeyboardStatus()) // if a valid key is available
-					{
-						if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
-						{
-							if (keyboardDrawEvent() == -1) // come back in the states (to menu)
-								changeProgramState(MENU);
-						}
+              if (mouseGalleryEvent() == 1)
+                changeProgramState(DRAW_SINGULAR);
+              else if (mouseGalleryEvent() == -1)
+                changeProgramState(MENU);
+            }
 
-					}
-				}
+          }
+        }
 
-				if (msg.NOTIFY_ARG & irq_set_rtc) {
+        if (msg.NOTIFY_ARG & irq_set_kbd) {
 
-					updateRTCStatus(); // update hour
-				}
+          if(updateKeyboardStatus()) // if a valid key is available
+          {
+            if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
+            {
+              if (keyboardDrawEvent() == -1) // come back in the states (to menu)
+                changeProgramState(MENU);
+            }
 
-				if (msg.NOTIFY_ARG & irq_set_timer) {
+            else if (current_state == GALLERY)
+              keyboardGalleryEvent();
 
-					timer_count++;
+          }
+        }
 
-					if (timer_count%2 == 0){
-						if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
-							set_graphicsDrawMode(getDrawScreen(),getDrawScreenInfo(),getButtonArray(),getColorBar(),getColorSelected()); // desenhar tudo
+        if (msg.NOTIFY_ARG & irq_set_rtc) {
 
-						else if(current_state == MENU)
-							set_graphicsMenuMode();
+          updateRTCStatus(); // update hour
+        }
 
-						else if(current_state == GALLERY)
-							set_graphicsGalleryMode(getFileDraw());
-					}
+        if (msg.NOTIFY_ARG & irq_set_timer) {
 
-					if(timer_count%5 == 0)
-					{
-						if (current_state == DRAW_MULTI)
-							checkPixelUpdate();
-					}
+          timer_count++;
 
-				}
+          if (timer_count%2 == 0){
+            if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
+              set_graphicsDrawMode(getDrawScreen(),getDrawScreenInfo(),getButtonArray(),getColorBar(),getColorSelected()); // desenhar tudo
 
-				break;
-			default:
-				break;
-			}
-		} else {
+            else if(current_state == MENU)
+              set_graphicsMenuMode();
 
-		}
-	}
+            else if(current_state == GALLERY)
+              set_graphicsGalleryMode(getFileDraw());
+          }
 
-	// ** DISABLE MOUSE, KBD, TIMER, RTC and Serial Port
-	mouse_send_cmd(DISABLE_STREAM_MODE);
-	mouse_unsubscribe_int();
-	keyboard_unsubscribe_int();
-	timer_unsubscribe_int();
-	shutRTCuieInt();
-	rtc_unsubscribe_int();
+          if(timer_count%5 == 0)
+          {
+            if (current_state == DRAW_MULTI)
+              checkCommandUpdate();
+          }
+
+        }
+
+        break;
+      default:
+        break;
+      }
+    } else {
+
+    }
+  }
+
+  // ** DISABLE MOUSE, KBD, TIMER, RTC and Serial Port
+  mouse_send_cmd(DISABLE_STREAM_MODE);
+  mouse_unsubscribe_int();
+  keyboard_unsubscribe_int();
+  timer_unsubscribe_int();
+  shutRTCuieInt();
+  rtc_unsubscribe_int();
 }
 
 int mouseMenuEvent()
 {
-	static int previous_LB_state = 1;
+  static int previous_LB_state = 0;
 
-	if (  getyMousePosition() >= 0 &&
-			getyMousePosition() < 192 &&
-			getMouseLBstate() && !previous_LB_state)
-		return 1; // ir para draw sem multi
+  if (  getyMousePosition() >= 0 &&
+      getyMousePosition() < 192 &&
+      getMouseLBstate() && !previous_LB_state)
+  {
+    previous_LB_state = 1;
+    return 1; // ir para draw sem multi
+  }
 
-	else if (getyMousePosition() >= 192 &&
-			getyMousePosition() < 384 &&
-			getMouseLBstate() && !previous_LB_state)
-		return 2; // ir para draw com multi
+  else if (getyMousePosition() >= 192 &&
+      getyMousePosition() < 384 &&
+      getMouseLBstate() && !previous_LB_state)
+  {
+    previous_LB_state = 1;
+    return 2; // ir para draw com multi
+  }
 
-	else if (getyMousePosition() >= 384 &&
-			getyMousePosition() < 576 &&
-			getMouseLBstate() && !previous_LB_state)
-		return 3; // ir para galeria
+  else if (getyMousePosition() >= 384 &&
+      getyMousePosition() < 576 &&
+      getMouseLBstate() && !previous_LB_state)
+  {
+    previous_LB_state = 1;
+    return 3; // ir para galeria
+  }
 
-	else if (getyMousePosition() >= 576 &&
-			getyMousePosition() <= 768 &&
-			getMouseLBstate() && !previous_LB_state)
-		return -1; // sair
+  else if (getyMousePosition() >= 576 &&
+      getyMousePosition() <= 768 &&
+      getMouseLBstate() && !previous_LB_state)
+  {
+    previous_LB_state = 1;
+    return -1; // sair
+  }
 
-	previous_LB_state = getMouseLBstate();
+  previous_LB_state = getMouseLBstate();
 
-	return 0;
+  return 0;
 }

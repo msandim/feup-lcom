@@ -40,7 +40,6 @@ typedef struct
   unsigned int x_ul_corner, y_ul_corner;
 } draw_screen_area;
 
-
 int screenInit();
 
 void screenExit();
@@ -81,7 +80,7 @@ int loadGalleryGraphics();
 
 void freeGalleryGraphics();
 
-unsigned short* loadDrawing(int number, unsigned int dim_h, unsigned int dim_v);
+int loadDrawing(int number, unsigned short* draw_screen);
 
 void saveDrawing(int number, unsigned short* buffer, unsigned int dim_h, unsigned int dim_v);
 

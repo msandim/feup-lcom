@@ -25,13 +25,16 @@ void (*handlers[5]) (void) = {
 static int command_number;
 static command_state current_state;
 
-static unsigned short* draw_screeny;
+static unsigned short* draw_screen;
 
-int command_handler(unsigned short* draw)
+void setComDrawScreen(unsigned short* draw)
+{
+  draw_screen = draw;
+}
+
+int command_handler()
 {
   unsigned char temp[5];
-
-  draw_screeny = draw;
 
   if (ser_receive_string_poll_fifo(SER_PORT_COM1,temp,1))
     return 1;
@@ -73,7 +76,25 @@ int command_handler(unsigned short* draw)
     {
       command_number = -1;
 
-      vg_fill_buffer_white(draw_screeny, DRAW_SCREEN_H, DRAW_SCREEN_V);
+      vg_fill_buffer(0xEF9D,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+
+      current_state = st0;
+    }
+
+    else if (received_char == 0xA7)
+    {
+      command_number = -1;
+
+      vg_mirror_effect_buffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+      current_state = st0;
+    }
+
+    else if (received_char == 0xA8)
+    {
+      command_number = -1;
+
+      vg_magic_bucket_effect_buffer(draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
       current_state = st0;
     }
@@ -96,54 +117,45 @@ void commandCircleHandler()
   case st0:
     lsb_x = received_char;
     current_state = st1;
-    //printf("recebi lsb_x de valor %u\n",lsb_x);
     break;
 
   case st1:
     msb_x = received_char;
     current_state = st2;
-    //printf("recebi msb_x de valor %u\n",msb_x);
     break;
 
   case st2:
     lsb_y = received_char;
     current_state = st3;
-    //printf("recebi lsb_y de valor %u\n",lsb_y);
     break;
 
   case st3:
     msb_y = received_char;
     current_state = st4;
-    //printf("recebi msb_y de valor %u\n",msb_y);
     break;
 
   case st4:
     lsb_radius = received_char;
     current_state = st5;
-    //printf("recebi lsb_raio de valor %u\n",lsb_radius);
     break;
 
   case st5:
     msb_radius = received_char;
     current_state = st6;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st6:
     lsb_color = received_char;
     current_state = st7;
-    //printf("recebi lsb cor de valor %u\n", lsb_color);
     break;
 
   case st7:
     msb_color = received_char;
     current_state = st8;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st8:
     mmsb_color = received_char;
-    //printf("recebi mmsb_cor de valor %u\n", mmsb_color);
     current_state = st0;
 
     unsigned int x = (unsigned int) (lsb_x | (((unsigned int) msb_x) << 8));
@@ -166,8 +178,7 @@ void commandCircleHandler()
     sprintf(temp, "%x", color);
     sscanf(temp, "%d", &color);
 
-    //printf("vou desenhar circulo (%u,%u), r=%u, color=%u",x,y,radius,color);
-    vg_draw_circle_buffer(x,y,radius,color,draw_screeny, DRAW_SCREEN_H, DRAW_SCREEN_V);
+    vg_draw_circle_buffer(x,y,radius,color,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
   }
 }
 
@@ -180,66 +191,55 @@ void commandRectangleHandler()
   case st0:
     lsb_x = received_char;
     current_state = st1;
-    //printf("recebi lsb_x de valor %u\n",lsb_x);
     break;
 
   case st1:
     msb_x = received_char;
     current_state = st2;
-    //printf("recebi msb_x de valor %u\n",msb_x);
     break;
 
   case st2:
     lsb_y = received_char;
     current_state = st3;
-    //printf("recebi lsb_y de valor %u\n",lsb_y);
     break;
 
   case st3:
     msb_y = received_char;
     current_state = st4;
-    //printf("recebi msb_y de valor %u\n",msb_y);
     break;
 
   case st4:
     lsb_dim_h = received_char;
     current_state = st5;
-    //printf("recebi lsb_raio de valor %u\n",lsb_radius);
     break;
 
   case st5:
     msb_dim_h = received_char;
     current_state = st6;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st6:
     lsb_dim_v = received_char;
     current_state = st7;
-    //printf("recebi lsb cor de valor %u\n", lsb_color);
     break;
 
   case st7:
     msb_dim_v = received_char;
     current_state = st8;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st8:
     lsb_color = received_char;
     current_state = st9;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st9:
     msb_color = received_char;
     current_state = st10;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st10:
     mmsb_color = received_char;
-    //printf("recebi mmsb_cor de valor %u\n", mmsb_color);
     current_state = st0;
 
     unsigned int x = (unsigned int) (lsb_x | (((unsigned int) msb_x) << 8));
@@ -266,7 +266,7 @@ void commandRectangleHandler()
     sprintf(temp, "%x", color);
     sscanf(temp, "%u", &color);
 
-    vg_draw_rectangle_buffer(x, y, dim_h, dim_v, color, draw_screeny, DRAW_SCREEN_H, DRAW_SCREEN_V);
+    vg_draw_rectangle_buffer(x, y, dim_h, dim_v, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
   }
 }
 
@@ -279,78 +279,65 @@ void commandLineHandler()
   case st0:
     lsb_x1 = received_char;
     current_state = st1;
-    //printf("recebi lsb_x de valor %u\n",lsb_x);
     break;
 
   case st1:
     msb_x1 = received_char;
     current_state = st2;
-    //printf("recebi msb_x de valor %u\n",msb_x);
     break;
 
   case st2:
     lsb_y1 = received_char;
     current_state = st3;
-    //printf("recebi lsb_y de valor %u\n",lsb_y);
     break;
 
   case st3:
     msb_y1 = received_char;
     current_state = st4;
-    //printf("recebi msb_y de valor %u\n",msb_y);
     break;
 
   case st4:
     lsb_x2 = received_char;
     current_state = st5;
-    //printf("recebi lsb_raio de valor %u\n",lsb_radius);
     break;
 
   case st5:
     msb_x2 = received_char;
     current_state = st6;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st6:
     lsb_y2 = received_char;
     current_state = st7;
-    //printf("recebi lsb cor de valor %u\n", lsb_color);
     break;
 
   case st7:
     msb_y2 = received_char;
     current_state = st8;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st8:
     lsb_radius = received_char;
     current_state = st9;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st9:
     msb_radius = received_char;
     current_state = st10;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st10:
     lsb_color = received_char;
     current_state = st11;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st11:
     msb_color = received_char;
     current_state = st12;
-    //printf("recebi msb_cor de valor %u\n", msb_color);
     break;
 
   case st12:
     mmsb_color = received_char;
-    //printf("recebi mmsb_cor de valor %u\n", mmsb_color);
     current_state = st0;
 
     unsigned int x1 = (unsigned int) (lsb_x1 | (((unsigned int) msb_x1) << 8));
@@ -381,7 +368,7 @@ void commandLineHandler()
     sprintf(temp, "%x", color);
     sscanf(temp, "%u", &color);
 
-    vg_draw_brush_buffer(x1, y1, x2, y2, color, radius, draw_screeny, DRAW_SCREEN_H, DRAW_SCREEN_V);
+    vg_draw_brush_buffer(x1, y1, x2, y2, color, radius, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
   }
 }
 
@@ -394,42 +381,35 @@ void commandFloodFillHandler()
   case st0:
     lsb_x = received_char;
     current_state = st1;
-    //printf("recebi lsb_x de valor %u\n",lsb_x);
     break;
 
   case st1:
     msb_x = received_char;
     current_state = st2;
-    //printf("recebi msb_x de valor %u\n",msb_x);
     break;
 
   case st2:
     lsb_y = received_char;
     current_state = st3;
-    //printf("recebi lsb_y de valor %u\n",lsb_y);
     break;
 
   case st3:
     msb_y = received_char;
     current_state = st4;
-    //printf("recebi msb_y de valor %u\n",msb_y);
     break;
 
   case st4:
     lsb_color = received_char;
     current_state = st5;
-    //printf("recebi lsb_raio de valor %u\n",lsb_radius);
     break;
 
   case st5:
     msb_color = received_char;
     current_state = st6;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st6:
     mmsb_color = received_char;
-    //printf("recebi mmsb_cor de valor %u\n", mmsb_color);
     current_state = st0;
 
     unsigned int x = (unsigned int) (lsb_x | (((unsigned int) msb_x) << 8));
@@ -448,7 +428,7 @@ void commandFloodFillHandler()
     sprintf(temp, "%x", color);
     sscanf(temp, "%u", &color);
 
-    vg_flood_fill_buffer(x, y, color, draw_screeny, DRAW_SCREEN_H, DRAW_SCREEN_V);
+    vg_flood_fill_buffer(x, y, color, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
   }
 }
 
@@ -462,78 +442,65 @@ void commandDateDrawHandler()
   case st0:
     lsb_x = received_char;
     current_state = st1;
-    //printf("recebi lsb_x de valor %u\n",lsb_x);
     break;
 
   case st1:
     msb_x = received_char;
     current_state = st2;
-    //printf("recebi msb_x de valor %u\n",msb_x);
     break;
 
   case st2:
     lsb_y = received_char;
     current_state = st3;
-    //printf("recebi lsb_y de valor %u\n",lsb_y);
     break;
 
   case st3:
     msb_y = received_char;
     current_state = st4;
-    //printf("recebi msb_y de valor %u\n",msb_y);
     break;
 
   case st4:
     seconds = received_char;
     current_state = st5;
-    //printf("recebi lsb_raio de valor %u\n",lsb_radius);
     break;
 
   case st5:
     minutes = received_char;
     current_state = st6;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st6:
     hours = received_char;
     current_state = st7;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st7:
     day = received_char;
     current_state = st8;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st8:
     month = received_char;
     current_state = st9;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st9:
     year = received_char;
     current_state = st10;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st10:
     lsb_color = received_char;
     current_state = st11;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st11:
     msb_color = received_char;
     current_state = st12;
-    //printf("recebi msb_raio de valor %u\n",msb_radius);
     break;
 
   case st12:
     mmsb_color = received_char;
-    //printf("recebi mmsb_cor de valor %u\n", mmsb_color);
     current_state = st0;
 
     unsigned int x = (unsigned int) (lsb_x | (((unsigned int) msb_x) << 8));
@@ -557,29 +524,12 @@ void commandDateDrawHandler()
     sprintf(temp, "%x", color);
     sscanf(temp, "%u", &color);
 
-    drawText(x,y,string_date,color,draw_screeny,DRAW_SCREEN_H,DRAW_SCREEN_V);
+    drawText(x,y,string_date,color,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
   }
 }
 
 int sendCommandCircle(unsigned int x, unsigned int y, unsigned int radius, unsigned long color)
 {
-  /*
-  unsigned char command[25];
-
-  unsigned char lsb_x = (unsigned char) (x & 0xFF);
-  unsigned char lsb_y = (unsigned char) (y & 0xFF);
-  unsigned char lsb_radius = (unsigned char) (radius & 0xFF);
-  unsigned char lsb_color = (unsigned char) (color & 0xFF);
-
-  // we are certain that x and y < 1024
-  unsigned char msb_x = (unsigned char) (x >> 8);
-  unsigned char msb_y = (unsigned char) (y >> 8);
-  unsigned char msb_radius = (unsigned char) (radius >> 8);
-  unsigned char msb_color = (unsigned char) (color >> 8);
-
-  snprintf(command,25,"%c%c%c%c%c%c%c%c%c",0x01,lsb_x,msb_x,lsb_y,msb_y,lsb_radius,msb_radius,lsb_color,msb_color);
-   */
-
   unsigned char command[25];
   char temp[16];
 
@@ -609,10 +559,6 @@ int sendCommandCircle(unsigned int x, unsigned int y, unsigned int radius, unsig
   unsigned char mmsb_color = (unsigned char) (color >> 16); // because the color can have 5 digits!
 
   snprintf(command,25,"%c%c%c%c%c%c%c%c%c%c",0xA1,lsb_x,msb_x,lsb_y,msb_y,lsb_radius,msb_radius,lsb_color,msb_color,mmsb_color);
-
-  //printf("enviei os valores: %u %u %u %u %u %u %u %u %u %u\n",0xA1,lsb_x,msb_x,lsb_y,msb_y,lsb_radius,msb_radius,lsb_color,msb_color,mmsb_color);
-
-  //printf("Enviei um circulo (%u,%u), r=%u, color=%u\n",x,y,radius,color);
 
   return ser_send_string_poll_fifo(SER_PORT_COM1,command,10);
 }
@@ -775,46 +721,24 @@ int sendCommandBlank()
   return ser_send_string_poll_fifo(SER_PORT_COM1,command,1);
 }
 
-/*
-int sendSetPixel(unsigned int x, unsigned int y, unsigned short color)
+int sendCommandMirrorEffect()
 {
-  unsigned char pixel_string[7], msb_x, msb_y, msb_color, lsb_x, lsb_y, lsb_color;
+  unsigned char command[25];
 
-  lsb_x = (x & 0xFF);
-  lsb_y = (y & 0xFF);
-  lsb_color = (color & 0xFF);
+  snprintf(command,25,"%c",0xA7);
 
-  // we are certain that x and y < 1024
-  msb_x = (unsigned char) (x >> 8);
-  msb_y = (unsigned char) (y >> 8);
-  msb_color = (unsigned char) (color >> 8);
-
-  snprintf(pixel_string,7,"%c%c%c%c%c%c",lsb_x,msb_x,lsb_y,msb_y,lsb_color,msb_color);
-
-  // mandar pixel_string
-  return ser_send_string_poll_fifo(SER_PORT_COM1,pixel_string);
-  //return 0;
+  return ser_send_string_poll_fifo(SER_PORT_COM1,command,1);
 }
- */
-int receiveCommand(unsigned char command[], unsigned int size)
+
+int sendCommandMagicBucketEffect()
 {
-  return (ser_receive_string_poll_fifo(SER_PORT_COM1,command,size));
+  unsigned char command[25];
+
+  snprintf(command,25,"%c",0xA8);
+
+  return ser_send_string_poll_fifo(SER_PORT_COM1,command,1);
 }
-/*
-int receiveSetPixel(unsigned int *x, unsigned int *y, unsigned short *color)
-{
-  unsigned char pixel_string[7];
 
-  if (ser_receive_string_poll_fifo(SER_PORT_COM1,pixel_string))
-    return 1;
-
- *x = (unsigned int) (pixel_string[0] | ((unsigned int) pixel_string[1] << 8));
- *y = (unsigned int) (pixel_string[2] | ((unsigned int) pixel_string[3] << 8));
- *color = (unsigned short) (pixel_string[4] | ((unsigned short) pixel_string[5] << 8));
-
-  return 0;
-}
- */
 int initSerialPort()
 {
   // copy registers for backup
@@ -824,19 +748,11 @@ int initSerialPort()
     return 1;
 
   // configs
-  if (ser_set_config(SER_PORT_COM1, 8, 1, 0, 19200))
+  if (ser_set_config(SER_PORT_COM1, 8, 1, 0, DEFAULT_BITRATE))
     return 1;
-
-  unsigned long big_ratty;
-
-  ser_get_bit_rate(SER_PORT_COM1,&big_ratty);
-
-  printf("RATE 1200 muheheh com gostilolinhu ta quase por cada 10 gurl: %u\n",big_ratty);
 
   // init fifos
   ser_init_fifo_poll(SER_PORT_COM1);
-
-  printf("FIFO's activados com sucesso!\n");
 
   command_number = -1;
   current_state = st0;
@@ -855,8 +771,6 @@ int shutSerialPort()
 
   if (ser_set_bit_rate(SER_PORT_COM1,rate_backup))
     return 1;
-
-  printf("FIFO's desactivados com sucesso!\n");
 
   return 0;
 }

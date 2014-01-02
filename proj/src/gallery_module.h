@@ -7,7 +7,7 @@ int getTotal();
 
 int getFileNumber();
 
-void setFileNumber(int number);
+void setNumber(int number);
 
 void incTotal ();
 
@@ -16,6 +16,8 @@ int galleryModeLoad();
 void galleryModeFree();
 
 void galleryModeInit();
+
+void keyboardGalleryEvent();
 
 int mouseGalleryEvent();
 

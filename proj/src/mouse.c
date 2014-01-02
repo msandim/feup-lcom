@@ -5,7 +5,6 @@
 #include <minix/sysutil.h>
 
 #include "mouse.h"
-#include "video_gr.h"
 
 static int hook_id;
 
@@ -121,7 +120,7 @@ void mouse_interrupt_handler()
 
   if (mouse_receive_data_outbuf(&code))
   {
-    printf("Didnt receive data from mouse yet. Try to move the mouse\n\n");
+    //printf("Didnt receive data from mouse yet. Try to move the mouse\n\n");
     return;
   }
 

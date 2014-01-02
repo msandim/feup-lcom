@@ -17,6 +17,27 @@
 #define MAX_THICKNESS 200
 #define MIN_THICKNESS 1
 
+#define F_MAKECODE 0x21
+#define B_MAKECODE 0x30
+#define K_MAKECODE 0x25
+#define I_MAKECODE 0x17
+#define C_MAKECODE 0x2E
+#define R_MAKECODE 0x13
+#define L_MAKECODE 0x26
+#define V_MAKECODE 0x2F
+#define M_MAKECODE 0x32
+#define G_MAKECODE 0x22
+#define T_MAKECODE 0x14
+#define S_MAKECODE 0x1F
+#define ESC_MAKECODE 0x01
+
+#define PLUS1_MAKECODE 0x4E
+#define PLUS2_MAKECODE 0x1A
+#define MINUS1_MAKECODE 0x4A
+#define MINUS2_MAKECODE 0x35
+
+
+
 typedef enum {st0, st1, st2, st3} tool_state;
 
 unsigned short* getDrawScreen();
@@ -34,18 +55,17 @@ int drawModeLoad();
 
 void drawModeFree();
 
-void drawModeInit(int enable_serial_com, int file_number);
+void drawModeInit(int enable_serial_com, int file_name);
 
 
 void mouseDrawEvent();
 
 int keyboardDrawEvent();
 
-void checkPixelUpdate();
+void checkCommandUpdate();
+
 
 void blank_handler();
-
-void reset_draw_screen();
 
 void brush_handler();
 
