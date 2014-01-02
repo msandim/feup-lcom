@@ -34,7 +34,7 @@ int drawModeLoad();
 
 void drawModeFree();
 
-void drawModeInit(int enable_serial_com);
+void drawModeInit(int enable_serial_com, int file_number);
 
 
 void mouseDrawEvent();
@@ -66,5 +66,7 @@ void mirror_effect_handler();
 void magic_bucket_handler();
 
 void date_draw_handler();
+
+void save_handler();
 
 #endif

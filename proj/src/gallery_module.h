@@ -3,6 +3,14 @@
 
 SPRITE getFileDraw();
 
+int getTotal();
+
+int getFileNumber();
+
+void setFileNumber(int number);
+
+void incTotal ();
+
 int galleryModeLoad();
 
 void galleryModeFree();
