@@ -1,7 +1,7 @@
 #ifndef _GRAPHIC_MODULE_H_
 #define _GRAPHIC_MODULE_H_
 
-/** @defgroup graphic graphic
+/** @defgroup Graphic Graphic
  * @{
  *
  * Module to work with graphics

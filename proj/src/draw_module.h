@@ -1,7 +1,7 @@
 #ifndef _DRAW_MODULE_H_
 #define _DRAW_MODULE_H_
 
-/** @defgroup draw draw
+/** @defgroup Draw Draw
  * @{
  *
  * Group of tool handlers

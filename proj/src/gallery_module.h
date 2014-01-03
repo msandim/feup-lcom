@@ -1,11 +1,11 @@
 #ifndef _GALLERY_MODULE_H_
 #define _GALLERY_MODULE_H_
-/** @defgroup gallery gallery
+/** @defgroup Gallery Gallery
  * @{
  *
  * Module to work with gallery
  */
- 
+
 /**
  * @brief Returns SPRITE to be drawn
  *
