@@ -1,0 +1,7 @@
+<map id="set_graphicsIntroMode" name="set_graphicsIntroMode">
+<area shape="rect" href="$group__video__gr.html#ga332dc868f76a482776952a76576e2f69" title="Draws an object on the &quot;buffer&quot;. " alt="" coords="212,5,367,32"/>
+<area shape="rect" href="$group__video__gr.html#ga3fc3f07355f5cad0248d1c426f185d00" title="Returns the static h_res variable. " alt="" coords="239,56,340,83"/>
+<area shape="rect" href="$group__video__gr.html#ga90eacdd060b588a092805bfc9227a54e" title="Returns the static v_res variable. " alt="" coords="239,107,340,133"/>
+<area shape="rect" href="$group__graphic.html#ga9eaed0a4ef63e900710c1bb85a370751" title="Copy drawing to VRAM. " alt="" coords="221,157,357,184"/>
+<area shape="rect" href="$group__video__gr.html#ga7029a1c3457ec3cd7443ff8d4fafe641" title="Copies a buffer (with the same size as video_mem) to video_mem using memcpy. " alt="" coords="416,157,528,184"/>
+</map>

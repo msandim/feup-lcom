@@ -1,0 +1,4 @@
+<map id="vg_draw_brush_buffer" name="vg_draw_brush_buffer">
+<area shape="rect" href="$group__video__gr.html#gaec2380ac8bf70c4264d7b7bfb81a0e28" title="Draws a circle on the &quot;buffer&quot;. " alt="" coords="208,5,360,32"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="409,5,545,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="drawText" name="drawText">
+<area shape="rect" href="$group__video__gr.html#ga4408032c1096522420f730e3f71aa7cf" title="Draws a char on the &quot;buffer&quot;. " alt="" coords="131,5,277,32"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="327,5,463,32"/>
+</map>

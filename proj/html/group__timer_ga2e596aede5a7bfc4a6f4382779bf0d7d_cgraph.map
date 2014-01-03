@@ -1,0 +1,4 @@
+<map id="timer_test_square" name="timer_test_square">
+<area shape="rect" href="$group__timer.html#gada4efbb5c88275795526fc45f0814aa3" title="Configures a timer to generate a square wave. " alt="" coords="183,5,305,32"/>
+<area shape="rect" href="$group__timer.html#ga0dedaae42644e81cabf9f228f1e48ab6" title="Reads the input timer configuration. " alt="" coords="355,5,475,32"/>
+</map>

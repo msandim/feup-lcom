@@ -1,0 +1,9 @@
+<map id="circle_handler" name="circle_handler">
+<area shape="rect" href="$group__user__interaction.html#gad8fbcdc36a052dfb5b780251e9ab2782" title="Returns info the mouse current left button state. " alt="" coords="171,5,296,32"/>
+<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="167,56,300,83"/>
+<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="167,107,300,133"/>
+<area shape="rect" href="$group__graphic.html#ga59827d63d3dd887e5b015d9039ae0f44" title="Checks equality of areas. " alt="" coords="179,157,288,184"/>
+<area shape="rect" href="$group__video__gr.html#gaec2380ac8bf70c4264d7b7bfb81a0e28" title="Draws a circle on the &quot;buffer&quot;. " alt="" coords="157,208,309,235"/>
+<area shape="rect" href="$group__com__module.html#gafc03ad6ed6caf35fb6c74c42714f18c4" title="Circle Command Sender. " alt="" coords="161,259,305,285"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="359,208,495,235"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="date_draw_handler" name="date_draw_handler">
+<area shape="rect" href="$group__user__interaction.html#gad8fbcdc36a052dfb5b780251e9ab2782" title="Returns info the mouse current left button state. " alt="" coords="212,5,337,32"/>
+<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="208,56,341,83"/>
+<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="208,107,341,133"/>
+<area shape="rect" href="$group__time__module.html#ga193dc218282fc0a9879fa308428cf775" title="Returns the &quot;current_time&quot; struct with the updated time. " alt="" coords="229,157,320,184"/>
+<area shape="rect" href="$group__graphic.html#ga8c20c534a21b68ce79e1c1747c20ae52" title="Draws Text. " alt="" coords="237,208,312,235"/>
+<area shape="rect" href="$group__com__module.html#ga6aa039a85cb73ace18ea8a679111a7da" title="Date Draw Command Sender. " alt="" coords="189,259,360,285"/>
+<area shape="rect" href="$group__video__gr.html#ga4408032c1096522420f730e3f71aa7cf" title="Draws a char on the &quot;buffer&quot;. " alt="" coords="408,208,555,235"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="604,208,740,235"/>
+</map>
