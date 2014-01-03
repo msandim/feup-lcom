@@ -1,6 +1,11 @@
 #ifndef _GALLERY_MODULE_H_
 #define _GALLERY_MODULE_H_
-
+/** @defgroup gallery gallery
+ * @{
+ *
+ * Module to work with gallery
+ */
+ 
 /**
  * @brief Returns SPRITE to be drawn
  *
@@ -74,5 +79,7 @@ void keyboardGalleryEvent();
  * @return 0 on success, 1 if user selected edit, -1 if user selected exit
  */
 int mouseGalleryEvent();
+
+/** @} */
 
 #endif

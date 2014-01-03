@@ -1,6 +1,12 @@
 #ifndef _DRAW_MODULE_H_
 #define _DRAW_MODULE_H_
 
+/** @defgroup draw draw
+ * @{
+ *
+ * Group of tool handlers
+ */
+
 #include "graphic_module.h"
 
 #define DRAW_SCREENX_UL_CORNER 122
@@ -228,5 +234,7 @@ typedef enum {st0, st1, st2, st3} tool_state;
  * Saves drawing for future use, copying buffer to file
  */
  void save_handler();
+
+/** @} */
 
 #endif

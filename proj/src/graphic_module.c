@@ -104,7 +104,7 @@ int set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area
   // draw toolboxes
   drawToolBar(btn_array,double_buf);
 
-  // draw colorbox
+  // draw colorbar
   vg_draw_object_buffer(color_bar.pixels,color_bar.width,color_bar.height, 122, 700, double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw draw_screen

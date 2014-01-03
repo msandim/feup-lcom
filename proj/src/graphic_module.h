@@ -1,6 +1,12 @@
 #ifndef _GRAPHIC_MODULE_H_
 #define _GRAPHIC_MODULE_H_
 
+/** @defgroup graphic graphic
+ * @{
+ *
+ * Module to work with graphics
+ */
+
 #define DRAW_SCREEN_H 880
 #define DRAW_SCREEN_V 650
 
@@ -271,5 +277,7 @@ int loadDrawing(int number, unsigned short* draw_screen);
  * Drawing files only contain the color of the pixels, save everything from buffer
  */
 void saveDrawing(int number, unsigned short* buffer, unsigned int dim_h, unsigned int dim_v);
+
+/** @} */
 
 #endif
