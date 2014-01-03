@@ -124,6 +124,12 @@ void drawBufferInVRAM();
  *	Color Bar
  *	Mouse
  *
+ * @param draw_screen Array to be drawn
+ * @param draw_area Area in wich to draw
+ * @param btn_array Array of buttons to be drawn
+ * @param color_bar Sprite containing the color bar
+ * @param color_selected Actual selected color
+ *
  * @return 0
  */
 int set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected);
