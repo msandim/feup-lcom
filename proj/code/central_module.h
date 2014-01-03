@@ -25,11 +25,29 @@ void changeProgramState(program_state new_state);
 /**
  * @brief Run's the devices and the interrupts associated to them
  *
+ * Main function that manages the interrupts and the program's states
+ *
  */
 void runDevices();
 
+/**
+ * @brief Handles Intro Screen Keyboard Events
+ *
+ * Handles the key events, turning them into actions in the program
+ *
+ * @return 1 if a key is pressed, 0 if not
+ */
 int keyboardIntroEvent();
 
+/**
+ * @brief Handles Menu Mouse events
+ *
+ * Handles the key events, turning them into actions in the program
+ *
+ * @return 1 if a key is pressed, 0 if not
+ */
 int mouseMenuEvent();
+
+/** @} */
 
 #endif

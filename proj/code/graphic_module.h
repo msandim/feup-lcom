@@ -214,6 +214,7 @@ void drawToolBar(BTN* btnArray, unsigned short* buffer);
  * @param x x coordinate of the point where to start to draw
  * @param y y coordinate of the point where to start to draw
  * @param text String to draw
+ * @param color color desired
  * @param buffer Buffer where to draw the text
  * @param dim_h Horizontal dimension of the buffer
  * @param dim_v Vertical dimension of the buffer
@@ -332,7 +333,7 @@ void freeGalleryGraphics();
  * Drawing files only contain the color of the pixels, load everything to array
  *
  * @param number number of the drawing
- * @param pointer to draw_screen to fill with the drawing
+ * @param draw_screen pointer to draw_screen to fill with the drawing
  *
  * @return 0 on success, 1 on error, image by reference
  */

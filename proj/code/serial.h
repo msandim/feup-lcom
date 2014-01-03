@@ -7,7 +7,7 @@
  * Low level module that has several functions that work directly with the UART
  */
 
-#define BIT(n) (0x01<<(n))
+#define BIT(n) (0x01<<(n)) /**< @brief Macro to generate bitmasks */
 
 #define BITRATE_CONSTANT 115200 /**< @brief Bitrate constant */
 
@@ -142,9 +142,9 @@ int ser_set_bit_rate(unsigned short base_addr,unsigned long bit_rate);
  * @brief Sets the configuration to use the UART
  *
  * @param base_addr base address of the port used
- * @param Number of bits per char
- * @param Number of stop bits
- * @param Desired parity ( -1: none, 0: even, 1: odd)
+ * @param bits Number of bits per char
+ * @param stop Number of stop bits
+ * @param parity Desired parity ( -1: none, 0: even, 1: odd)
  * @param rate Desired bit rate
  * @return 1 in success, 0 in non-success
  */
