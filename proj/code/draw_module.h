@@ -42,10 +42,6 @@
 #define MINUS1_MAKECODE 0x4A /**< @brief Minus 1 key makecode */
 #define MINUS2_MAKECODE 0x35 /**< @brief Minus 2 key makecode */
 
-
-//State of the drawing tools
-typedef enum {st0, st1, st2, st3} tool_state;
-
 /**
  * @brief Returns the screen
  *

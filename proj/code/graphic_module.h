@@ -37,8 +37,8 @@ typedef struct {
    unsigned short int bits;         /**< @brief Bits per pixel            */
    unsigned int compression;        /**< @brief Compression type          */
    unsigned int imagesize;          /**< @brief Image size in bytes       */
-   int xresolution;                 /**< @brief Pixels per meter */
-   int yresolution;                 /**< @brief Pixels per meter          */
+   int xresolution;                 /**< @brief X resolution of the image */
+   int yresolution;                 /**< @brief Y resolution of the image          */
    unsigned int ncolours;           /**< @brief Number of colours         */
    unsigned int importantcolours;   /**< @brief Important colours         */
 } INFOHEADER;
@@ -59,7 +59,7 @@ typedef struct {
 /** @name Button Struct*/
 /**@{
  *
- * Structure that contains information on a button
+ * Structure that contains information of a button
  */
 typedef struct {
 	SPRITE sprite_off; /**< @brief Sprite with the button image if it's not pressed */

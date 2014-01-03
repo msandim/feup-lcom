@@ -247,10 +247,4 @@ int vg_exit(void);
 
 /** @} end of video_gr */
 
-void vg_fill_ra(unsigned int x, unsigned int y,
-    unsigned short color,
-    unsigned short* buffer, unsigned int w, unsigned int h);
-
-void _vg_fill(unsigned int x, unsigned int y, unsigned char dir);
-
 #endif /* __VIDEO_GR_H */

@@ -11,6 +11,8 @@
 
 #include "com_module.h"
 
+typedef enum {st0, st1, st2, st3} tool_state;
+
 static unsigned short* draw_screen;
 static Draw_screen_area default_area, current_area;
 
@@ -120,11 +122,11 @@ void drawModeInit(int enable_serial_com, int file_name)
 
   printf("drawModeInit file_name -> %u\n",file_name);
 
-  if (file_name != getTotal())
+  if (file_name != getTotalNumberDrawings())
     loadDrawing(file_name,draw_screen);
   else
   {
-    setNumber(getTotal());
+    setFileNumber(getTotalNumberDrawings());
 
     // start as white
     vg_fill_buffer(0xFFFF,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
@@ -644,8 +646,8 @@ void date_draw_handler()
 
 void save_handler()
 {
-  if (getFileNumber() == getTotal())
-    incTotal();
+  if (getFileNumber() == getTotalNumberDrawings())
+    incTotalNumberDrawings();
 
   int number = getFileNumber();
   printf("Number: %u\n",number);

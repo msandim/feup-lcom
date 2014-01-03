@@ -14,6 +14,7 @@
 #include "timer.h"
 #include "time_module.h"
 
+
 static program_state current_state;
 
 void programInit()
@@ -70,14 +71,14 @@ void changeProgramState(program_state new_state)
     if (current_state == GALLERY)
       drawModeInit(0,getFileNumber()); // disable serial com and edit the file we were seeing in the gallery
     else
-      drawModeInit(0,getTotal()); // disable serial com and get a new filename to use
+      drawModeInit(0,getTotalNumberDrawings()); // disable serial com and get a new filename to use
   }
 
   else if (new_state == DRAW_MULTI)
   {
     initSerialPort();
     printf("porta serie iniciada\n");
-    drawModeInit(1,getTotal()); // enable serial com and get a new filename to use
+    drawModeInit(1,getTotalNumberDrawings()); // enable serial com and get a new filename to use
   }
 
   else if (new_state == GALLERY)
@@ -237,7 +238,7 @@ int mouseMenuEvent()
       getMouseLBstate() && !previous_LB_state)
   {
     previous_LB_state = 1;
-    return 1; // ir para draw sem multi
+    return 1; // draw singular mode
   }
 
   else if (getyMousePosition() >= 192 &&
@@ -245,7 +246,7 @@ int mouseMenuEvent()
       getMouseLBstate() && !previous_LB_state)
   {
     previous_LB_state = 1;
-    return 2; // ir para draw com multi
+    return 2; // draw multi mode
   }
 
   else if (getyMousePosition() >= 384 &&
@@ -253,7 +254,7 @@ int mouseMenuEvent()
       getMouseLBstate() && !previous_LB_state)
   {
     previous_LB_state = 1;
-    return 3; // ir para galeria
+    return 3; // gallery mode
   }
 
   else if (getyMousePosition() >= 576 &&
@@ -261,7 +262,7 @@ int mouseMenuEvent()
       getMouseLBstate() && !previous_LB_state)
   {
     previous_LB_state = 1;
-    return -1; // sair
+    return -1; // exit
   }
 
   previous_LB_state = getMouseLBstate();

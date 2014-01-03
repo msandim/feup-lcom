@@ -15,7 +15,7 @@ unsigned short* getFileDraw()
   return file_draw;
 }
 
-int getTotal()
+int getTotalNumberDrawings()
 {
   return total;
 }
@@ -25,11 +25,11 @@ int getFileNumber()
   return file_number;
 }
 
-void setNumber (int number) {
+void setFileNumber(int number) {
   file_number = number;
 }
 
-void incTotal () {
+void incTotalNumberDrawings () {
   total++;
 }
 
@@ -90,13 +90,13 @@ void galleryModeInit()
 
   file_number = 0;
 
-  // check if the file exists, if exists, file number = 1 and copy the contents to the sprite
+  // check if there are drawings available, if not print a message on the screen
   if (total == 0)
   {
     vg_fill_buffer(0xFFFF,file_draw, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
     drawText(100, 100, "- no file was found -", 0, file_draw, DRAW_SCREEN_H, DRAW_SCREEN_V);
-  } else
+  } else // if there are, load the first one (000)
     loadDrawing(file_number, file_draw);
 
 }

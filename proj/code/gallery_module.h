@@ -10,9 +10,8 @@
 /**
  * @brief Returns the buffer with the file's drawing to be drawn
  *
- * Returns the buffer containing the drawing beeing seen in the gallery
  *
- * @return drawing SPRITE
+ * @return the buffer containing the drawing beeing seen in the gallery
  */
 unsigned short* getFileDraw();
 
@@ -21,7 +20,7 @@ unsigned short* getFileDraw();
  *
  * @return number of existing drawings
  */
-int getTotal();
+int getTotalNumberDrawings();
 
 /**
  * @brief Returns file number
@@ -37,14 +36,14 @@ int getFileNumber();
  *
  * @param number of the drawing
  */
-void setNumber(int number);
+void setFileNumber(int number);
 
 /**
- * @brief Increments total
+ * @brief Increments total number of drawings variable
  *
- * Adds one to total number of files
+ * Adds one to total number of files (drawings)
  */
-void incTotal();
+void incTotalNumberDrawings();
 
 /**
  * @brief Loads Gallery Mode
@@ -72,12 +71,14 @@ void galleryModeInit();
 /**
  * @brief Handles Gallery keyboard events
  *
- * Receive key strokes and handle them
+ * Receives keyboard events and handles them in the context of the gallery
  */
 void keyboardGalleryEvent();
 
 /**
  * @brief Handles Gallery mouse events
+ *
+ * Receives mouse events and handles them in the context of the gallery
  *
  * @return 0 on success, 1 if user selected edit, -1 if user selected exit
  */

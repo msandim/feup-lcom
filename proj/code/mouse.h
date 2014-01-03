@@ -14,14 +14,14 @@
 #define DELAY_MOUSE 10000
 #define WAIT_KBC 20
 
-#define MOUSE_IRQ 12
+#define MOUSE_IRQ 12 /**< @brief Mouse IRQ */
 
 // ******* ports
 
-#define STAT_REG 0x64
-#define KBC_CMD_REG 0x64
-#define OUT_BUF 0x60
-#define MOUSE_CMD_PORT 0x60
+#define STAT_REG 0x64 /**< @brief Mouse Stat Reg Port */
+#define KBC_CMD_REG 0x64 /**< @brief Mouse KBC Reg Port */
+#define OUT_BUF 0x60 /**< @brief Mouse OUT_BUF Port */
+#define MOUSE_CMD_PORT 0x60 /**< @brief Mouse Command Port */
 
 // ******* bitmasks
 
@@ -60,10 +60,10 @@
 #define ACK 0xFA
 
 // ******* KBC COMMANDS
-#define WRITE_BYTE_MOUSE 0xD4
-#define ENABLE_PACKETS 0xF4
-#define DISABLE_STREAM_MODE 0xF5
-#define STATUS_REQUEST 0xE9
+#define WRITE_BYTE_MOUSE 0xD4 /**< @brief KBC COMMAND: Write byte to mouse */
+#define ENABLE_PACKETS 0xF4 /**< @brief KBC COMMAND: Enable Packets */
+#define DISABLE_STREAM_MODE 0xF5 /**< @brief KBC COMMAND: Disable Stream Mode */
+#define STATUS_REQUEST 0xE9 /**< @brief KBC COMMAND: Status Request */
 
 // ******* MOUSE FUNCTIONS ****************************************************
 

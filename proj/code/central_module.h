@@ -11,6 +11,7 @@ typedef enum {INTRO, MENU, GALLERY, DRAW_SINGULAR, DRAW_MULTI} program_state;
 
 /**
  * @brief Initiates the program
+ *
  * Calls several routines that alloc memory, and finally some that free that exact memory
  */
 void programInit();
@@ -42,9 +43,11 @@ int keyboardIntroEvent();
 /**
  * @brief Handles Menu Mouse events
  *
- * Handles the key events, turning them into actions in the program
+ * Handles the mouse events, turning them into actions in the program
  *
- * @return 1 if a key is pressed, 0 if not
+ * @return 1 if the user selected the singular button, 2 if the user
+ * selected multi button, 3 if the user selected gallery button
+ * and -1 if the user selected the exit button
  */
 int mouseMenuEvent();
 
