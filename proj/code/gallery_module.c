@@ -8,9 +8,9 @@
 #include "graphic_module.h"
 
 static int file_number, total;
-static SPRITE file_draw;
+static unsigned short* file_draw;
 
-SPRITE getFileDraw()
+unsigned short* getFileDraw()
 {
   return file_draw;
 }
@@ -36,13 +36,11 @@ void incTotal () {
 int galleryModeLoad()
 {
   // allocate memory for the file in memory (visualization at the gallery)
-  file_draw.width = DRAW_SCREEN_H;
-  file_draw.height = DRAW_SCREEN_V;
-  file_draw.pixels = (unsigned short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(unsigned short));
+  file_draw = (unsigned short*) malloc(DRAW_SCREEN_H * DRAW_SCREEN_V * sizeof(unsigned short));
 
-  if (file_draw.pixels == NULL)
+  if (file_draw == NULL)
   {
-    printf("Could not allocate file_draw SPRITE\n");
+    printf("Could not allocate file_draw space\n");
     return 1;
   }
 
@@ -84,7 +82,7 @@ void galleryModeFree()
   }
 
   // free the memory to store current file in gallery
-  free(file_draw.pixels);
+  free(file_draw);
 }
 
 void galleryModeInit()
@@ -95,11 +93,11 @@ void galleryModeInit()
   // check if the file exists, if exists, file number = 1 and copy the contents to the sprite
   if (total == 0)
   {
-    vg_fill_buffer(0xFFFF,file_draw.pixels, file_draw.width, file_draw.height);
+    vg_fill_buffer(0xFFFF,file_draw, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-    drawText(100, 100, "- no file was found -", 0, file_draw.pixels, file_draw.width, file_draw.height);
+    drawText(100, 100, "- no file was found -", 0, file_draw, DRAW_SCREEN_H, DRAW_SCREEN_V);
   } else
-    loadDrawing(file_number, file_draw.pixels);
+    loadDrawing(file_number, file_draw);
 
 }
 
@@ -110,7 +108,7 @@ void keyboardGalleryEvent()
       && file_number < (total-1))
   {
     printf("NEXT\nNumber %u\nTotal %u\n",file_number + 1,total);
-    loadDrawing(++file_number,file_draw.pixels);
+    loadDrawing(++file_number,file_draw);
   }
 
   // click on the left
@@ -118,7 +116,7 @@ void keyboardGalleryEvent()
       && file_number != 0)
   {
     printf("PREVIOUS\nNumber %u\nTotal %u\n",file_number - 1,total);
-    loadDrawing(--file_number,file_draw.pixels);
+    loadDrawing(--file_number,file_draw);
   }
 }
 
@@ -136,7 +134,7 @@ int mouseGalleryEvent()
   )
   {
     printf("NEXT\nNumber %u\nTotal %u\n",file_number + 1,total);
-    loadDrawing(++file_number,file_draw.pixels);
+    loadDrawing(++file_number,file_draw);
   }
 
   // click on the left
@@ -147,7 +145,7 @@ int mouseGalleryEvent()
       getMouseLBstate() && file_number != 0 && !previous_LB_state)
   {
     printf("PREVIOUS\nNumber %u\nTotal %u\n",file_number - 1,total);
-    loadDrawing(--file_number,file_draw.pixels);
+    loadDrawing(--file_number,file_draw);
   }
 
   else if (getxMousePosition() >= 170 &&

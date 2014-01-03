@@ -1,22 +1,23 @@
 #ifndef _GALLERY_MODULE_H_
 #define _GALLERY_MODULE_H_
-/** @defgroup Gallery Gallery
+
+/** @defgroup Gallery_Module Gallery Module
  * @{
  *
  * Module to work with gallery
  */
 
 /**
- * @brief Returns SPRITE to be drawn
+ * @brief Returns the buffer with the file's drawing to be drawn
  *
- * Returns the SPRITE correspondent to the drawing beeing seen in the gallery
+ * Returns the buffer containing the drawing beeing seen in the gallery
  *
  * @return drawing SPRITE
  */
-SPRITE getFileDraw();
+unsigned short* getFileDraw();
 
 /**
- * @brief Returns total
+ * @brief Returns total variable
  *
  * @return number of existing drawings
  */
@@ -25,7 +26,7 @@ int getTotal();
 /**
  * @brief Returns file number
  *
- * @return number of drawing beeing seen in the gallery
+ * @return number of the drawing beeing seen in the gallery
  */
 int getFileNumber();
 
@@ -33,6 +34,8 @@ int getFileNumber();
  * @brief Sets file number
  *
  * Sets file number to value passed in number argument
+ *
+ * @param number of the drawing
  */
 void setNumber(int number);
 
@@ -41,12 +44,12 @@ void setNumber(int number);
  *
  * Adds one to total number of files
  */
-void incTotal ();
+void incTotal();
 
 /**
- * @brief Loads Gallery
+ * @brief Loads Gallery Mode
  *
- * Loads image used by the gallery from file
+ * Loads space for the image showed in the gallery. Sets the total number of drawings
  *
  * @return 0 on success, 1 on error
  */
@@ -55,12 +58,12 @@ int galleryModeLoad();
 /**
  * @brief Frees Gallery
  *
- * Frees memory used by image used by the gallery
+ * Frees memory used by image showed in the gallery.
  */
 void galleryModeFree();
 
 /**
- * @brief Ínitializes Gallery
+ * @brief Initializes Gallery
  *
  * Initialize Gallery Mode, setting file number to 0 and checking if there are files
  */

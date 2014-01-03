@@ -1,46 +1,46 @@
 #ifndef _DRAW_MODULE_H_
 #define _DRAW_MODULE_H_
 
-/** @defgroup Draw Draw
+/** @defgroup Draw_Module Draw Module
  * @{
  *
- * Group of tool handlers
+ * Module that works with the draw mode
  */
 
 #include "graphic_module.h"
 
-#define DRAW_SCREENX_UL_CORNER 122
-#define DRAW_SCREENY_UL_CORNER 30
+#define DRAW_SCREENX_UL_CORNER 122 /**< @brief Draw Screen Upper Left Corner X Coordinate */
+#define DRAW_SCREENY_UL_CORNER 30 /**< @brief Draw Screen Upper Left Corner Y Coordinate */
 
-#define COLOR_BARX_UL_CORNER 122
-#define COLOR_BARY_UL_CORNER 700
-#define COLOR_BAR_H_LENGTH 882
-#define COLOR_BAR_V_LENGTH 62
+#define COLOR_BARX_UL_CORNER 122 /**< @brief Color Bar Upper Left Corner X Coordinate */
+#define COLOR_BARY_UL_CORNER 700 /**< @brief Color Bar Upper Left Corner Y Coordinate */
+#define COLOR_BAR_H_LENGTH 882 /**< @brief Color Bar Horizontal length */
+#define COLOR_BAR_V_LENGTH 62 /**< @brief Color Bar Vertical length */
 
-#define MAX_COMMANDS_PER_UPDATE 2000
+#define MAX_CHARS_PER_UPDATE 2000 /**< @brief Max Chars Processed by Update */
 
 // VARIABLES FOR DRAWING
-#define MAX_THICKNESS 200
-#define MIN_THICKNESS 1
+#define MAX_THICKNESS 120 /**< @brief Max Thickness allowed */
+#define MIN_THICKNESS 1 /**< @brief Min Thickness allowed */
 
-#define F_MAKECODE 0x21
-#define B_MAKECODE 0x30
-#define K_MAKECODE 0x25
-#define I_MAKECODE 0x17
-#define C_MAKECODE 0x2E
-#define R_MAKECODE 0x13
-#define L_MAKECODE 0x26
-#define V_MAKECODE 0x2F
-#define M_MAKECODE 0x32
-#define G_MAKECODE 0x22
-#define T_MAKECODE 0x14
-#define S_MAKECODE 0x1F
-#define ESC_MAKECODE 0x01
+#define F_MAKECODE 0x21 /**< @brief F key makecode */
+#define B_MAKECODE 0x30 /**< @brief B key makecode */
+#define K_MAKECODE 0x25 /**< @brief K key makecode */
+#define I_MAKECODE 0x17 /**< @brief I key makecode */
+#define C_MAKECODE 0x2E /**< @brief C key makecode */
+#define R_MAKECODE 0x13 /**< @brief R key makecode */
+#define L_MAKECODE 0x26 /**< @brief L key makecode */
+#define V_MAKECODE 0x2F /**< @brief V key makecode */
+#define M_MAKECODE 0x32 /**< @brief M key makecode */
+#define G_MAKECODE 0x22 /**< @brief G key makecode */
+#define T_MAKECODE 0x14 /**< @brief T key makecode */
+#define S_MAKECODE 0x1F /**< @brief S key makecode */
+#define ESC_MAKECODE 0x01 /**< @brief ESC key makecode */
 
-#define PLUS1_MAKECODE 0x4E
-#define PLUS2_MAKECODE 0x1A
-#define MINUS1_MAKECODE 0x4A
-#define MINUS2_MAKECODE 0x35
+#define PLUS1_MAKECODE 0x4E /**< @brief Plus 1 key makecode */
+#define PLUS2_MAKECODE 0x1A /**< @brief Plus 2 key makecode */
+#define MINUS1_MAKECODE 0x4A /**< @brief Minus 1 key makecode */
+#define MINUS2_MAKECODE 0x35 /**< @brief Minus 2 key makecode */
 
 
 //State of the drawing tools
@@ -120,22 +120,25 @@ typedef enum {st0, st1, st2, st3} tool_state;
  *	If the user has chosen a file from the gallery loads the file, otherwise prints a welcome message
  *	
  *	If the user has chosen to use the Multi mode, enables serial port
+ *
+ *	@param enable_serial_com Flag that indicates if serial communication is on
+ *	@param file_name Number of the file to save
  */
 
  void drawModeInit(int enable_serial_com, int file_name);
 
 
 /**
- * @brief Handle mouse
+ * @brief Handles mouse events
  *
- * If the user pressed in the screen, activate selected tool
+ * If the user pressed in the screen, activate selected tool.
  *
- *	If the user pressed in the color bar, update selected color
+ *If the user pressed in the color bar, update selected color.
  */
  void mouseDrawEvent();
 
 /**
- * @brief Handle keyboard
+ * @brief Handles keyboard events
  *
  * Activates tool based on received key stroke
  *
@@ -235,6 +238,6 @@ typedef enum {st0, st1, st2, st3} tool_state;
  */
  void save_handler();
 
-/** @} */
+ /** @} */
 
 #endif

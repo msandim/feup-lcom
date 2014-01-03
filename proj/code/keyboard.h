@@ -9,41 +9,41 @@
 
 // ******* constants to use in keyboard
 
-#define BIT(n) (0x01<<(n))
+#define BIT(n) (0x01<<(n)) /**< @brief Macro to generate bitmaks */
 
-#define DELAY_KBD 20000
-#define WAIT_KBC 20
+#define DELAY_KBD 20000 /**< @brief Delay to use in the KBD functions */
+#define WAIT_KBC 20 /**< @brief Delay to use in the KBC functions */
 
-#define KBD_IRQ 1
+#define KBD_IRQ 1 /**< @brief KBD IRQ */
 
 // ******* ports
 
-#define STAT_REG 0x64
-#define KBC_CMD_REG 0x64
-#define OUT_BUF 0x60
-#define KBD_IN_BUF 0x60
+#define STAT_REG 0x64 /**< @brief STAT_REG port address */
+#define KBC_CMD_REG 0x64 /**< @brief KBC_CMD_REG port address */
+#define OUT_BUF 0x60 /**< @brief OUT_BUF port address */
+#define KBD_IN_BUF 0x60 /**< @brief KBD_IN_BUF port address */
 
 // ******* bitmasks
 
 // byte with IBF ->1 (bitmask)
-#define IBF 0x02
+#define IBF 0x02 /**< @brief Bitmask with IBF to 1*/
 // byte with OBF ->1 (bitmask)
-#define OBF 0x01
+#define OBF 0x01 /**< @brief Bitmask with OBF to 1*/
 
 // PAR BIT
-#define PAR_ERR 0x80
+#define PAR_ERR 0x80 /**< @brief Bitmask to par error bit*/
 // TIMEOUT BIT
-#define TO_ERR 0x40
+#define TO_ERR 0x40 /**< @brief Bitmask to timeout error bit*/
 
 // ******* TYPES OF ERRORS
 
-#define RESEND 0xFE
-#define ERROR 0xFC
+#define RESEND 0xFE /**< @brief Response of type "RESEND" */
+#define ERROR 0xFC /**< @brief Response of type "ERROR" */
 
 // ******* KBD COMMANDS
 
-#define ENABLE_KBD_DEFAULT 0xF6
-#define TOGGLE_LEDS 0xED
+#define ENABLE_KBD_DEFAULT 0xF6 /**< @brief ENABLE_KBD_DEFAULT command */
+#define TOGGLE_LEDS 0xED /**< @brief TOGGLE_LEDS command */
 
 // ******* FUNCTIONS ****************************************************
 

@@ -94,84 +94,113 @@
 
 
 /* ************************* POLLING *****************************/
-#define DELAY_POLL 5000 // 5ms
+#define DELAY_POLL 5000 // 5ms /**< @brief Delay for polling mode */
 
 /* FUNCTIONS DECLARATIONS */
 
-// gets the value of a reg with relative addr/ returns 1 in success, 0 in non-success
+/**
+ * @brief Returns by reference the value of a reg with relative addr
+ *
+ * @param base_addr base address of the port used
+ * @param relative_addr relative address of the reg
+ * @param result pointer to the variable to be filled with the reg's contents
+ *
+ * @return 1 in success, 0 in non-success
+ */
 int ser_get_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long* result);
 
-// sets the value of a reg with relative addr/ returns 1 in success, 0 in non-success
+/**
+ * @brief Sets the value of a reg with relative address
+ *
+ * @param base_addr base address of the port used
+ * @param relative_addr relative address of the reg
+ * @param value value to write in the reg
+ *
+ * @return 1 in success, 0 in non-success
+ */
 int ser_set_reg(unsigned short base_addr, unsigned char relative_addr, unsigned long value);
 
-// gets the value of bite rate/ returns 1 in success, 0 in non-success
+/**
+ * @brief Returns the value of the bit rate
+ *
+ * @param base_addr base address of the port used
+ * @param bit_rate pointer to the variable to be filled with the bit rate
+ * @return 1 in success, 0 in non-success
+ */
 int ser_get_bit_rate(unsigned short base_addr,unsigned long* bit_rate);
 
-// sets the value of bite rate/ returns 1 in success, 0 in non-success
+/**
+ * @brief Sets the value of the bit rate
+ *
+ * @param base_addr base address of the port used
+ * @param bit_rate Desired bit rate
+ * @return 1 in success, 0 in non-success
+ */
 int ser_set_bit_rate(unsigned short base_addr,unsigned long bit_rate);
 
-// sets config
+/**
+ * @brief Sets the configuration to use the UART
+ *
+ * @param base_addr base address of the port used
+ * @param Number of bits per char
+ * @param Number of stop bits
+ * @param Desired parity ( -1: none, 0: even, 1: odd)
+ * @param rate Desired bit rate
+ * @return 1 in success, 0 in non-success
+ */
 int ser_set_config(unsigned short base_addr, unsigned long bits, unsigned long stop, long parity, unsigned long rate);
 
-// shows lcr in a human friendly way
+/**
+ * @brief Shows the LCR reg in a human friendly way
+ *
+ * @param lcr LCR reg contents
+ */
 void ser_show_lcr(unsigned long lcr);
 
-// shows ier in a human friendly way
+/**
+ * @brief Shows the IER reg in a human friendly way
+ *
+ * @param ier IER reg contents
+ */
 void ser_show_ier(unsigned long ier);
 
-/* FOR POLLING */
+// FOR FIFOS ************************************
 
-// sends an array of bytes in polling mode/ returns 1 in success, 0 in non-success
-int ser_send_string_poll(unsigned short base_addr, unsigned char string[]);
-
-// sends a byte in polling mode
-void ser_send_char_poll(unsigned short base_addr,unsigned char char_send);
-
-// receives an array of bytes in polling mode/ returns 1 in success, 0 in non-success
-int ser_receive_string_poll(unsigned short base_addr);
-
-// receives a byte in polling mode/ returns 1 in success, 0 in non-success
-int ser_receive_char_poll(unsigned short base_addr, unsigned char* char_receive);
-
-/* FOR INTERRUPTS */
-
-// sends a string by interrupt mode/ returns 1 in success, 0 in non-success
-int ser_send_string_int(unsigned short base_addr, unsigned char string[]);
-
-// receives a string by interrupt mode/ returns 1 in success, 0 in non-success
-int ser_receive_string_int(unsigned short base_addr);
-
-/* FOR FIFOS */
-
-// sends a string by interrupt mode with fifos/returns 1 in success, 0 in non-success
-int ser_send_string_int_fifo(unsigned short base_addr,unsigned char string[]);
-
-// receive a string by interrupt mode with fifos/ returns 1 in success, 0 in non-success
-int ser_receive_string_int_fifo(unsigned short base_addr,unsigned long trigger);
-
-// initiates fifo activity prepared for polling mode
+/**
+ * @brief Initiates FIFO activity prepared for polling mode
+ *
+ * @param base_addr base address of the port used
+ * @return 1 in success, 0 in non-success
+ */
 int ser_init_fifo_poll(unsigned short base_addr);
 
-// shuts down fifo activity prepared for polling mode
+/**
+ * @brief Shuts down fifo activity prepared for polling mode
+ *
+ * @param base_addr base address of the port used
+ * @return 1 in success, 0 in non-success
+ */
 int ser_shut_fifo_poll(unsigned short base_addr);
 
-// send a string by polling mode with fifos/ returns 1 in success, 0 in non-success
+/**
+ * @brief Sends a string by polling mode with fifos
+ *
+ * @param base_addr base address of the port used
+ * @param string Char array to send
+ * @param string_size Size of the char array (it may not terminate on "\0")
+ * @return 1 in success, 0 in non-success
+ */
 int ser_send_string_poll_fifo(unsigned short base_addr, unsigned char string[], unsigned int string_size);
 
+/**
+ * @brief Receives a string by polling mode with fifos
+ *
+ * @param base_addr base address of the port used
+ * @param string Char buffer to be filled with what we receive
+ * @param string_size the number of chars to receive
+ * @return 1 in success, 0 in non-success
+ */
 int ser_receive_string_poll_fifo(unsigned short base_addr, unsigned char string[], unsigned int string_size);
-
-/* OTHERS */
-
-// Interrupt Handler: handles serial port interrupts
-// Returns: 0 if receives or returns a byte or an array of bytes (if using fifos)
-//          1 if receives an error
-//          2 if a timeout interrupt occurs
-//          3 if a interrupt outside the serial port happens
-int ser_ih(unsigned short base_addr, unsigned char* char_send_receive, int fifo, int size_fifo);
-
-int ser_subscribe_int(unsigned short base_addr);
-
-int ser_unsubscribe_int();
 
 /** @} */
 

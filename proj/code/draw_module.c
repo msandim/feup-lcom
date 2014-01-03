@@ -321,7 +321,7 @@ int keyboardDrawEvent()
 
 void checkCommandUpdate()
 {
-  unsigned int number_commands_update = MAX_COMMANDS_PER_UPDATE;
+  unsigned int number_commands_update = MAX_CHARS_PER_UPDATE;
 
   while (number_commands_update)
   {
@@ -649,5 +649,5 @@ void save_handler()
 
   int number = getFileNumber();
   printf("Number: %u\n",number);
-  saveDrawing(number,draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+  saveDrawing(number,draw_screen);
 }

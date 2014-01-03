@@ -7,7 +7,7 @@
  * Higher level module that handles with the UART and receives/transfers drawing commands
  */
 
-#define DEFAULT_BITRATE 19200
+#define DEFAULT_BITRATE 19200 /**< @brief Default bitrate */
 
 #include "time_module.h"
 

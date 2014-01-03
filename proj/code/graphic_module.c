@@ -96,7 +96,7 @@ void drawBufferInVRAM()
 }
 
 
-int set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected)
+void set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected)
 {
   // desenhar fundo
   vg_fill_buffer(color_selected,double_buf,vg_get_h_res(),vg_get_v_res());
@@ -104,7 +104,7 @@ int set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area
   // draw toolboxes
   drawToolBar(btn_array,double_buf);
 
-  // draw colorbar
+  // draw colorbox
   vg_draw_object_buffer(color_bar.pixels,color_bar.width,color_bar.height, 122, 700, double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw draw_screen
@@ -115,21 +115,17 @@ int set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area
 
   // update buffer in VRAM
   drawBufferInVRAM();
-
-  return 0;
 }
 
-int set_graphicsIntroMode()
+void set_graphicsIntroMode()
 {
   vg_draw_object_buffer(intro.pixels, intro.width, intro.height, 0, 0, double_buf, vg_get_h_res(), vg_get_v_res());
 
   // update buffer in VRAM
   drawBufferInVRAM();
-
-  return 0;
 }
 
-int set_graphicsMenuMode()
+void set_graphicsMenuMode()
 {
   // draw menu
   //drawAreaInDoubleBuffer(menu.pixels, 0, 0, menu.width, menu.height);
@@ -140,25 +136,21 @@ int set_graphicsMenuMode()
 
   // update buffer in VRAM
   drawBufferInVRAM();
-
-  return 0;
 }
 
-int set_graphicsGalleryMode(SPRITE file_drawing)
+void set_graphicsGalleryMode(unsigned short* file_drawing)
 {
   // draw gallery
   vg_draw_object_buffer(gallery.pixels, gallery.width, gallery.height, 0, 0, double_buf, vg_get_h_res(), vg_get_v_res());
 
   // draw file drawing
-  drawAreaInDoubleBuffer(file_drawing.pixels, 72, 31, file_drawing.width, file_drawing.height);
+  drawAreaInDoubleBuffer(file_drawing, 72, 31, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
   // draw mouse
   drawMouse();
 
   // update buffer in VRAM
   drawBufferInVRAM();
-
-  return 0;
 }
 
 int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v)
@@ -184,7 +176,7 @@ int areasAreEqual(Draw_screen_area area1, Draw_screen_area area2)
       && (area1.y_ul_corner == area2.y_ul_corner));
 }
 
-int drawMouse()
+void drawMouse()
 {
   unsigned int mouse_x = getxMousePosition() - 5, mouse_y = getyMousePosition() - 5;
   int i, j, k;
@@ -204,8 +196,6 @@ int drawMouse()
       k++;
     }
   }
-
-  return 0;
 }
 
 void drawToolBar(BTN* btnArray, unsigned short* buffer) {
@@ -572,7 +562,7 @@ int loadDrawing(int number, unsigned short* draw_screen) {
   return 0;
 }
 
-void saveDrawing(int number, unsigned short* buffer, unsigned int dim_h, unsigned int dim_v)
+void saveDrawing(int number, unsigned short* buffer)
 {
   // allocate memory for the file name
   char path[100];

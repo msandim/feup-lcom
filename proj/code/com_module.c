@@ -8,7 +8,7 @@
 #include "graphic_module.h"
 #include "serial.h"
 
-typedef enum {st0, st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12, st13} command_state;
+typedef enum {st0, st1, st2, st3, st4, st5, st6, st7, st8, st9, st10, st11, st12} command_state;
 
 static unsigned long lcr_backup, rate_backup;
 
@@ -76,7 +76,7 @@ int command_handler()
     {
       command_number = -1;
 
-      vg_fill_buffer(0xEF9D,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+      vg_fill_buffer(0xFFFF,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
 
       current_state = st0;
     }
@@ -111,7 +111,6 @@ void commandCircleHandler()
 {
   static unsigned char lsb_x, lsb_y, lsb_radius, lsb_color, msb_x, msb_y, msb_radius, msb_color, mmsb_color;
 
-  //printf("vou para o handler do circulo\n");
   switch(current_state)
   {
   case st0:
