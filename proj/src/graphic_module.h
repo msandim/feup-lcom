@@ -10,6 +10,11 @@
 #define DRAW_SCREEN_H 880
 #define DRAW_SCREEN_V 650
 
+/** @name Header Struct*/
+/**@{
+ *
+ * Header of BMP file
+ */
 typedef struct {
 	unsigned short int type;                 /* Magic identifier            */
 	unsigned int size;                       /* File size in bytes          */
@@ -17,6 +22,13 @@ typedef struct {
 	unsigned int offset;                     /* Offset to image data, bytes */
 } HEADER;
 
+/** @}  */
+
+/** @name Info Header Struct*/
+/**@{
+ *
+ * Information Header of BMP file
+ */
 typedef struct {
    unsigned int size;               /* Header size in bytes      */
    int width,height;                /* Width and height of image */
@@ -29,22 +41,45 @@ typedef struct {
    unsigned int importantcolours;   /* Important colours         */
 } INFOHEADER;
 
+/** @}  */
+
+/** @name Sprite Struct*/
+/**@{
+ *
+ * Structure that contains information of images
+ */
 typedef struct {
 	unsigned short* pixels;
 	int width, height;
 } SPRITE;
 
+/** @}  */
+
+/** @name BTN Struct*/
+/**@{
+ *
+ * Structure that contains information on buttons
+ */
 typedef struct {
 	SPRITE sprite_off;
 	SPRITE sprite_on;
 	int press_state;
 } BTN;
 
+/** @}  */
+
+/** @name Draw Screen Area Struct*/
+/**@{
+ *
+ * Structure that contains information on the drawing portion of the screen
+ */
 typedef struct
 {
   unsigned int h_dim, v_dim;
   unsigned int x_ul_corner, y_ul_corner;
 } Draw_screen_area;
+
+/** @}  */
 
 /**
  * @brief Loads Graphics
