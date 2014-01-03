@@ -1,0 +1,6 @@
+<map id="screenExit" name="screenExit">
+<area shape="rect" href="$group___graphic.html#gad8b85989b1de62b2f8ad0a0d2f812488" title="Frees memory used by Intro. " alt="" coords="148,5,271,32"/>
+<area shape="rect" href="$group___graphic.html#ga990fb09eac9267f9be85a9ba9b72c8e0" title="Frees memory used by Menu. " alt="" coords="144,56,275,83"/>
+<area shape="rect" href="$group___graphic.html#gac5a7dbf63417fac60da5a5f8bd40a962" title="Frees memory used by Gallery. " alt="" coords="140,107,279,133"/>
+<area shape="rect" href="$group__video__gr.html#ga42f593e6656f1a978315aff02b1bcebf" title="Returns to default Minix 3 text mode (0x03: 25 x 80, 16 colors) " alt="" coords="177,157,241,184"/>
+</map>

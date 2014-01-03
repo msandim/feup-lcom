@@ -1,0 +1,4 @@
+<map id="vg_draw_rectangle_buffer" name="vg_draw_rectangle_buffer">
+<area shape="rect" href="$group__video__gr.html#ga78f5a2ba76271135d89370d8d508ab45" title="Draw line segment with specifed end points and color on the &quot;buffer&quot;. " alt="" coords="229,5,371,32"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="420,5,556,32"/>
+</map>
