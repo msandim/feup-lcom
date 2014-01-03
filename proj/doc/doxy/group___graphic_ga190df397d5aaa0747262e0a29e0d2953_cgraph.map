@@ -1,0 +1,12 @@
+<map id="set_graphicsMenuMode" name="set_graphicsMenuMode">
+<area shape="rect" href="$group__video__gr.html#ga332dc868f76a482776952a76576e2f69" title="Draws an object on the &quot;buffer&quot;. " alt="" coords="220,5,375,32"/>
+<area shape="rect" href="$group__video__gr.html#ga3fc3f07355f5cad0248d1c426f185d00" title="Returns the static h_res variable. " alt="" coords="443,56,544,83"/>
+<area shape="rect" href="$group__video__gr.html#ga90eacdd060b588a092805bfc9227a54e" title="Returns the static v_res variable. " alt="" coords="443,107,544,133"/>
+<area shape="rect" href="$group___graphic.html#ga52f58182a38f638ecb23904dbcbf0cbe" title="Draws Mouse. " alt="" coords="252,157,343,184"/>
+<area shape="rect" href="$group___graphic.html#ga9eaed0a4ef63e900710c1bb85a370751" title="Copy drawing to VRAM. " alt="" coords="229,284,365,311"/>
+<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="427,208,560,235"/>
+<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="427,259,560,285"/>
+<area shape="rect" href="$group__video__gr.html#gac39074bdef054bd8bbedd5437e52d8d7" title="Returns the color of the input pixel on the &quot;buffer&quot;. " alt="" coords="425,309,561,336"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="425,157,561,184"/>
+<area shape="rect" href="$group__video__gr.html#ga7029a1c3457ec3cd7443ff8d4fafe641" title="Copies a buffer (with the same size as video_mem) to video_mem using memcpy. " alt="" coords="437,360,549,387"/>
+</map>

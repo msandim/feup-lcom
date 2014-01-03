@@ -1,0 +1,6 @@
+<map id="save_handler" name="save_handler">
+<area shape="rect" href="$group___gallery___module.html#ga8decd544b10edbff4660c74c9dee027b" title="Returns file number. " alt="" coords="187,5,296,32"/>
+<area shape="rect" href="$group___gallery___module.html#gaa5b8571f4f454344afe07a085859b30a" title="Returns total variable. " alt="" coords="156,56,327,83"/>
+<area shape="rect" href="$group___gallery___module.html#ga90ad73d4e3d45ed5baf2f9ccead0e776" title="Increments total number of drawings variable. " alt="" coords="156,107,327,133"/>
+<area shape="rect" href="$group__graphic__module.html#ga9ca8086f270dae977e1af9a15b50aff3" title="Saves Drawing to file. " alt="" coords="192,157,291,184"/>
+</map>

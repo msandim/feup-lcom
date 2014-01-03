@@ -1,0 +1,6 @@
+<map id="shutSerialPort" name="shutSerialPort">
+<area shape="rect" href="$group__serial.html#ga99bb8d44aaaccc109cfc1a8c338d6646" title="Shuts down fifo activity prepared for polling mode. " alt="" coords="160,5,285,32"/>
+<area shape="rect" href="$group__serial.html#ga4d779c4dfbdacf916bfe103630231711" title="Sets the value of a reg with relative address. " alt="" coords="335,56,425,83"/>
+<area shape="rect" href="$group__serial.html#ga6e3a76d744a60ae0abcc2bcc51e2f409" title="Sets the value of the bit rate. " alt="" coords="164,107,281,133"/>
+<area shape="rect" href="$group__serial.html#ga5a31fe72318b779bea06717f46a07806" title="Returns by reference the value of a reg with relative addr. " alt="" coords="335,107,425,133"/>
+</map>

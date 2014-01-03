@@ -1,0 +1,4 @@
+<map id="keyboard_toggle_led" name="keyboard_toggle_led">
+<area shape="rect" href="$group__keyboard.html#ga5cafffba9ffc71ca4b9c981c19d36a46" title="Sends a command to IN_BUF, to a port defined as parameter. " alt="" coords="223,5,367,32"/>
+<area shape="rect" href="$group__keyboard.html#ga09dc9b8c2faaeb77ed97c2e3bab9eaab" title="Receives a command (byte) from the OUT_BUF kbd. " alt="" coords="200,56,389,83"/>
+</map>

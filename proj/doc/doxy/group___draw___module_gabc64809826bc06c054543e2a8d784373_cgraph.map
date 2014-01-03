@@ -1,0 +1,7 @@
+<map id="blank_handler" name="blank_handler">
+<area shape="rect" href="$group__video__gr.html#ga4ae4dc88499ba71f37ba18897be19ae5" title="Fills the buffer &quot;buffer&quot; with the input color. " alt="" coords="185,5,281,32"/>
+<area shape="rect" href="$group__com__module.html#ga584c2ed1724478062aef17601ef7ffb5" title="Blank Command Sender. " alt="" coords="161,56,305,83"/>
+<area shape="rect" href="$group__serial.html#ga4f89ad56589db1712c529499d4778606" title="Sends a string by polling mode with fifos. " alt="" coords="356,56,524,83"/>
+<area shape="rect" href="$group__serial.html#ga5a31fe72318b779bea06717f46a07806" title="Returns by reference the value of a reg with relative addr. " alt="" coords="575,31,665,57"/>
+<area shape="rect" href="$group__serial.html#ga4d779c4dfbdacf916bfe103630231711" title="Sets the value of a reg with relative address. " alt="" coords="575,81,665,108"/>
+</map>

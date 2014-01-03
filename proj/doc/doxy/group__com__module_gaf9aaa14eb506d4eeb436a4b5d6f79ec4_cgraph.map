@@ -1,0 +1,5 @@
+<map id="commandLineHandler" name="commandLineHandler">
+<area shape="rect" href="$group__video__gr.html#ga1ba7dd6ae7e7f014ef55f7a6573c4030" title="Draws on the &quot;buffer&quot; a line consisting of circles (&quot;brush&quot;) " alt="" coords="207,5,359,32"/>
+<area shape="rect" href="$group__video__gr.html#gaec2380ac8bf70c4264d7b7bfb81a0e28" title="Draws a circle on the &quot;buffer&quot;. " alt="" coords="408,5,560,32"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="609,5,745,32"/>
+</map>

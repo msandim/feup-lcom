@@ -1,0 +1,8 @@
+<map id="initSerialPort" name="initSerialPort">
+<area shape="rect" href="$group__serial.html#ga5a31fe72318b779bea06717f46a07806" title="Returns by reference the value of a reg with relative addr. " alt="" coords="484,23,575,49"/>
+<area shape="rect" href="$group__serial.html#ga031a1b936d7c0511726d89497e945775" title="Returns the value of the bit rate. " alt="" coords="317,149,435,176"/>
+<area shape="rect" href="$group__serial.html#gaca8d293c97a4a8661dfe85559f6b1d7f" title="Sets the configuration to use the UART. " alt="" coords="157,61,264,88"/>
+<area shape="rect" href="$group__serial.html#ga9e61b6557b38e8a1e7a453606295c42a" title="Initiates FIFO activity prepared for polling mode. " alt="" coords="152,187,269,213"/>
+<area shape="rect" href="$group__serial.html#ga4d779c4dfbdacf916bfe103630231711" title="Sets the value of a reg with relative address. " alt="" coords="484,124,575,151"/>
+<area shape="rect" href="$group__serial.html#ga6e3a76d744a60ae0abcc2bcc51e2f409" title="Sets the value of the bit rate. " alt="" coords="317,48,435,75"/>
+</map>

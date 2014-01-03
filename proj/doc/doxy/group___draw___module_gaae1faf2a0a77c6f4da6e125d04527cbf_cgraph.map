@@ -1,0 +1,9 @@
+<map id="drawModeInit" name="drawModeInit">
+<area shape="rect" href="$group___gallery___module.html#gaa5b8571f4f454344afe07a085859b30a" title="Returns total variable. " alt="" coords="156,5,327,32"/>
+<area shape="rect" href="$group__graphic__module.html#ga7da961827da64333921c76c75495ca9b" title="Loads Drawing from file. " alt="" coords="193,56,289,83"/>
+<area shape="rect" href="$group___gallery___module.html#ga50c62511f10d532f1cfb76c6575e7c3c" title="Sets file number. " alt="" coords="188,107,295,133"/>
+<area shape="rect" href="$group__video__gr.html#ga4ae4dc88499ba71f37ba18897be19ae5" title="Fills the buffer &quot;buffer&quot; with the input color. " alt="" coords="193,157,289,184"/>
+<area shape="rect" href="$group__graphic__module.html#ga8c20c534a21b68ce79e1c1747c20ae52" title="Draws Text (a&#45;z),(0&#45;9) and (&#45;) " alt="" coords="204,208,279,235"/>
+<area shape="rect" href="$group__video__gr.html#ga4408032c1096522420f730e3f71aa7cf" title="Draws a char on the &quot;buffer&quot;. " alt="" coords="376,208,523,235"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="572,208,708,235"/>
+</map>

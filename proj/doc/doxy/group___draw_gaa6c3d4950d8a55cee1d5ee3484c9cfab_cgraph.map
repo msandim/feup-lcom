@@ -1,0 +1,6 @@
+<map id="drawModeLoad" name="drawModeLoad">
+<area shape="rect" href="$group__com__module.html#ga15a81311d7d5af2dbeb43a62c4549119" title="Sets the draw_screen to the same as in draw_module to draw commands. " alt="" coords="169,5,308,32"/>
+<area shape="rect" href="$group___graphic.html#gaeb0648f9ce252a89ce8e7fa06e4efd2c" title="Loads Tool Bar. " alt="" coords="192,56,285,83"/>
+<area shape="rect" href="$group___graphic.html#ga641789aa3598927915601df3aecd7b14" title="Loads Color Bar. " alt="" coords="189,107,288,133"/>
+<area shape="rect" href="$group___graphic.html#ga8eb94e4fdd88eb2ea1523bf7b823c707" title="Loads BMP&#39;s. " alt="" coords="359,81,433,108"/>
+</map>

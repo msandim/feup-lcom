@@ -1,0 +1,12 @@
+<map id="brush_handler" name="brush_handler">
+<area shape="rect" href="$group__user__interaction.html#gad8fbcdc36a052dfb5b780251e9ab2782" title="Returns info the mouse current left button state. " alt="" coords="175,5,300,32"/>
+<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="171,56,304,83"/>
+<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="171,107,304,133"/>
+<area shape="rect" href="$group__video__gr.html#ga1ba7dd6ae7e7f014ef55f7a6573c4030" title="Draws on the &quot;buffer&quot; a line consisting of circles (&quot;brush&quot;) " alt="" coords="161,157,313,184"/>
+<area shape="rect" href="$group__com__module.html#gab5476ab1bb442d5f64aa1a90d0e436f0" title="Line Command Sender. " alt="" coords="169,208,305,235"/>
+<area shape="rect" href="$group__video__gr.html#gaec2380ac8bf70c4264d7b7bfb81a0e28" title="Draws a circle on the &quot;buffer&quot;. " alt="" coords="372,157,524,184"/>
+<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="583,157,719,184"/>
+<area shape="rect" href="$group__serial.html#ga4f89ad56589db1712c529499d4778606" title="Sends a string by polling mode with fifos. " alt="" coords="364,208,532,235"/>
+<area shape="rect" href="$group__serial.html#ga5a31fe72318b779bea06717f46a07806" title="Returns by reference the value of a reg with relative addr. " alt="" coords="605,208,696,235"/>
+<area shape="rect" href="$group__serial.html#ga4d779c4dfbdacf916bfe103630231711" title="Sets the value of a reg with relative address. " alt="" coords="605,259,696,285"/>
+</map>

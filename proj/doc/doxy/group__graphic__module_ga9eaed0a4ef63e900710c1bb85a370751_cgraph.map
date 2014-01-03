@@ -1,0 +1,3 @@
+<map id="drawBufferInVRAM" name="drawBufferInVRAM">
+<area shape="rect" href="$group__video__gr.html#ga7029a1c3457ec3cd7443ff8d4fafe641" title="Copies a buffer (with the same size as video_mem) to video_mem using memcpy. " alt="" coords="189,5,301,32"/>
+</map>

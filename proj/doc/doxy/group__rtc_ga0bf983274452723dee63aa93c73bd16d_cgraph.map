@@ -1,0 +1,8 @@
+<map id="rtc_get_time_UIE_int" name="rtc_get_time_UIE_int">
+<area shape="rect" href="$group__rtc.html#gabd8de825e876e8ef94c64ac616f68a11" title="Subscribes and enables RTC interrupts. " alt="" coords="211,5,333,32"/>
+<area shape="rect" href="$group__rtc.html#gac730452132272e18d2e9979949807524" title="Loads the contents of the register in the &quot;addr&quot; address to the &quot;info&quot; pointed variable. " alt="" coords="393,132,489,159"/>
+<area shape="rect" href="$group__rtc.html#gaf5f07113fe4c58e60263c45603560d1a" title="Saves the contents of the parameter &quot;info_to_send&quot; in the register with address &quot;addr&quot;. " alt="" coords="223,107,321,133"/>
+<area shape="rect" href="$group__rtc.html#gab2bb93bebbb966e5f5476f69ec2bae44" title="RTC Interrupt Handler (written in assembly) " alt="" coords="200,157,344,184"/>
+<area shape="rect" href="$group__rtc.html#gadfbcee8673b2046ad141c1430c4bf112" title="Fills the date_info struct passed as parameter with date info. " alt="" coords="224,208,320,235"/>
+<area shape="rect" href="$group__rtc.html#gab8f17bf5280c908c8b199a90fefcc758" title="Unsubscribes RTC interrupts. " alt="" coords="204,259,340,285"/>
+</map>
