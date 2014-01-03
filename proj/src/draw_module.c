@@ -12,7 +12,7 @@
 #include "com_module.h"
 
 static unsigned short* draw_screen;
-static draw_screen_area default_area, current_area;
+static Draw_screen_area default_area, current_area;
 
 static BTN* button_array;
 static int tool_selected;
@@ -42,7 +42,7 @@ void (*tool_handlers[12]) (void) = {
 unsigned short* getDrawScreen()
 { return draw_screen; }
 
-draw_screen_area getDrawScreenInfo()
+Draw_screen_area getDrawScreenInfo()
 { return default_area; }
 
 BTN* getButtonArray()
@@ -127,7 +127,7 @@ void drawModeInit(int enable_serial_com, int file_name)
     setNumber(getTotal());
 
     // start as white
-    vg_fill_buffer(0xEF9D,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+    vg_fill_buffer(0xFFFF,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
 
     // write a welcome message
     drawText(300,60,"feel free to draw",color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
@@ -334,7 +334,7 @@ void checkCommandUpdate()
 
 void blank_handler()
 {
-  vg_fill_buffer(0xEF9D,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+  vg_fill_buffer(0xFFFF,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
 
   if (serial_com_enabled) // if we have to send
     sendCommandBlank();
@@ -589,8 +589,8 @@ void selected_area_handler()
         current_area.x_ul_corner = xi;
         current_area.y_ul_corner = yi;
 
-        vg_draw_rectangle_buffer(xi - DRAW_SCREENX_UL_CORNER,
-            yi - DRAW_SCREENY_UL_CORNER, xf - xi, yf - yi, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        //vg_draw_rectangle_buffer(xi - DRAW_SCREENX_UL_CORNER,
+            //yi - DRAW_SCREENY_UL_CORNER, xf - xi, yf - yi, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
       }
 
       tool_current_state = st0;
@@ -625,7 +625,7 @@ void date_draw_handler()
     y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
     // get time (attention, it's in BCD)
-    date_info current_rtc_time = getRTCtime();
+    Date_info current_rtc_time = getRTCtime();
 
     char string_date[25];
 

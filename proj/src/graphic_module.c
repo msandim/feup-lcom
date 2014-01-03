@@ -13,6 +13,7 @@ static unsigned short* double_buf; // temp buffer for graphic use
 static SPRITE* letters; // sprite buffer with the letters
 static SPRITE cursor;
 
+static SPRITE intro;
 static SPRITE menu;
 static SPRITE gallery;
 
@@ -37,6 +38,12 @@ int screenInit()
   if (loadCursor())
   {
     printf("Error loading cursor\n");
+    return 1;
+  }
+
+  if (loadIntroGraphics())
+  {
+    printf("Error loading Intro Graphics\n");
     return 1;
   }
 
@@ -71,9 +78,13 @@ void screenExit()
   // free memory for the cursor sprite
   free(cursor.pixels);
 
+  // free intro graphics
+  freeIntroGraphics();
+
   // free menu graphics
   freeMenuGraphics();
 
+  // free gallery graphics
   freeGalleryGraphics();
 
   vg_exit();
@@ -85,7 +96,7 @@ void drawBufferInVRAM()
 }
 
 
-int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected)
+int set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected)
 {
   // desenhar fundo
   vg_fill_buffer(color_selected,double_buf,vg_get_h_res(),vg_get_v_res());
@@ -101,6 +112,16 @@ int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area
 
   // draw mouse
   drawMouse();
+
+  // update buffer in VRAM
+  drawBufferInVRAM();
+
+  return 0;
+}
+
+int set_graphicsIntroMode()
+{
+  vg_draw_object_buffer(intro.pixels, intro.width, intro.height, 0, 0, double_buf, vg_get_h_res(), vg_get_v_res());
 
   // update buffer in VRAM
   drawBufferInVRAM();
@@ -157,7 +178,7 @@ int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corn
   return 0;
 }
 
-int areasAreEqual(draw_screen_area area1, draw_screen_area area2)
+int areasAreEqual(Draw_screen_area area1, Draw_screen_area area2)
 {
   return ((area1.h_dim == area2.h_dim) && (area1.v_dim == area2.v_dim) && (area1.x_ul_corner == area2.x_ul_corner)
       && (area1.y_ul_corner == area2.y_ul_corner));
@@ -459,6 +480,28 @@ int loadChars() {
   letters = sprite_buffer;
 
   return 0;
+}
+
+int loadIntroGraphics()
+{
+  unsigned int x, y;
+  intro.pixels = loadBMP ("intro.bmp",&x,&y);
+
+  if (intro.pixels == NULL)
+  {
+    printf("Error loading intro BMP\n");
+    return 1;
+  }
+
+  intro.width = x;
+  intro.height = y;
+
+  return 0;
+}
+
+void freeIntroGraphics()
+{
+  free(intro.pixels);
 }
 
 int loadMenuGraphics() {

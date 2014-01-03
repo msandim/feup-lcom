@@ -23,7 +23,7 @@ typedef struct
   unsigned long year; /**< @brief Year number */
   unsigned long week_day; /**< @brief Week day number */
   unsigned long month_day; /**< @brief Day of the Month number */
-} date_info;
+} Date_info;
 
 /** @} end of Date Info Struct */
 
@@ -51,13 +51,13 @@ void rtc_show_config(unsigned long config[]);
  *
  * @return 0 on success, non-zero otherwise
  */
-int rtc_get_data(date_info *data);
+int rtc_get_data(Date_info *data);
 
 /**
  * @brief shows the date information in the struct passed as parameter in a human friendly way
  * @param data struct with the date info
  */
-void rtc_show_data(date_info data);
+void rtc_show_data(Date_info data);
 
 // 3 ways of getting the time!
 
@@ -67,7 +67,7 @@ void rtc_show_data(date_info data);
  *
  * @return 0 on success, non-zero otherwise
  */
-void rtc_get_time_UIP(date_info *data);
+void rtc_get_time_UIP(Date_info *data);
 
 /**
  * @brief Fills the date_info struct passed as parameter with date info using UIE Interrupt method
@@ -75,7 +75,7 @@ void rtc_get_time_UIP(date_info *data);
  *
  * @return 0 on success, non-zero otherwise
  */
-void rtc_get_time_UIE_int(date_info *data);
+void rtc_get_time_UIE_int(Date_info *data);
 
 /**
  * @brief Fills the date_info struct passed as parameter with date info using Periodic Interrupt method
@@ -83,7 +83,7 @@ void rtc_get_time_UIE_int(date_info *data);
  *
  * @return 0 on success, non-zero otherwise
  */
-void rtc_get_time_periodic_int(date_info *data);
+void rtc_get_time_periodic_int(Date_info *data);
 
 /**
  * @brief Sets the alarm with the values given in the struct "data"
@@ -91,7 +91,7 @@ void rtc_get_time_periodic_int(date_info *data);
  *
  * @return 0 on success, non-zero otherwise
  */
-int rtc_set_alarm(date_info data);
+int rtc_set_alarm(Date_info data);
 
 /**
  * @brief Loads the contents of the register in the "addr" address to the "info" pointed variable

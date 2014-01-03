@@ -681,7 +681,7 @@ int sendCommandFloodFill(unsigned int x, unsigned int y, unsigned long color)
   return ser_send_string_poll_fifo(SER_PORT_COM1,command,8);
 }
 
-int sendCommandDateDraw(unsigned int x, unsigned int y, date_info date, unsigned long color)
+int sendCommandDateDraw(unsigned int x, unsigned int y, Date_info date, unsigned long color)
 {
   unsigned char command[25];
   unsigned char temp[16];

@@ -137,7 +137,7 @@ int sendCommandFloodFill(unsigned int x, unsigned int y, unsigned long color);
  * @param color color to use in the date draw
  * @return 0 on success, non-zero otherwise
  */
-int sendCommandDateDraw(unsigned int x, unsigned int y, date_info date, unsigned long color);
+int sendCommandDateDraw(unsigned int x, unsigned int y, Date_info date, unsigned long color);
 
 /**
  * @brief Blank Command Sender

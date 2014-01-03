@@ -41,37 +41,11 @@ void programInit()
     return;
   }
 
-  current_state = MENU;
+  current_state = INTRO; // Start program in intro
 
-  /* APENAS PARA TESTESSSSSSSSSSSSSSS
-  char buffer[16];
-  unsigned long var = 12690;
-  unsigned long vary;
-  unsigned long var2 = 65535;
-  unsigned char varyy;
-  sprintf(buffer, "%u", var);
-  sscanf(buffer, "%x", &vary);
+  set_graphicsIntroMode(); // Set graphics for intro
 
-  printf("bcd result: %x\n",vary);
-  printf("decimal do bcd: %u\n",vary);
-
-  sprintf(buffer,"%x",vary);
-  sscanf(buffer,"%u",&vary);
-
-  printf("bin result: %u\n",vary);
-
-  sprintf(buffer, "%u", var);
-  sscanf(buffer, "%x", &varyy);
-
-  printf("bcd result2: %x\n",varyy);
-
-  sprintf(buffer,"%x",varyy);
-  sscanf(buffer,"%u",&varyy);
-
-  printf("bin result2: %u\n",varyy);
-  //ACABOU O QUE ERA PARA TESTESSSSSSSS */
-
-  runDevices();
+  runDevices(); // Run device interrupts
 
   drawModeFree(); // free the stuff for drawMode
 
@@ -90,7 +64,6 @@ void changeProgramState(program_state new_state)
     shutSerialPort();
     printf("porta serie desactivada\n");
   }
-
 
   if (new_state == DRAW_SINGULAR)
   {
@@ -162,10 +135,7 @@ void runDevices()
                 changeProgramState(GALLERY);
 
               else if (event_status == -1)
-              {
                 exit_flag = 1;
-                printf("saiu\n");
-              }
             }
 
             else if (current_state == GALLERY)
@@ -185,7 +155,13 @@ void runDevices()
 
           if(updateKeyboardStatus()) // if a valid key is available
           {
-            if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
+            if (current_state == INTRO)
+            {
+              if (keyboardIntroEvent())
+                changeProgramState(MENU);
+            }
+
+            else if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
             {
               if (keyboardDrawEvent() == -1) // come back in the states (to menu)
                 changeProgramState(MENU);
@@ -207,6 +183,7 @@ void runDevices()
           timer_count++;
 
           if (timer_count%2 == 0){
+
             if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
               set_graphicsDrawMode(getDrawScreen(),getDrawScreenInfo(),getButtonArray(),getColorBar(),getColorSelected()); // desenhar tudo
 
@@ -241,6 +218,14 @@ void runDevices()
   timer_unsubscribe_int();
   shutRTCuieInt();
   rtc_unsubscribe_int();
+}
+
+int keyboardIntroEvent()
+{
+  if (getKeyboardPressState()) // if a key is pressed, jump screen
+    return 1;
+  else
+    return 0;
 }
 
 int mouseMenuEvent()

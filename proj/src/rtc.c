@@ -69,7 +69,7 @@ void rtc_show_config(unsigned long config[])
   printf("VRT: %X\n",VRT);
 }
 
-int rtc_get_data(date_info *data)
+int rtc_get_data(Date_info *data)
 {
   // read data
   rtc_load_info(RTC_REG_SECONDS,&data->seconds);
@@ -83,14 +83,14 @@ int rtc_get_data(date_info *data)
   return 0;
 }
 
-void rtc_show_data(date_info data)
+void rtc_show_data(Date_info data)
 {
   printf("The time:\n");
   printf("%x:%x:%x - %x/%x/%x\n",data.hours,data.minutes,data.seconds,data.month_day,data.month,data.year);
   printf("Week day: %x\n",data.week_day);
 }
 
-void rtc_get_time_UIP(date_info *data)
+void rtc_get_time_UIP(Date_info *data)
 {
   unsigned long UIP;
 
@@ -109,7 +109,7 @@ void rtc_get_time_UIP(date_info *data)
   rtc_get_data(data);
 }
 
-void rtc_get_time_UIE_int(date_info *data)
+void rtc_get_time_UIE_int(Date_info *data)
 {
   unsigned long status, info;
 
@@ -166,7 +166,7 @@ void rtc_get_time_UIE_int(date_info *data)
   rtc_unsubscribe_int();
 }
 
-void rtc_get_time_periodic_int(date_info *data)
+void rtc_get_time_periodic_int(Date_info *data)
 {
   unsigned long status,info,reg_A_backup;
 
@@ -233,7 +233,7 @@ void rtc_get_time_periodic_int(date_info *data)
 }
 
 
-int rtc_set_alarm(date_info data)
+int rtc_set_alarm(Date_info data)
 {
   // read data
   rtc_save_info(RTC_REG_SECONDS_ALARM,data.seconds);

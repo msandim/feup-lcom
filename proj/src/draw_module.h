@@ -56,7 +56,7 @@ typedef enum {st0, st1, st2, st3} tool_state;
  *
  * @return information about default draw area
  */
- draw_screen_area getDrawScreenInfo();
+ Draw_screen_area getDrawScreenInfo();
 
 /**
  * @brief Returns button array

@@ -42,7 +42,7 @@ void shutRTCuieInt();
  *
  * @return current_time struct
  */
-date_info getRTCtime();
+Date_info getRTCtime();
 
 /** @} */
 

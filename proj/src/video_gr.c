@@ -329,15 +329,15 @@ int vg_flood_fill_buffer(unsigned long x, unsigned long y, unsigned long replace
 
   unsigned long target_color = vg_get_pixel_buffer(x, y, buffer, dim_h, dim_v);
 
-  if(replacement_color == target_color) return; //avoid infinite loop
+  if(replacement_color == target_color) return 0; //avoid infinite loop
 
   int cur_x = x, cur_y = y;
 
-  stack* s = new_stack(16777216);
+  Stack* s = new_stack(16777216);
 
   if (s == NULL) {
     printf("Stack not created!\n");
-    return;
+    return 1;
   }
 
   push_stack(s, cur_x);
@@ -349,22 +349,22 @@ int vg_flood_fill_buffer(unsigned long x, unsigned long y, unsigned long replace
 
     if(cur_x + 1 < dim_h && vg_get_pixel_buffer(cur_x + 1, cur_y, buffer, dim_h, dim_v) == target_color)
     {
-      if(push_stack(s,cur_x + 1) || push_stack(s,cur_y)) return;
+      if(push_stack(s,cur_x + 1) || push_stack(s,cur_y)) return 1;
     }
 
     if(cur_x - 1 >= 0 && vg_get_pixel_buffer(cur_x - 1, cur_y, buffer, dim_h, dim_v) == target_color)
     {
-      if(push_stack(s,cur_x - 1) || push_stack(s,cur_y)) return;
+      if(push_stack(s,cur_x - 1) || push_stack(s,cur_y)) return 1;
     }
 
     if(cur_y + 1 < dim_v && vg_get_pixel_buffer(cur_x, cur_y + 1, buffer, dim_h, dim_v) == target_color)
     {
-      if(push_stack(s,cur_x) || push_stack(s,cur_y + 1)) return;
+      if(push_stack(s,cur_x) || push_stack(s,cur_y + 1)) return 1;
     }
 
     if(cur_y - 1 >= 0 && vg_get_pixel_buffer(cur_x, cur_y - 1, buffer, dim_h, dim_v) == target_color)
     {
-      if(push_stack(s,cur_x) || push_stack(s,cur_y - 1)) return;
+      if(push_stack(s,cur_x) || push_stack(s,cur_y - 1)) return 1;
     }
   }
 
@@ -560,10 +560,10 @@ int vg_magic_bucket_effect_buffer(unsigned short* buffer, unsigned long dim_h, u
         break;
 
       case 0x2104:
-        vg_set_pixel_buffer(j, i, 0xEF9D, buffer, dim_h, dim_v);
+        vg_set_pixel_buffer(j, i, 0xFFFF, buffer, dim_h, dim_v);
         break;
 
-      case 0xEF9D:
+      case 0xFFFF:
         vg_set_pixel_buffer(j, i, 0xE8E4, buffer, dim_h, dim_v);
         break;
 
@@ -604,62 +604,4 @@ int vg_exit() {
     return 1;
   } else
     return 0;
-}
-
-unsigned short* _vg_fill_buf;
-unsigned int _vg_fill_w, _vg_fill_h;
-unsigned short _vg_fill_c, _vg_fill_o;
-
-void vg_fill_ra(unsigned int x, unsigned int y,
-    unsigned short color,
-    unsigned short* buffer, unsigned int w, unsigned int h){
-  if( buffer[x+y*w] == color ) return;
-  _vg_fill_buf = buffer;
-  _vg_fill_w = w;
-  _vg_fill_h = h;
-  _vg_fill_c = color;
-  _vg_fill_o = buffer[x+y*w];
-  buffer[x+y*w] = color;
-  //vg_set_pixel_buffer(x,y,_vg_fill_c,_vg_fill_buf,_vg_fill_w,_vg_fill_h);
-  if(
-      x > 0 &&
-      _vg_fill_o == buffer[x-1+y*w]
-  ) _vg_fill( x-1, y, 0 );
-  if(
-      y > 0 &&
-      _vg_fill_o == buffer[x+(y-1)*w]
-  ) _vg_fill( x, y-1, 1 );
-  if(
-      x < w &&
-      _vg_fill_o == buffer[x+1+y*w]
-  ) _vg_fill( x+1, y, 2 );
-  if(
-      y < h &&
-      _vg_fill_o == buffer[x+(y+1)*w]
-  ) _vg_fill( x, y+1, 3 );
-}
-
-void _vg_fill(unsigned int x, unsigned int y, unsigned char dir){ //dir 0 = going left, 1 = up, 2 = right, 3 = down
-  _vg_fill_buf[x+y*_vg_fill_w] = _vg_fill_c;
-  //vg_set_pixel_buffer(x,y,_vg_fill_c,_vg_fill_buf,_vg_fill_w,_vg_fill_h);
-  if(
-      dir != 2 &&
-      x > 0 &&
-      _vg_fill_o == _vg_fill_buf[x-1+y*_vg_fill_w]
-  ) _vg_fill( x-1, y, 0 );
-  if(
-      dir != 3 &&
-      y > 0 &&
-      _vg_fill_o == _vg_fill_buf[x+(y-1)*_vg_fill_w]
-  ) _vg_fill( x, y-1, 1 );
-  if(
-      dir != 0 &&
-      x < _vg_fill_w &&
-      _vg_fill_o == _vg_fill_buf[x+1+y*_vg_fill_w]
-  ) _vg_fill( x+1, y, 2 );
-  if(
-      dir != 1 &&
-      y < _vg_fill_h &&
-      _vg_fill_o == _vg_fill_buf[x+(y+1)*_vg_fill_w]
-  ) _vg_fill( x, y+1, 3 );
 }

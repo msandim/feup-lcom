@@ -38,7 +38,7 @@ typedef struct
 {
   unsigned int h_dim, v_dim;
   unsigned int x_ul_corner, y_ul_corner;
-} draw_screen_area;
+} Draw_screen_area;
 
 int screenInit();
 
@@ -46,7 +46,9 @@ void screenExit();
 
 void drawBufferInVRAM();
 
-int set_graphicsDrawMode(unsigned short* draw_screen, draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected);
+int set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected);
+
+int set_graphicsIntroMode();
 
 int set_graphicsMenuMode();
 
@@ -54,7 +56,7 @@ int set_graphicsGalleryMode();
 
 int drawAreaInDoubleBuffer(unsigned short* buffer, unsigned int x_upperleft_corner, unsigned int y_upperleft_corner,unsigned int dim_h, unsigned int dim_v);
 
-int areasAreEqual(draw_screen_area area1, draw_screen_area area2);
+int areasAreEqual(Draw_screen_area area1, Draw_screen_area area2);
 
 int drawMouse();
 
@@ -71,6 +73,10 @@ int loadColorBar(SPRITE* color_bar);
 int loadCursor();
 
 int loadChars();
+
+int loadIntroGraphics();
+
+void freeIntroGraphics();
 
 int loadMenuGraphics();
 

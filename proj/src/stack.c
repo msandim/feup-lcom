@@ -5,8 +5,8 @@
 
 #include "stack.h"
 
-stack *new_stack(int ini_size) {
-	stack * s = (stack*) malloc(sizeof(stack));
+Stack *new_stack(int ini_size) {
+	Stack * s = (Stack*) malloc(sizeof(Stack));
 
 	s->buf = (int*) malloc (ini_size * sizeof(int));
 
@@ -21,12 +21,12 @@ stack *new_stack(int ini_size) {
 	return s;
 }
 
-void delete_stack(stack *s) {
+void delete_stack(Stack *s) {
 	free (s->buf);
 	free(s);
 }
 
-int push_stack (stack *s, int obj) {
+int push_stack (Stack *s, int obj) {
 
 	// if the last position of the vector is the top (we cant fit any more)
 	if (s->top >= s->size - 1)
@@ -40,7 +40,7 @@ int push_stack (stack *s, int obj) {
 	return 0;
 }
 
-int pop_stack (stack *s, int* obj) {
+int pop_stack (Stack *s, int* obj) {
 
 	if (s->top == -1)
 		return 1;

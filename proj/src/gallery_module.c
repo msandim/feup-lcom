@@ -7,8 +7,6 @@
 
 #include "graphic_module.h"
 
-static const char* drawings_path = "/home/lcom/proj/drawings/";
-
 static int file_number, total;
 static SPRITE file_draw;
 

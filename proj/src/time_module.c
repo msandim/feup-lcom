@@ -6,7 +6,7 @@
 #include "rtc_constants.h"
 
 // RTC VARIABLES
-static date_info current_time;
+static Date_info current_time;
 
 /* RTC STATUS FUNCTIONS */
 int updateRTCStatus()
@@ -46,7 +46,7 @@ void shutRTCuieInt()
   rtc_load_info(RTC_REG_C, &test);
 }
 
-date_info getRTCtime()
+Date_info getRTCtime()
 {
   return current_time;
 }
