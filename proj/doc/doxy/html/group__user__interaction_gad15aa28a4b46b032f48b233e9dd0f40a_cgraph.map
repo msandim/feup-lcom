@@ -1,9 +1,0 @@
-<map id="updateMouseStatus" name="updateMouseStatus">
-<area shape="rect" href="$group__mouse.html#ga1ba8ccf32722915b37e49d01e9f9b6d6" title="Mouse Interrupt Handler. " alt="" coords="196,17,364,44"/>
-<area shape="rect" href="$group__mouse.html#ga0d1541ceab631253e0ca1813beb4c4d5" title="Checks if the packet is complete (and checks if it&#39;s valid) " alt="" coords="204,69,356,96"/>
-<area shape="rect" href="$group__mouse.html#ga321380fbae36cf6772feb330c507f188" title="Returns the packet received. " alt="" coords="213,120,347,147"/>
-<area shape="rect" href="$group__video__gr.html#ga3fc3f07355f5cad0248d1c426f185d00" title="Returns the static h_res variable. " alt="" coords="229,171,331,197"/>
-<area shape="rect" href="$group__video__gr.html#ga90eacdd060b588a092805bfc9227a54e" title="Returns the static v_res variable. " alt="" coords="229,221,331,248"/>
-<area shape="rect" href="$group__mouse.html#ga99b05122b9a934a85e962a6a70ba8850" title="Receives a byte from the OUT_BUF. " alt="" coords="415,5,559,48"/>
-<area shape="rect" href="$group__mouse.html#gab23cd6108f26e0278b84df5a5781fe51" title="Checks if the packet is valid. " alt="" coords="416,72,557,99"/>
-</map>

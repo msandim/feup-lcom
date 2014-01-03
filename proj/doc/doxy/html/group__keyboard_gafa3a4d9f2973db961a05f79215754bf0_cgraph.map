@@ -1,4 +1,0 @@
-<map id="keyboard_interrupt_handler" name="keyboard_interrupt_handler">
-<area shape="rect" href="$group__keyboard.html#gab8b16e8512d723daf6957f5dd62caab8" title="Receives a command (byte) from the OUT_BUF kbc. " alt="" coords="188,5,375,32"/>
-<area shape="rect" href="$group__keyboard.html#ga426495cbd21900c1709bf430f10d7a4d" title="Analyzes if a code is a makecode, breakcode or a 2 byte code indicator (0xE0) " alt="" coords="193,56,369,83"/>
-</map>

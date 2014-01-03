@@ -1,5 +1,0 @@
-<map id="drawToolBar" name="drawToolBar">
-<area shape="rect" href="$group__video__gr.html#ga332dc868f76a482776952a76576e2f69" title="Draws an object on the &quot;buffer&quot;. " alt="" coords="153,5,308,32"/>
-<area shape="rect" href="$group__video__gr.html#ga3fc3f07355f5cad0248d1c426f185d00" title="Returns the static h_res variable. " alt="" coords="180,56,281,83"/>
-<area shape="rect" href="$group__video__gr.html#ga90eacdd060b588a092805bfc9227a54e" title="Returns the static v_res variable. " alt="" coords="180,107,281,133"/>
-</map>

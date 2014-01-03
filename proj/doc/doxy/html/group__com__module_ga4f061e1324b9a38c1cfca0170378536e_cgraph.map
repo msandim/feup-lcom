@@ -1,5 +1,0 @@
-<map id="commandRectangleHandler" name="commandRectangleHandler">
-<area shape="rect" href="$group__video__gr.html#ga90f4909738a265e9ea822614bd268f9b" title="Draws a rectangle on the &quot;buffer&quot;. " alt="" coords="240,5,416,32"/>
-<area shape="rect" href="$group__video__gr.html#ga78f5a2ba76271135d89370d8d508ab45" title="Draw line segment with specifed end points and color on the &quot;buffer&quot;. " alt="" coords="464,5,605,32"/>
-<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="655,5,791,32"/>
-</map>
