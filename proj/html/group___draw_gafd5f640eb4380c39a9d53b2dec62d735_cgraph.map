@@ -1,5 +1,0 @@
-<map id="selected_area_handler" name="selected_area_handler">
-<area shape="rect" href="$group__user__interaction.html#gad8fbcdc36a052dfb5b780251e9ab2782" title="Returns info the mouse current left button state. " alt="" coords="215,5,340,32"/>
-<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="211,56,344,83"/>
-<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="211,107,344,133"/>
-</map>

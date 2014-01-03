@@ -1,6 +1,0 @@
-<map id="keyboardGalleryEvent" name="keyboardGalleryEvent">
-<area shape="rect" href="$group__user__interaction.html#ga4ffaaf35b0ad2a2d49c0238d596685e5" title="Returns info about press state of the last key pressed/released. " alt="" coords="205,5,368,32"/>
-<area shape="rect" href="$group__user__interaction.html#ga154ffa1e9d1c7e22d46d3255126c1c8a" title="Returns info about the number of number of make/break codes that the current key has. " alt="" coords="205,56,368,83"/>
-<area shape="rect" href="$group__user__interaction.html#gacd485d2cd404ce947294125b441c9d85" title="Returns the makecode of the last key pressed. " alt="" coords="215,107,359,133"/>
-<area shape="rect" href="$group___graphic.html#ga7da961827da64333921c76c75495ca9b" title="Loads Drawing from file. " alt="" coords="239,157,335,184"/>
-</map>

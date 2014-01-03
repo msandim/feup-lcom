@@ -1,6 +1,0 @@
-<map id="magic_bucket_handler" name="magic_bucket_handler">
-<area shape="rect" href="$group__video__gr.html#ga6b24cfcf91ad54fbb6b3a4a5a311350d" title="Does the magic bucket effect on a buffer. " alt="" coords="240,23,405,65"/>
-<area shape="rect" href="$group__com__module.html#ga91301a426047268be1af4d746f0b104b" title="Magic Bucket effect Command Sender. " alt="" coords="212,89,433,116"/>
-<area shape="rect" href="$group__video__gr.html#gac39074bdef054bd8bbedd5437e52d8d7" title="Returns the color of the input pixel on the &quot;buffer&quot;. " alt="" coords="484,5,620,32"/>
-<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="484,56,620,83"/>
-</map>

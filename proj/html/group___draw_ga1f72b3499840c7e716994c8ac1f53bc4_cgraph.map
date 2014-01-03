@@ -1,9 +1,0 @@
-<map id="rectangle_handler" name="rectangle_handler">
-<area shape="rect" href="$group__user__interaction.html#gad8fbcdc36a052dfb5b780251e9ab2782" title="Returns info the mouse current left button state. " alt="" coords="207,5,332,32"/>
-<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="203,56,336,83"/>
-<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="203,107,336,133"/>
-<area shape="rect" href="$group__video__gr.html#ga90f4909738a265e9ea822614bd268f9b" title="Draws a rectangle on the &quot;buffer&quot;. " alt="" coords="181,157,357,184"/>
-<area shape="rect" href="$group__com__module.html#ga2569e87b6cbd1f3f65fdb7e3bfc6d086" title="Rectangle Command Sender. " alt="" coords="184,208,355,235"/>
-<area shape="rect" href="$group__video__gr.html#ga78f5a2ba76271135d89370d8d508ab45" title="Draw line segment with specifed end points and color on the &quot;buffer&quot;. " alt="" coords="405,157,547,184"/>
-<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="596,157,732,184"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="rtc_get_time_UIP" name="rtc_get_time_UIP">
-<area shape="rect" href="$group__rtc.html#gac730452132272e18d2e9979949807524" title="Loads the contents of the register in the &quot;addr&quot; address to the &quot;info&quot; pointed variable. " alt="" coords="324,5,420,32"/>
-<area shape="rect" href="$group__rtc.html#gadfbcee8673b2046ad141c1430c4bf112" title="Fills the date_info struct passed as parameter with date info. " alt="" coords="179,31,275,57"/>
-</map>

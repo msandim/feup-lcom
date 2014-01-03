@@ -1,9 +1,0 @@
-<map id="drawModeInit" name="drawModeInit">
-<area shape="rect" href="$group__gallery.html#gad9bf18ec22f5f68027b4e6e39fff8a92" title="Returns total. " alt="" coords="169,5,239,32"/>
-<area shape="rect" href="$group__graphic.html#ga7da961827da64333921c76c75495ca9b" title="Loads Drawing from file. " alt="" coords="156,56,252,83"/>
-<area shape="rect" href="$group__gallery.html#ga1562a69b34f303196aea747de7ca2077" title="Sets file number. " alt="" coords="161,107,247,133"/>
-<area shape="rect" href="$group__video__gr.html#ga4ae4dc88499ba71f37ba18897be19ae5" title="Fills the buffer &quot;buffer&quot; with the input color. " alt="" coords="156,157,252,184"/>
-<area shape="rect" href="$group__graphic.html#ga8c20c534a21b68ce79e1c1747c20ae52" title="Draws Text. " alt="" coords="167,208,241,235"/>
-<area shape="rect" href="$group__video__gr.html#ga4408032c1096522420f730e3f71aa7cf" title="Draws a char on the &quot;buffer&quot;. " alt="" coords="301,208,448,235"/>
-<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="497,208,633,235"/>
-</map>

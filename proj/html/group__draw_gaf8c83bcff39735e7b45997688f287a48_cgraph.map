@@ -1,8 +1,0 @@
-<map id="checkCommandUpdate" name="checkCommandUpdate">
-<area shape="rect" href="$group__com__module.html#ga12062a6b2f0ca6ad588dd3bf6274c249" title="Handles command receiving. " alt="" coords="215,56,345,83"/>
-<area shape="rect" href="$group__video__gr.html#ga4ae4dc88499ba71f37ba18897be19ae5" title="Fills the buffer &quot;buffer&quot; with the input color. " alt="" coords="429,5,525,32"/>
-<area shape="rect" href="$group__video__gr.html#ga8cbeaf3f96a2386b9f8166f508dbc7dd" title="Does the mirror effect on a buffer. " alt="" coords="399,56,556,83"/>
-<area shape="rect" href="$group__video__gr.html#ga6b24cfcf91ad54fbb6b3a4a5a311350d" title="Does the magic bucket effect on a buffer. " alt="" coords="395,107,560,149"/>
-<area shape="rect" href="$group__video__gr.html#gac39074bdef054bd8bbedd5437e52d8d7" title="Returns the color of the input pixel on the &quot;buffer&quot;. " alt="" coords="609,89,745,116"/>
-<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="609,140,745,167"/>
-</map>
