@@ -1,4 +1,0 @@
-<map id="initRTCuieInt" name="initRTCuieInt">
-<area shape="rect" href="$group__rtc.html#gac730452132272e18d2e9979949807524" title="Loads the contents of the register in the &quot;addr&quot; address to the &quot;info&quot; pointed variable. " alt="" coords="155,5,251,32"/>
-<area shape="rect" href="$group__rtc.html#gaf5f07113fe4c58e60263c45603560d1a" title="Saves the contents of the parameter &quot;info_to_send&quot; in the register with address &quot;addr&quot;. " alt="" coords="153,56,252,83"/>
-</map>

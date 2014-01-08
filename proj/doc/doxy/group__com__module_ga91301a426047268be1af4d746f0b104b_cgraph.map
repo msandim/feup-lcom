@@ -1,5 +1,0 @@
-<map id="sendCommandMagicBucketEffect" name="sendCommandMagicBucketEffect">
-<area shape="rect" href="$group__serial.html#ga4f89ad56589db1712c529499d4778606" title="Sends a string by polling mode with fifos. " alt="" coords="279,31,447,57"/>
-<area shape="rect" href="$group__serial.html#ga5a31fe72318b779bea06717f46a07806" title="Returns by reference the value of a reg with relative addr. " alt="" coords="497,5,588,32"/>
-<area shape="rect" href="$group__serial.html#ga4d779c4dfbdacf916bfe103630231711" title="Sets the value of a reg with relative address. " alt="" coords="497,56,588,83"/>
-</map>

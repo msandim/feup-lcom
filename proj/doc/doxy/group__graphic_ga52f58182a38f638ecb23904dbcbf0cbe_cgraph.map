@@ -1,8 +1,0 @@
-<map id="drawMouse" name="drawMouse">
-<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="147,5,280,32"/>
-<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="147,56,280,83"/>
-<area shape="rect" href="$group__video__gr.html#gac39074bdef054bd8bbedd5437e52d8d7" title="Returns the color of the input pixel on the &quot;buffer&quot;. " alt="" coords="145,107,281,133"/>
-<area shape="rect" href="$group__video__gr.html#ga3fc3f07355f5cad0248d1c426f185d00" title="Returns the static h_res variable. " alt="" coords="163,157,264,184"/>
-<area shape="rect" href="$group__video__gr.html#ga90eacdd060b588a092805bfc9227a54e" title="Returns the static v_res variable. " alt="" coords="163,208,264,235"/>
-<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="145,259,281,285"/>
-</map>

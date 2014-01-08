@@ -1,5 +1,0 @@
-<map id="updateRTCStatus" name="updateRTCStatus">
-<area shape="rect" href="$group__rtc.html#gab2bb93bebbb966e5f5476f69ec2bae44" title="RTC Interrupt Handler (written in assembly) " alt="" coords="181,5,325,32"/>
-<area shape="rect" href="$group__rtc.html#gadfbcee8673b2046ad141c1430c4bf112" title="Fills the date_info struct passed as parameter with date info. " alt="" coords="205,56,301,83"/>
-<area shape="rect" href="$group__rtc.html#gac730452132272e18d2e9979949807524" title="Loads the contents of the register in the &quot;addr&quot; address to the &quot;info&quot; pointed variable. " alt="" coords="375,56,471,83"/>
-</map>

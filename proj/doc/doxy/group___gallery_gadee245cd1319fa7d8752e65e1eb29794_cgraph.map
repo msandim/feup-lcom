@@ -1,6 +1,0 @@
-<map id="mouseGalleryEvent" name="mouseGalleryEvent">
-<area shape="rect" href="$group__user__interaction.html#gacb56d010b18f2d98c57a4f5a01edac22" title="Returns info the mouse current x position on the current video mode. " alt="" coords="192,5,325,32"/>
-<area shape="rect" href="$group__user__interaction.html#ga36c183967006babde4f4d90a33373bb0" title="Returns info the mouse current y position on the current video mode. " alt="" coords="192,56,325,83"/>
-<area shape="rect" href="$group__user__interaction.html#gad8fbcdc36a052dfb5b780251e9ab2782" title="Returns info the mouse current left button state. " alt="" coords="196,107,321,133"/>
-<area shape="rect" href="$group___graphic.html#ga7da961827da64333921c76c75495ca9b" title="Loads Drawing from file. " alt="" coords="211,157,307,184"/>
-</map>

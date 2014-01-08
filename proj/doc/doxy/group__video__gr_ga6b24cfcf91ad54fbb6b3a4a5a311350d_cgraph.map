@@ -1,4 +1,0 @@
-<map id="vg_magic_bucket_effect_buffer" name="vg_magic_bucket_effect_buffer">
-<area shape="rect" href="$group__video__gr.html#gac39074bdef054bd8bbedd5437e52d8d7" title="Returns the color of the input pixel on the &quot;buffer&quot;. " alt="" coords="220,5,356,32"/>
-<area shape="rect" href="$group__video__gr.html#ga2e462e785ace1a851d70a22a2c137ca3" title="Sets input pixel with input color on the input buffer. " alt="" coords="220,56,356,83"/>
-</map>
