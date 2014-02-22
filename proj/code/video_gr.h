@@ -155,6 +155,10 @@ int vg_draw_object_buffer(unsigned short* object, unsigned long w, unsigned long
  */
 int vg_draw_rectangle_buffer(unsigned long x, unsigned long y, unsigned long w, unsigned long h, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
 
+
+int vg_draw_frame_buffer(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v);
+
+
 /**
  * @brief Draws a circle on the "buffer"
  *

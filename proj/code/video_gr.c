@@ -180,7 +180,6 @@ int vg_draw_line_buffer(unsigned long xi, unsigned long yi,
   if (yi >= dim_v || yf >= dim_v || xi >= dim_h || xf >= dim_h)
     return 1;
 
-
   int cx, cy,
   ix, iy,
   dx, dy,
@@ -270,16 +269,8 @@ int vg_draw_object_buffer(unsigned short* object, unsigned long w, unsigned long
   printf ("Y: %u\n", y);
    */
 
-  for (i = 0; i < h; i++) {
-
+  for (i = 0; i < h; i++)
     memcpy( &buffer[ ( (y + i) * dim_h) + x], &object[ (w * h) - (i*w)], w*2);
-
-    /*k = 0;
-    for (j = w; j > 0; j--) {
-      vg_set_pixel_buffer(x+j, y+i, object[(w*h) - (i*w+k)], buffer, dim_h, dim_v);
-      k++;
-    }*/
-  }
 
   return 0;
 }
@@ -293,6 +284,19 @@ int vg_draw_rectangle_buffer(unsigned long x, unsigned long y, unsigned long w, 
 
   for (i = 0; i < h; i++)
     vg_draw_line_buffer(x,y+i,x+w,y+i,color,buffer,dim_h,dim_v);
+
+  return 0;
+}
+
+int vg_draw_frame_buffer(unsigned long x1, unsigned long y1, unsigned long x2, unsigned long y2, unsigned long color, unsigned short* buffer, unsigned long dim_h, unsigned long dim_v)
+{
+  if (y1 >= dim_v || y2 >= dim_v || x1 >= dim_h || x2 >= dim_h)
+    return 1;
+
+  vg_draw_line_buffer(x1, y1, x1, y2, color, buffer, dim_h, dim_v);
+  vg_draw_line_buffer(x1, y2, x2, y2, color, buffer, dim_h, dim_v);
+  vg_draw_line_buffer(x2, y2, x2, y1, color, buffer, dim_h, dim_v);
+  vg_draw_line_buffer(x2, y1, x1, y1, color, buffer, dim_h, dim_v);
 
   return 0;
 }

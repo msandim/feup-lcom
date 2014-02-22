@@ -96,9 +96,9 @@ void drawBufferInVRAM()
 }
 
 
-void set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected)
+void set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, Draw_screen_area current_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected)
 {
-  // desenhar fundo
+  // draw background
   vg_fill_buffer(color_selected,double_buf,vg_get_h_res(),vg_get_v_res());
 
   // draw toolboxes
@@ -109,6 +109,10 @@ void set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_are
 
   // draw draw_screen
   drawAreaInDoubleBuffer(draw_screen, draw_area.x_ul_corner, draw_area.y_ul_corner, draw_area.h_dim, draw_area.v_dim);
+
+  // draw frame of area selected (if different from the default one)
+  if (!areasAreEqual(draw_area,current_area))
+    vg_draw_frame_buffer(current_area.x_ul_corner, current_area.y_ul_corner, current_area.x_ul_corner + current_area.h_dim, current_area.y_ul_corner + current_area.v_dim, 45, double_buf, vg_get_h_res(), vg_get_v_res());
 
   // draw mouse
   drawMouse();

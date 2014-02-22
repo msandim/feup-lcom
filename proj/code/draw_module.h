@@ -60,6 +60,15 @@
  */
  Draw_screen_area getDrawScreenInfo();
 
+ /**
+  * @brief Returns current_area
+  *
+  * Returns information about the current draw area to be used to draw the screen
+  *
+  * @return information about current draw area
+  */
+ Draw_screen_area getCurrentDrawScreen();
+
 /**
  * @brief Returns button array
  *

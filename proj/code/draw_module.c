@@ -47,6 +47,9 @@ unsigned short* getDrawScreen()
 Draw_screen_area getDrawScreenInfo()
 { return default_area; }
 
+Draw_screen_area getCurrentDrawScreen()
+{ return current_area; }
+
 BTN* getButtonArray()
 { return button_array; }
 
@@ -167,8 +170,12 @@ void mouseDrawEvent()
     color_selected = vg_get_pixel_buffer(getxMousePosition() - 122, getyMousePosition() - 700, color_bar.pixels, 882, 62);
 
 
-  // if the click was not on a relevant place, disable personalized draw area
-  else if (!previous_LB_state && getMouseLBstate()) // if it was a real click
+  // if the click was outside the area disable personalized draw area
+  else if (!previous_LB_state && getMouseLBstate() &&
+      (getxMousePosition() < current_area.x_ul_corner ||
+          getxMousePosition() > current_area.x_ul_corner + current_area.h_dim - 1 ||
+          getyMousePosition() < current_area.y_ul_corner ||
+          getyMousePosition() > current_area.y_ul_corner + current_area.v_dim - 1)) // if it was a real click
   {
     button_array[7].press_state = 0;
     current_area = default_area;
@@ -452,8 +459,8 @@ void circle_handler()
 
       // see if we are working in personalized area, and if we are, check if the circle fits the area
       if ((!areasAreEqual(default_area, current_area) && (xi + DRAW_SCREENX_UL_CORNER + r <= current_area.x_ul_corner + current_area.h_dim)
-          && (xi + DRAW_SCREENX_UL_CORNER - r >= current_area.x_ul_corner) && (yi + DRAW_SCREENY_UL_CORNER + r <= current_area.y_ul_corner + current_area.v_dim)
-          && (yi + DRAW_SCREENY_UL_CORNER - r >= current_area.y_ul_corner)) || areasAreEqual(default_area, current_area))
+          && ((signed int) xi + (signed int) DRAW_SCREENX_UL_CORNER - (signed int) r >= (signed int) current_area.x_ul_corner) && (yi + DRAW_SCREENY_UL_CORNER + r <= current_area.y_ul_corner + current_area.v_dim)
+          && ((signed int) yi + (signed int) DRAW_SCREENY_UL_CORNER - (signed int) r >= (signed int) current_area.y_ul_corner)) || areasAreEqual(default_area, current_area))
       {
         vg_draw_circle_buffer(xi, yi, r, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
@@ -592,7 +599,7 @@ void selected_area_handler()
         current_area.y_ul_corner = yi;
 
         //vg_draw_rectangle_buffer(xi - DRAW_SCREENX_UL_CORNER,
-            //yi - DRAW_SCREENY_UL_CORNER, xf - xi, yf - yi, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+        //yi - DRAW_SCREENY_UL_CORNER, xf - xi, yf - yi, color_selected, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
       }
 
       tool_current_state = st0;

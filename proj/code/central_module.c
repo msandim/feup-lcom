@@ -186,7 +186,7 @@ void runDevices()
           if (timer_count%2 == 0){
 
             if (current_state == DRAW_SINGULAR || current_state == DRAW_MULTI)
-              set_graphicsDrawMode(getDrawScreen(),getDrawScreenInfo(),getButtonArray(),getColorBar(),getColorSelected()); // desenhar tudo
+              set_graphicsDrawMode(getDrawScreen(),getDrawScreenInfo(),getCurrentDrawScreen(),getButtonArray(),getColorBar(),getColorSelected()); // desenhar tudo
 
             else if(current_state == MENU)
               set_graphicsMenuMode();

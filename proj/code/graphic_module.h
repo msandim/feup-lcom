@@ -127,11 +127,12 @@ void drawBufferInVRAM();
  *
  *  @param draw_screen array of colors of the draw screen
  *  @param draw_area default measures for the draw_area on the screen
+ *  @param draw_area current measures for the draw_area on the screen
  *  @param btn_array array of buttons (tools)
  *  @param color_bar color bar sprite
  *  @param color_selected color selected by the user (used to paint the background)
  */
-void set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected);
+void set_graphicsDrawMode(unsigned short* draw_screen, Draw_screen_area draw_area, Draw_screen_area current_area, BTN* btn_array, SPRITE color_bar, unsigned short color_selected);
 
 /**
  * @brief Draws Graphics in Intro
