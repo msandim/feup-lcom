@@ -95,7 +95,7 @@ void galleryModeInit()
   {
     vg_fill_buffer(0xFFFF,file_draw, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
-    drawText(100, 100, "- no file was found -", 0, file_draw, DRAW_SCREEN_H, DRAW_SCREEN_V);
+    drawText(225, 300, "- no file was found -", 0, file_draw, DRAW_SCREEN_H, DRAW_SCREEN_V);
   } else // if there are, load the first one (000)
     loadDrawing(file_number, file_draw);
 

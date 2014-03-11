@@ -123,6 +123,8 @@ void drawModeInit(int enable_serial_com, int file_name)
   thickness = 5;
   tool_current_state = st0;
 
+  current_area = default_area;
+
   printf("drawModeInit file_name -> %u\n",file_name);
 
   if (file_name != getTotalNumberDrawings())
@@ -135,7 +137,7 @@ void drawModeInit(int enable_serial_com, int file_name)
     vg_fill_buffer(0xFFFF,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
 
     // write a welcome message
-    drawText(300,60,"feel free to draw",color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
+    drawText(250,200,"feel free to draw",color_selected,draw_screen,DRAW_SCREEN_H,DRAW_SCREEN_V);
   }
 
   // all the buttons must be off
@@ -376,11 +378,35 @@ void brush_handler()
       new_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
       new_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
+
+      // see if we are working in personalized area, and if we are, check if the circle fits the area
+      if ((!areasAreEqual(default_area, current_area)
+          // verificacao se o circulo do inicio cabe
+          && ((signed int) last_x + (signed int) DRAW_SCREENX_UL_CORNER + (signed int) thickness <= (signed int) current_area.x_ul_corner + (signed int) current_area.h_dim)
+          && ((signed int) last_x + (signed int) DRAW_SCREENX_UL_CORNER - (signed int) thickness >= (signed int) current_area.x_ul_corner)
+          && ((signed int) last_y + (signed int) DRAW_SCREENY_UL_CORNER + (signed int) thickness <= (signed int) current_area.y_ul_corner + (signed int) current_area.v_dim)
+          && ((signed int) last_y + (signed int) DRAW_SCREENY_UL_CORNER - (signed int) thickness >= (signed int) current_area.y_ul_corner)
+
+          // verificacao se o circulo do final cabe
+          && ((signed int) new_x + (signed int) DRAW_SCREENX_UL_CORNER + (signed int) thickness <= (signed int) current_area.x_ul_corner + (signed int) current_area.h_dim)
+          && ((signed int) new_x + (signed int) DRAW_SCREENX_UL_CORNER - (signed int) thickness >= (signed int) current_area.x_ul_corner)
+          && ((signed int) new_y + (signed int) DRAW_SCREENY_UL_CORNER + (signed int) thickness <= (signed int) current_area.y_ul_corner + (signed int) current_area.v_dim)
+          && ((signed int) new_y + (signed int) DRAW_SCREENY_UL_CORNER - (signed int) thickness >= (signed int) current_area.y_ul_corner)) || areasAreEqual(default_area, current_area))
+      {
+        vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
+            color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+        if (serial_com_enabled)
+          sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
+      }
+
+      /*
       vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
           color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
       if (serial_com_enabled)
         sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
+       */
 
       // update last coordinates
       last_x = new_x;
@@ -543,11 +569,35 @@ void rect_line_handler()
       new_x = getxMousePosition() - DRAW_SCREENX_UL_CORNER;
       new_y = getyMousePosition() - DRAW_SCREENY_UL_CORNER;
 
+      // see if we are working in personalized area, and if we are, check if the circle fits the area
+      if ((!areasAreEqual(default_area, current_area)
+          // verificacao se o circulo do inicio cabe
+          && ((signed int) last_x + (signed int) DRAW_SCREENX_UL_CORNER + (signed int) thickness <= (signed int) current_area.x_ul_corner + (signed int) current_area.h_dim)
+          && ((signed int) last_x + (signed int) DRAW_SCREENX_UL_CORNER - (signed int) thickness >= (signed int) current_area.x_ul_corner)
+          && ((signed int) last_y + (signed int) DRAW_SCREENY_UL_CORNER + (signed int) thickness <= (signed int) current_area.y_ul_corner + (signed int) current_area.v_dim)
+          && ((signed int) last_y + (signed int) DRAW_SCREENY_UL_CORNER - (signed int) thickness >= (signed int) current_area.y_ul_corner)
+
+          // verificacao se o circulo do final cabe
+          && ((signed int) new_x + (signed int) DRAW_SCREENX_UL_CORNER + (signed int) thickness <= (signed int) current_area.x_ul_corner + (signed int) current_area.h_dim)
+          && ((signed int) new_x + (signed int) DRAW_SCREENX_UL_CORNER - (signed int) thickness >= (signed int) current_area.x_ul_corner)
+          && ((signed int) new_y + (signed int) DRAW_SCREENY_UL_CORNER + (signed int) thickness <= (signed int) current_area.y_ul_corner + (signed int) current_area.v_dim)
+          && ((signed int) new_y + (signed int) DRAW_SCREENY_UL_CORNER - (signed int) thickness >= (signed int) current_area.y_ul_corner)) || areasAreEqual(default_area, current_area))
+      {
+        vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
+            color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
+
+        if (serial_com_enabled)
+          sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
+      }
+
+      /*
       vg_draw_brush_buffer(last_x, last_y, new_x, new_y,
           color_selected, thickness, draw_screen, DRAW_SCREEN_H, DRAW_SCREEN_V);
 
       if (serial_com_enabled)
         sendCommandLine(last_x, last_y, new_x, new_y, thickness, color_selected);
+
+       */
 
       tool_current_state = st0;
     }
